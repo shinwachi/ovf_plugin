@@ -1,0 +1,12 @@
+# Build artifacts
+org.knime.serverconnector/build/
+org.knime.serverconnector/bin/
+org.knime.serverconnector.413/build/
+org.knime.serverconnector.413/bin/
+
+# IDE
+.project
+.classpath
+.settings/
+*.iml
+.idea/
