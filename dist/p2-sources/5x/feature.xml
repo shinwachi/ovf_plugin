@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.knime.serverconnector.feature"
+      label="KNIME Server Connector"
+      version="1.0.0"
+      provider-name="KNIME User">
+   <description>
+      Server Explorer view for KNIME 5.x -- browse remote HTTP or local
+      filesystem workflow shares alongside KNIME Explorer.
+   </description>
+   <copyright>KNIME User</copyright>
+   <license>Proprietary</license>
+   <plugin
+         id="org.knime.serverconnector"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+</feature>

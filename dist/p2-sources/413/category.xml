@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/org.knime.serverconnector.feature_1.0.0.413.jar"
+            id="org.knime.serverconnector.feature"
+            version="1.0.0.413">
+      <category name="server-connector"/>
+   </feature>
+   <category-def name="server-connector"
+                 label="KNIME Server Connector">
+      <description>
+         Server Explorer view for browsing remote HTTP or local
+         workflow shares from within KNIME.
+      </description>
+   </category-def>
+</site>

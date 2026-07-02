@@ -9,28 +9,45 @@ in the Modeller perspective.
 
 ## Install
 
-Prebuilt dropin zips are in `dist/`:
+Two install formats are published under `dist/`:
 
-| KNIME version | Zip                                          |
-| ------------- | -------------------------------------------- |
-| 5.x           | `dist/knime-serverconnector-5.x-1.0.0.zip`   |
-| 4.1.x         | `dist/knime-serverconnector-4.1.x-1.0.0.zip` |
+| KNIME version | Update-site archive (recommended)                       | Dropin zip                                   |
+| ------------- | ------------------------------------------------------- | -------------------------------------------- |
+| 5.x           | `dist/knime-serverconnector-5.x-1.0.0-updatesite.zip`   | `dist/knime-serverconnector-5.x-1.0.0.zip`   |
+| 4.1.x         | `dist/knime-serverconnector-4.1.x-1.0.0-updatesite.zip` | `dist/knime-serverconnector-4.1.x-1.0.0.zip` |
 
-Each zip contains a `serverconnector/` dropin folder and an `INSTALL.txt`
-covering Linux, macOS, and Windows. The short version:
+### Update-site archive (recommended)
 
-```
-cd <knime-install>/dropins
-unzip /path/to/knime-serverconnector-<version>-1.0.0.zip
-<knime-install>/knime -clean
-```
+Uses KNIME's built-in installer. Works identically on Linux, macOS, and
+Windows and gives you a proper Uninstall entry:
 
-After launch, look for a "Server Explorer" tab next to **KNIME Explorer**.
-If the tab isn't visible, force it open via
+1. In KNIME: *File > Install KNIME Extensions...* (or
+   *Help > Install New Software...*).
+2. Click **Add...** next to *Work with:*.
+3. Click **Archive...** and pick the `-updatesite.zip` for your KNIME
+   version. Name it "KNIME Server Connector" and click Add.
+4. Check the feature under the "KNIME Server Connector" category, click
+   Next, accept the license, Finish, and restart when prompted.
+
+### Dropin
+
+Fallback method if you can't use the GUI installer. Extract the plain
+`.zip` (not the `-updatesite.zip`) into `<knime-install>/dropins/`,
+then launch KNIME once with `-clean`. Each dropin zip ships an
+`INSTALL.txt` with per-OS steps.
+
+### After install
+
+Look for a *Server Explorer* tab next to **KNIME Explorer** in the
+Modeller perspective. If the tab isn't visible:
 *Window > Show View > Other... > KNIME Views > Server Explorer*.
 
 Configure a server URL under *File > Preferences > KNIME > Server
 Connector > Servers*.
+
+The update-site sources (`feature.xml`, `category.xml`) and the exact
+`p2.publisher` / `p2.director` commands used to build and validate the
+archives live under `dist/p2-sources/`.
 
 ## Building from source
 
