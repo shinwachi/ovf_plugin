@@ -151,15 +151,30 @@ public class ServerExplorerView extends ViewPart {
     public void createPartControl(Composite parent) {
         System.out.println("[ServerExplorer] createPartControl called");
 
-        // Determine workspace path from KNIME runtime
+        // Determine workspace path from KNIME runtime. On Windows the URL
+        // form is file:/C:/Users/... and URL.getPath() yields
+        // "/C:/Users/..." which is not a valid java.nio.file.Path
+        // (java.nio.file.InvalidPathException at index 2 on the colon).
+        // Convert via File(URI) which does the platform-correct thing.
         try {
-            workspacePath = org.eclipse.core.runtime.Platform.getInstanceLocation()
-                    .getURL().getPath();
-            if (workspacePath.endsWith("/") && workspacePath.length() > 1) {
-                workspacePath = workspacePath.substring(0, workspacePath.length() - 1);
+            java.net.URL locUrl = org.eclipse.core.runtime.Platform
+                    .getInstanceLocation().getURL();
+            java.io.File dir;
+            try {
+                dir = new java.io.File(locUrl.toURI());
+            } catch (Exception uriEx) {
+                String raw = locUrl.getPath();
+                if (raw.length() > 3 && raw.charAt(0) == '/'
+                        && raw.charAt(2) == ':'
+                        && java.io.File.separatorChar == '\\') {
+                    raw = raw.substring(1);
+                }
+                dir = new java.io.File(raw);
             }
+            workspacePath = dir.getAbsolutePath();
         } catch (Exception e) {
-            workspacePath = System.getProperty("user.home", "/root") + "/knime-workspace";
+            workspacePath = System.getProperty("user.home", "/root")
+                    + java.io.File.separator + "knime-workspace";
             System.err.println("[ServerExplorer] Could not get workspace path, using: " + workspacePath);
         }
         System.out.println("[ServerExplorer] Workspace path: " + workspacePath);
@@ -615,7 +630,16 @@ public class ServerExplorerView extends ViewPart {
      */
     private void startWorkspaceWatcher() {
         if (workspacePath == null) return;
-        Path dir = Paths.get(workspacePath);
+        // Never let a bad path bring down the whole view -- the watcher is
+        // a background convenience, not a correctness requirement.
+        Path dir;
+        try {
+            dir = Paths.get(workspacePath);
+        } catch (Exception e) {
+            System.err.println("[ServerExplorer] Skipping watcher, invalid workspace path '"
+                    + workspacePath + "': " + e);
+            return;
+        }
         if (!java.nio.file.Files.isDirectory(dir)) {
             System.err.println("[ServerExplorer] Workspace path not a directory, skipping watcher: " + dir);
             return;
