@@ -14,9 +14,9 @@ target KNIME version. Layout expected by the publisher:
 ```
 <input>/
   plugins/
-    org.knime.serverconnector_<ver>.jar
+    org.ovf.serverconnector_<ver>.jar
   features/
-    org.knime.serverconnector.feature_<ver>.jar    # jar of feature.xml
+    org.ovf.serverconnector.feature_<ver>.jar    # jar of feature.xml
 ```
 
 Then:
@@ -29,8 +29,8 @@ java -jar "$LAUNCHER" \
     -application org.eclipse.equinox.p2.publisher.FeaturesAndBundlesPublisher \
     -metadataRepository file:///out/repo \
     -artifactRepository file:///out/repo \
-    -metadataRepositoryName "KNIME Server Connector" \
-    -artifactRepositoryName "KNIME Server Connector" \
+    -metadataRepositoryName "OVF Server Explorer" \
+    -artifactRepositoryName "OVF Server Explorer" \
     -source /input \
     -publishArtifacts \
     -compress
@@ -56,7 +56,7 @@ File > Install KNIME Extensions:
 java -jar "$LAUNCHER" \
     -application org.eclipse.equinox.p2.director \
     -repository "jar:file:///path/to/updatesite.zip!/" \
-    -installIU org.knime.serverconnector.feature.feature.group \
+    -installIU org.ovf.serverconnector.feature.feature.group \
     -destination /tmp/testinst \
     -profile KNIMEProfile
 ```

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.views">
+      <!-- Reuse KNIME's UI view category so we appear in the same
+           Window > Show View group as KNIME Explorer. -->
+      <view
+            id="org.ovf.serverconnector.views.ServerExplorerView"
+            name="Server Explorer"
+            class="org.ovf.serverconnector.views.ServerExplorerView"
+            category="org.knime.workbench.ui.category"
+            icon="icons/server.png"
+            allowMultiple="false"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            id="org.ovf.serverconnector.preferences.ServerConnectorPreferencePage"
+            class="org.ovf.serverconnector.preferences.ServerConnectorPreferencePage"
+            name="Server Connector">
+      </page>
+      <page
+            category="org.ovf.serverconnector.preferences.ServerConnectorPreferencePage"
+            id="org.ovf.serverconnector.preferences.ServersPreferencePage"
+            class="org.ovf.serverconnector.preferences.ServersPreferencePage"
+            name="Servers">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.ovf.serverconnector.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="org.knime.workbench.ui.ModellerPerspective">
+         <view
+               id="org.ovf.serverconnector.views.ServerExplorerView"
+               closeable="true"
+               visible="true"
+               relationship="stack"
+               relative="org.knime.workbench.explorer.view">
+         </view>
+         <viewShortcut
+               id="org.ovf.serverconnector.views.ServerExplorerView">
+         </viewShortcut>
+      </perspectiveExtension>
+   </extension>
+</plugin>

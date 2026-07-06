@@ -1,4 +1,4 @@
-# KNIME Server Connector (OVF Plugin)
+# OVF Server Explorer (OVF Plugin)
 
 An Eclipse / KNIME view that browses a workflow share on a remote HTTP
 server or a local filesystem mount, with upload, download, drag-and-drop,
@@ -13,8 +13,8 @@ Two install formats are published under `dist/`:
 
 | KNIME version | Update-site archive (recommended)                       | Dropin zip                                   |
 | ------------- | ------------------------------------------------------- | -------------------------------------------- |
-| 5.x           | `dist/knime-serverconnector-5.x-1.0.0-updatesite.zip`   | `dist/knime-serverconnector-5.x-1.0.0.zip`   |
-| 4.1.x         | `dist/knime-serverconnector-4.1.x-1.0.0-updatesite.zip` | `dist/knime-serverconnector-4.1.x-1.0.0.zip` |
+| 5.x           | `dist/ovf-serverconnector-5.x-1.0.0-updatesite.zip`   | `dist/ovf-serverconnector-5.x-1.0.0.zip`   |
+| 4.1.x         | `dist/ovf-serverconnector-4.1.x-1.0.0-updatesite.zip` | `dist/ovf-serverconnector-4.1.x-1.0.0.zip` |
 
 ### Update-site archive (recommended)
 
@@ -25,8 +25,8 @@ Windows and gives you a proper Uninstall entry:
    *Help > Install New Software...*).
 2. Click **Add...** next to *Work with:*.
 3. Click **Archive...** and pick the `-updatesite.zip` for your KNIME
-   version. Name it "KNIME Server Connector" and click Add.
-4. Check the feature under the "KNIME Server Connector" category, click
+   version. Name it "OVF Server Explorer" and click Add.
+4. Check the feature under the "OVF Server Explorer" category, click
    Next, accept the license, Finish, and restart when prompted.
 
 ### Dropin
@@ -55,8 +55,8 @@ Both plugin variants live as standalone Eclipse plugin projects:
 
 | Directory                     | Targets                                | Java |
 | ----------------------------- | -------------------------------------- | ---- |
-| `org.knime.serverconnector/`     | KNIME 5.x (Eclipse 4.31 / Java 17)  | 17   |
-| `org.knime.serverconnector.413/` | KNIME 4.1.x (Eclipse 4.7 / Java 8)  | 8    |
+| `org.ovf.serverconnector/`     | KNIME 5.x (Eclipse 4.31 / Java 17)  | 17   |
+| `org.ovf.serverconnector.413/` | KNIME 4.1.x (Eclipse 4.7 / Java 8)  | 8    |
 
 The two trees mirror the same source layout. Differences are constrained
 to API-compat shims (4.1.x has explicit `IPartListener2` stubs, lacks
@@ -68,11 +68,11 @@ To compile and package from the command line (Eclipse-free):
 # 5.x (Java 17, KNIME 5.x bundles on -cp)
 javac -encoding UTF-8 --release 17 -d out \
     -cp "<knime-5.x>/plugins/*.jar" \
-    $(find org.knime.serverconnector/src -name '*.java')
-cp -r org.knime.serverconnector/META-INF \
-      org.knime.serverconnector/icons \
-      org.knime.serverconnector/plugin.xml out/
-(cd out && jar cfm org.knime.serverconnector_1.0.0.jar META-INF/MANIFEST.MF .)
+    $(find org.ovf.serverconnector/src -name '*.java')
+cp -r org.ovf.serverconnector/META-INF \
+      org.ovf.serverconnector/icons \
+      org.ovf.serverconnector/plugin.xml out/
+(cd out && jar cfm org.ovf.serverconnector_1.0.0.jar META-INF/MANIFEST.MF .)
 
 # 4.1.x: same idea with --release 8 and the 4.1.x platform jars on -cp.
 ```
