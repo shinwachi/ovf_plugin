@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OVF Server Explorer
 Bundle-SymbolicName: org.ovf.serverconnector;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-Vendor: OVF
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-Activator: org.ovf.serverconnector.ServerConnectorActivator

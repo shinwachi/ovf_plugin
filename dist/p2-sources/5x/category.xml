@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.ovf.serverconnector.feature_1.0.0.jar"
+   <feature url="features/org.ovf.serverconnector.feature_1.0.1.jar"
             id="org.ovf.serverconnector.feature"
-            version="1.0.0">
+            version="1.0.1">
       <category name="server-connector"/>
    </feature>
    <category-def name="server-connector"
