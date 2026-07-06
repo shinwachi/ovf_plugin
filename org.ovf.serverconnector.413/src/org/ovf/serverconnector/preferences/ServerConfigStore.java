@@ -105,10 +105,16 @@ public final class ServerConfigStore {
     }
 
     /**
-     * Return the active server, falling back to:
-     *   - the first configured server if active name is missing,
-     *   - a synthesized config from the legacy {@code -Dknime.server.url}
-     *     system property if nothing is configured yet.
+     * Return the active server, or {@code null} if nothing is configured.
+     * Falls back to the first configured server if the active name has
+     * gone stale (e.g., the active entry was renamed or removed and no
+     * replacement was chosen).
+     *
+     * <p>Callers must handle the null case: previously we synthesized a
+     * "Default" entry pointing at a URL only the plugin author's network
+     * could resolve, which stuck fresh installs on a permanent
+     * "Connecting..." state and hid any newly-added shares behind the
+     * inactive default. Returning null makes the empty state explicit.
      */
     public static ServerConfig getActive() {
         List<ServerConfig> all = getAll();
@@ -119,9 +125,7 @@ public final class ServerConfigStore {
             }
         }
         if (!all.isEmpty()) return all.get(0);
-        // Legacy fallback.
-        String legacy = System.getProperty("knime.server.url", "http://knimeserver.wachilab.com");
-        return new ServerConfig("Default", legacy, false);
+        return null;
     }
 
     /**

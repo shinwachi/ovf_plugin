@@ -52,16 +52,13 @@ public class ServerConnectorActivator extends AbstractUIPlugin {
         instance = this;
 
         String serverUrl = System.getProperty("knime.server.url", "http://knimeserver.wachilab.com");
-        System.out.println("OVF Server Explorer plugin started. Server URL: " + serverUrl);
-
-        // First-time-ever seed: ensure the Servers list always shows a
-        // usable starting entry instead of being empty after the user
-        // experimented with their config.
-        try {
-            org.ovf.serverconnector.preferences.ServerConfigStore.seedDefaultIfEmpty();
-        } catch (Throwable t) {
-            System.err.println("[ServerConnector] seedDefaultIfEmpty failed: " + t);
-        }
+        System.out.println("OVF Server Explorer plugin started. "
+                + "Legacy fallback URL (only used if never configured): " + serverUrl);
+        // We intentionally do NOT seed a default server: it left every
+        // fresh install trying to connect to a URL only the plugin author's
+        // network resolves, showing a stuck "Connecting..." indicator and
+        // hiding freshly-added local shares behind an inactive default.
+        // The user configures servers via File > Preferences.
     }
 
     @Override

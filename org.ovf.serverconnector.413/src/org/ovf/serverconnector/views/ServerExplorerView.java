@@ -813,7 +813,10 @@ public class ServerExplorerView extends ViewPart {
     private void onServerConfigChanged() {
         if (viewer == null || viewer.getControl().isDisposed()) return;
         ServerConfig active = ServerConfigStore.getActive();
-        if (active.equals(currentServer)) return;
+        // null-safe equality: only skip if BOTH sides are the same reference
+        // or both non-null and equal. Prevents NPE when unconfigured.
+        if (active == null && currentServer == null) return;
+        if (active != null && active.equals(currentServer)) return;
         System.out.println("[ServerExplorer] Active server changed: "
                 + currentServer + " -> " + active);
         currentServer = active;
@@ -839,6 +842,16 @@ public class ServerExplorerView extends ViewPart {
     }
 
     private void checkServerConnection() {
+        // No server configured -> show a call-to-action instead of a stuck
+        // "Connecting..." (previously we synthesized a fallback URL, tried
+        // to reach it, and got wedged on DNS/connect failure).
+        if (currentServer == null) {
+            if (statusLabel != null && !statusLabel.isDisposed()) {
+                statusLabel.setText("No server configured — click ⚙ to add one");
+                statusLabel.getParent().layout();
+            }
+            return;
+        }
         new Thread(() -> {
             boolean healthy = client.isHealthy();
             viewer.getControl().getDisplay().asyncExec(() -> {
