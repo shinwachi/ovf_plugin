@@ -95,6 +95,13 @@ at its `plugins/*.jar`.
 - Auto-refresh on cross-client changes (10s when the view is focused,
   60s when not), driven by a cheap `/api/v1/state` content-hash poll
 
+## Developer notes
+
+Non-obvious bugs, design decisions, and surviving quirks are documented
+in [`doc/DEVELOPER_NOTES.md`](doc/DEVELOPER_NOTES.md). Read it before
+touching the view, packaging, or the update-site pipeline — several of
+these were painful to diagnose and easy to re-break.
+
 ## License
 
 See `LICENSE` if/when added. No license header is set on the source yet;
