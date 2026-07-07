@@ -76,7 +76,37 @@ added my folder and the plugin refuses to show it."
 Upgrading users still have the seeded entry in their prefs; document the
 manual delete step or ship a one-time migration.
 
-### 1.4 Cross-client server changes invisible without manual refresh
+### 1.4 Upload / download blocked the UI thread — KNIME "froze" on SMB targets
+
+**Symptom:** dragging a workflow from KNIME Explorer to a Server Explorer
+tree whose active server is a **Local Drive** pointing at an SMB / NFS
+mount would freeze the entire KNIME UI for tens of seconds while the
+transfer ran. Same on the reverse direction. On a truly local disk the
+same operation was fast enough to be invisible, so the bug went
+unnoticed until we added an SMB target.
+
+**Root cause:** `UploadAction.uploadNode()` and
+`DownloadAction.downloadNode()` did the whole zip + write cycle inline
+on the SWT UI thread. `client.upload(target, zipData)` for a
+`LocalServerBackend` calls `deleteRecursive(target)` followed by
+`ZipHelper.unzipToDirectory(zipData, target)` — every file operation is
+a separate SMB round-trip. A 100-file workflow = 100 round-trips
+serialised on the UI thread. The class comment on
+`WorkflowDropAdapter` even claimed *"Heavy work runs in a background
+Job"* but only the `move*` helpers actually did so; the two most common
+operations (upload, download) did not.
+
+**Fix:** wrap the zip+I/O portion of both actions in a `Job` with
+`setUser(true)` so a cancellable progress dialog appears. Dialogs
+(rename prompt, success message) still run on the UI thread; the
+long-running byte-shuffle runs off-thread. Success handlers marshal
+back to the UI via `Display.asyncExec`. Errors do the same for the
+error dialog. See `actions/UploadAction.java::uploadNode` and
+`actions/DownloadAction.java::downloadNode`.
+
+Fix mirrored in both source trees.
+
+### 1.5 Cross-client server changes invisible without manual refresh
 
 **Symptom:** when two KNIME instances point at the same backend, changes made
 by instance A (upload / delete / rename) don't appear in instance B's tree
@@ -392,11 +422,13 @@ upgrading from a pre-rename build re-configures from scratch.
 | `views/ServerExplorerView.java::startWorkspaceWatcher` | Defensive catch on bad path (§2.1) |
 | `views/ServerExplorerView.java::checkServerConnection` | No-server call-to-action (§1.3) |
 | `views/ServerExplorerView.java::onServerConfigChanged` | Null-safe equality (§1.3) |
-| `views/ServerExplorerView.java::startStatePoller` | Cross-client refresh polling (§1.4) |
+| `views/ServerExplorerView.java::startStatePoller` | Cross-client refresh polling (§1.5) |
 | `preferences/ServerConfigStore.java::getActive` | Returns null when unconfigured (§1.3) |
 | `ServerConnectorActivator.java::start` | Seed removed (§1.3) |
 | `client/ServerClient.java` | Tolerates null cfg (§1.3) |
-| `client/HttpServerBackend.java::stateSignature` | Signature endpoint client (§1.4) |
-| `client/LocalServerBackend.java::stateSignature` | Same for filesystem backend (§1.4) |
+| `client/HttpServerBackend.java::stateSignature` | Signature endpoint client (§1.5) |
+| `client/LocalServerBackend.java::stateSignature` | Same for filesystem backend (§1.5) |
 | `actions/DeleteAction.java::run` | Multi-select iteration (§1.1) |
+| `actions/UploadAction.java::uploadNode` | Off-UI-thread upload (SMB freeze) (§1.4) |
+| `actions/DownloadAction.java::downloadNode` | Off-UI-thread download (SMB freeze) (§1.4) |
 | `dnd/WorkflowDropAdapter.java::performDrop` | Multi-select drag (§1.2) |

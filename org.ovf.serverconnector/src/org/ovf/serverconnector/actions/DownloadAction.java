@@ -2,6 +2,10 @@ package org.ovf.serverconnector.actions;
 
 import java.io.File;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -10,6 +14,7 @@ import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
@@ -82,38 +87,63 @@ public class DownloadAction extends Action {
             }
         }
 
+        // Run the fetch+unzip on a background Job so a slow backend (SMB
+        // share, high-latency HTTP) doesn't block the SWT UI thread and
+        // freeze KNIME during the transfer. See the same fix in
+        // UploadAction for the mirror path.
         final String finalName = targetName;
-        try {
-            System.out.println("[ServerExplorer] Downloading: server:" + node.getPath() + " -> workspace/" + finalName);
-            byte[] zipData = client.download(node.getPath());
-            File targetDir = new File(workspacePath, finalName);
+        final String nodePath = node.getPath();
+        final String nodeName = node.getName();
+        final Display display = viewer.getControl().getDisplay();
+        final IPreferenceStore fPrefs = prefs;
 
-            File staleProject = new File(targetDir, ".project");
-            if (staleProject.isFile() && staleProject.delete()) {
-                System.out.println("[ServerExplorer] Removed stale .project from " + targetDir);
-            }
+        Job job = new Job("Download '" + nodeName + "' from server") {
+            @Override
+            protected IStatus run(IProgressMonitor monitor) {
+                monitor.beginTask("Downloading " + nodeName, IProgressMonitor.UNKNOWN);
+                try {
+                    System.out.println("[ServerExplorer] Downloading: server:" + nodePath + " -> workspace/" + finalName);
+                    byte[] zipData = client.download(nodePath);
+                    File targetDir = new File(workspacePath, finalName);
 
-            ZipHelper.unzipStripRoot(zipData, targetDir);
-            System.out.println("[ServerExplorer] Extracted to: " + targetDir);
+                    File staleProject = new File(targetDir, ".project");
+                    if (staleProject.isFile() && staleProject.delete()) {
+                        System.out.println("[ServerExplorer] Removed stale .project from " + targetDir);
+                    }
 
-            boolean hideSuccess = prefs != null && prefs.getBoolean(PreferenceConstants.P_HIDE_SUCCESS_DIALOGS);
-            if (!hideSuccess) {
-                MessageDialogWithToggle dialog = MessageDialogWithToggle.openInformation(shell,
-                        "Download Complete",
-                        "Downloaded '" + node.getName() + "' to workspace as '" + finalName + "'",
-                        "Don't show this again", false, null, null);
-                if (dialog.getToggleState() && prefs != null) {
-                    prefs.setValue(PreferenceConstants.P_HIDE_SUCCESS_DIALOGS, true);
-                    flush(prefs);
+                    ZipHelper.unzipStripRoot(zipData, targetDir);
+                    System.out.println("[ServerExplorer] Extracted to: " + targetDir);
+                } catch (final Exception e) {
+                    System.err.println("[ServerExplorer] Download failed: " + e.getMessage());
+                    e.printStackTrace();
+                    display.asyncExec(() -> showError("Download failed: " + e.getMessage()));
+                    return new Status(IStatus.ERROR,
+                            ServerConnectorActivator.PLUGIN_ID,
+                            "Download failed", e);
+                } finally {
+                    monitor.done();
                 }
+                display.asyncExec(() -> {
+                    boolean hideSuccess = fPrefs != null
+                            && fPrefs.getBoolean(PreferenceConstants.P_HIDE_SUCCESS_DIALOGS);
+                    if (!hideSuccess) {
+                        MessageDialogWithToggle dialog = MessageDialogWithToggle.openInformation(shell,
+                                "Download Complete",
+                                "Downloaded '" + nodeName + "' to workspace as '" + finalName + "'",
+                                "Don't show this again", false, null, null);
+                        if (dialog.getToggleState() && fPrefs != null) {
+                            fPrefs.setValue(PreferenceConstants.P_HIDE_SUCCESS_DIALOGS, true);
+                            flush(fPrefs);
+                        }
+                    }
+                    refreshWorkspaceRoot();
+                    KnimeExplorerRefresher.refreshAsync();
+                });
+                return Status.OK_STATUS;
             }
-            refreshWorkspaceRoot();
-            KnimeExplorerRefresher.refreshAsync();
-        } catch (Exception e) {
-            System.err.println("[ServerExplorer] Download failed: " + e.getMessage());
-            e.printStackTrace();
-            showError("Download failed: " + e.getMessage());
-        }
+        };
+        job.setUser(true);
+        job.schedule();
     }
 
     private IPreferenceStore prefs() {
