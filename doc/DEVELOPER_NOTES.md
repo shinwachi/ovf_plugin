@@ -358,30 +358,73 @@ README, no bytecode change), no version bump is needed.
 
 ## 6. Surviving known quirks
 
-### 6.1 KNIME 5.x can't install via `http://updatesite.wachilab.com/5x/`
+### 6.1 KNIME 5.x URL install (HTTPS) — resolved via a private CA
 
-**Symptom:** *"Unable to read repository … cannot read content.xml"*.
-Log shows `Connection to https://updatesite.wachilab.com/5x/p2.index
-failed on (certificate_unknown) PKIX path building failed`.
+**Original symptom (pre-fix):** *"Unable to read repository … cannot
+read content.xml"*. Log showed `Connection to
+https://updatesite.wachilab.com/5x/p2.index failed on
+(certificate_unknown) PKIX path building failed`.
 
 **Root cause:** Eclipse 4.31's p2 transport tries HTTPS first as a
-security-upgrade heuristic even when given an `http://` URL. Our traefik
-serves a self-signed cert on port 443, PKIX validation fails, and the
-transport does **not** fall back to HTTP — the whole repository load
-aborts. The 4.1.x transport is older and lacks this behavior, so 4.1.x
-URL installs work fine over HTTP.
+security-upgrade heuristic even when given an `http://` URL. Our
+traefik was serving a self-signed cert on port 443, PKIX validation
+failed against Java's trust store, and the transport did **not** fall
+back to HTTP — the whole repository load aborted. The 4.1.x transport
+is older and lacks this heuristic, so 4.1.x URL installs work over
+HTTP without needing TLS.
 
-**Workaround today:** use the **archive** install path instead — download
-`ovf-serverconnector-5.x-<ver>-updatesite.zip` from
-`/downloads/` and use *Install New Software > Add > Archive*. Same p2
-code path, no HTTPS attempt.
+**Why not Let's Encrypt:** `updatesite.wachilab.com` resolves to the
+private IP `192.168.1.5`, so LE's HTTP-01 challenge can't reach the
+host from the internet. The DNS is also manually managed with no API,
+so LE's DNS-01 challenge is impractical. Both flavors ruled out.
 
-**Proper fix pending:** add a real TLS cert to the traefik `updatesite`
-route. Two flavors depending on DNS setup:
-- Publicly resolvable `wachilab.com` + port 80 reachable from the
-  internet: use Let's Encrypt via traefik ACME.
-- Internal-only DNS: self-signed cert imported into Windows Trusted
-  Root Certification Authorities.
+**Chosen fix — private CA via [mkcert](https://github.com/FiloSottile/mkcert):**
+
+1. Generated a local root CA at `~/.mkcert/rootCA.pem` (10-year
+   validity).
+2. Issued a `*.wachilab.com` + `wachilab.com` leaf cert signed by that
+   CA, valid until 2028-10-07.
+3. Replaced the self-signed pair in `homelab_traefik/certs/` with the
+   mkcert-issued leaf; traefik's file provider re-loaded automatically.
+4. Added a HTTPS router label pair to the `updatesite` compose service
+   (`websecure` entrypoint, `tls=true`) so the same nginx serves both
+   schemes.
+5. Bind-mounted the root CA into the container and taught the nginx
+   entrypoint to publish it at `/rootCA.crt` (with matching MIME type
+   in `nginx.conf`), so a Windows client can grab and trust the CA in
+   one browser hit.
+
+**Windows client setup (one-time per box):**
+
+1. Browse to `http://updatesite.wachilab.com/rootCA.crt`.
+2. When the file downloads, right-click → *Install Certificate...*
+3. *Local Machine* → *Place all certificates in the following store*
+   → **Trusted Root Certification Authorities** → Finish.
+4. **Also import into KNIME's bundled JRE truststore** so KNIME's p2
+   sees it (Windows-level trust doesn't propagate into Java): from an
+   admin cmd/PowerShell, replacing paths for your install:
+
+   ```powershell
+   cd "C:\Program Files\KNIME\plugins\org.knime.binary.jre.win32.x86_64_<ver>\jre\bin"
+   .\keytool -importcert -trustcacerts -noprompt -alias mkcert-wachilab `
+       -file "$env:USERPROFILE\Downloads\rootCA.crt" `
+       -keystore ..\lib\security\cacerts -storepass changeit
+   ```
+
+After that, `https://updatesite.wachilab.com/5x/` works in *Install
+New Software > Add > Location*. Every other `*.wachilab.com` service
+(xpra tabs, etc.) also becomes properly TLS-trusted with no further
+work.
+
+**Validated:** fresh KNIME 5.x container, mkcert CA imported into
+KNIME's bundled JRE cacerts, `p2.director` installs from
+`https://updatesite.wachilab.com/5x/` cleanly (~6 seconds).
+
+**Fallback still available:** the archive install path
+(`ovf-serverconnector-5.x-<ver>-updatesite.zip` from `/downloads/`,
+*Install New Software > Add > Archive*) does not touch HTTPS and
+therefore doesn't need the CA installed. Recommend it for one-off
+installs where importing the CA isn't worth the setup cost.
 
 ### 6.2 4.1.x doesn't apply `perspectiveExtension` to cached perspectives
 
