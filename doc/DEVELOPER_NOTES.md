@@ -298,23 +298,35 @@ resolution as `xpra.your-knime-server.example.com` and
 
 ### 4.4 Distribution channels
 
-Four artifacts are published for each KNIME version. All live in `dist/`:
+Four artifacts are built per KNIME version. Local build outputs land
+in `dist/`; the public copies are served from a separate distribution
+repo, [`ovf-updates`](https://github.com/shinwachi/ovf-updates), via
+GitHub Pages:
 
-| Channel | 5.x path | 4.1.x path |
+| Channel | 5.x | 4.1.x |
 |---|---|---|
-| Dropin zip | `dist/ovf-serverconnector-5.x-<ver>.zip` | `dist/ovf-serverconnector-4.1.x-<ver>.zip` |
-| p2 update-site archive | `dist/ovf-serverconnector-5.x-<ver>-updatesite.zip` | `dist/ovf-serverconnector-4.1.x-<ver>-updatesite.zip` |
-| Live update-site URL | `http://updatesite.example.com/5x/` | `http://updatesite.example.com/4.1.x/` |
-| Raw downloads mirror | `http://updatesite.example.com/downloads/` | same |
+| Dropin zip (local) | `dist/ovf-serverconnector-5.x-<ver>.zip` | `dist/ovf-serverconnector-4.1.x-<ver>.zip` |
+| p2 update-site archive (local) | `dist/ovf-serverconnector-5.x-<ver>-updatesite.zip` | `dist/ovf-serverconnector-4.1.x-<ver>-updatesite.zip` |
+| Live update-site URL (public) | `https://shinwachi.github.io/ovf-updates/5x/` | `https://shinwachi.github.io/ovf-updates/4.1.x/` |
+| Raw downloads mirror (public) | `https://shinwachi.github.io/ovf-updates/downloads/` | same |
 
-The **live URL** is served by the `updatesite` docker service (nginx +
-unzip on start; entrypoint at `updatesite/entrypoint.sh` extracts the
-current `-updatesite.zip` from a read-only `dist/` mount). Restart the
-container after `dist/` changes and it re-extracts.
+To ship a new release, copy the four `dist/*.zip` files into the
+`ovf-updates` repo's `dist/` directory, commit, push. The `publish-pages`
+Actions workflow there rebuilds the site tree (extracts the update-site
+zips into `/5x/` and `/4.1.x/`, mirrors the raw zips into `/downloads/`)
+and redeploys — usually within a minute. TLS is served by GitHub's own
+cert; no CA management on the plugin side.
 
-The **p2 archive** is built by two Eclipse publishers running inside the
-container whose Eclipse matches the target runtime; commands and
-`feature.xml` / `category.xml` inputs are archived at
+Older infra for reference: an on-prem `updatesite` nginx container that
+extracted the same zips from a bind-mounted `dist/` directory. Now
+obsoleted by GitHub Pages but its Docker setup remains in a private
+infra repo in case internal-only hosting is ever needed again (see
+§6.1 for the CA workaround that made that route usable with KNIME 5.x's
+p2 HTTPS-upgrade heuristic).
+
+The **p2 archives themselves** are built by two Eclipse publishers
+running inside a container whose Eclipse matches the target runtime.
+Commands and `feature.xml` / `category.xml` inputs are archived at
 `dist/p2-sources/`.
 
 ### 4.5 Test VMs
@@ -358,7 +370,16 @@ README, no bytecode change), no version bump is needed.
 
 ## 6. Surviving known quirks
 
-### 6.1 KNIME 5.x URL install (HTTPS) — resolved via a private CA
+### 6.1 KNIME 5.x URL install (HTTPS) — historical writeup, self-hosted case only
+
+> **Current status:** binaries are published via GitHub Pages at
+> `https://shinwachi.github.io/ovf-updates/5x/` (and `.../4.1.x/`).
+> GitHub serves TLS from its own cert, which every JVM already trusts,
+> so URL install on KNIME 5.x now Just Works with no client-side setup.
+> This section is retained for the **self-hosted** case — if you ever
+> republish the update site from your own infra instead of GH Pages,
+> the same HTTPS-upgrade heuristic below still bites, and the private-CA
+> fix documented here is the workaround.
 
 **Original symptom (pre-fix):** *"Unable to read repository … cannot
 read content.xml"*. Log showed `Connection to

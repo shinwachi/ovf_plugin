@@ -9,32 +9,52 @@ in the Modeller perspective.
 
 ## Install
 
-Two install formats are published under `dist/`:
+Pre-built binaries are hosted on GitHub Pages via a separate distribution
+repo, [`ovf-updates`](https://github.com/shinwachi/ovf-updates). Landing
+page and full instructions:
 
-| KNIME version | Update-site archive (recommended)                       | Dropin zip                                   |
-| ------------- | ------------------------------------------------------- | -------------------------------------------- |
-| 5.x           | `dist/ovf-serverconnector-5.x-1.0.0-updatesite.zip`   | `dist/ovf-serverconnector-5.x-1.0.0.zip`   |
-| 4.1.x         | `dist/ovf-serverconnector-4.1.x-1.0.0-updatesite.zip` | `dist/ovf-serverconnector-4.1.x-1.0.0.zip` |
+**<https://shinwachi.github.io/ovf-updates/>**
 
-### Update-site archive (recommended)
+### Update-site URL (recommended)
 
-Uses KNIME's built-in installer. Works identically on Linux, macOS, and
-Windows and gives you a proper Uninstall entry:
+Point KNIME at the URL for your version — no download step, in-place
+updates on future releases:
 
-1. In KNIME: *File > Install KNIME Extensions...* (or
-   *Help > Install New Software...*).
+| KNIME | URL to paste into *Install New Software > Add > Location* |
+| ----- | --------------------------------------------------------- |
+| 5.x   | `https://shinwachi.github.io/ovf-updates/5x/`             |
+| 4.1.x | `https://shinwachi.github.io/ovf-updates/4.1.x/`          |
+
+Steps:
+
+1. In KNIME: *File > Install KNIME Extensions...*
+   (or *Help > Install New Software...*).
 2. Click **Add...** next to *Work with:*.
-3. Click **Archive...** and pick the `-updatesite.zip` for your KNIME
-   version. Name it "OVF Server Explorer" and click Add.
-4. Check the feature under the "OVF Server Explorer" category, click
-   Next, accept the license, Finish, and restart when prompted.
+3. Paste the URL, name it "OVF Server Explorer", click **Add**.
+4. Expand the **OVF Server Explorer** category, check the feature,
+   Next, accept the license, Finish, restart when prompted.
 
-### Dropin
+TLS is handled natively by GitHub's own certificate — no CA import
+needed on any platform.
 
-Fallback method if you can't use the GUI installer. Extract the plain
-`.zip` (not the `-updatesite.zip`) into `<knime-install>/dropins/`,
-then launch KNIME once with `-clean`. Each dropin zip ships an
-`INSTALL.txt` with per-OS steps.
+### Archive install (offline / air-gapped)
+
+If your KNIME can't reach GitHub, grab the archive zip and use
+*Install New Software > Add > **Archive*** instead of Location:
+
+- All zip downloads:
+  <https://shinwachi.github.io/ovf-updates/downloads/>
+- Latest 5.x archive:
+  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.2-updatesite.zip>
+- Latest 4.1.x archive:
+  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.2-updatesite.zip>
+
+### Dropin (last-resort fallback)
+
+If you can't use the GUI installer at all, the raw dropin zips are in
+the same download index above (the non-`-updatesite.zip` variants).
+Extract into `<knime-install>/dropins/`, then launch KNIME once with
+`-clean`. Each dropin zip ships an `INSTALL.txt` with per-OS steps.
 
 ### After install
 
@@ -42,12 +62,15 @@ Look for a *Server Explorer* tab next to **KNIME Explorer** in the
 Modeller perspective. If the tab isn't visible:
 *Window > Show View > Other... > KNIME Views > Server Explorer*.
 
-Configure a server URL under *File > Preferences > KNIME > Server
-Connector > Servers*.
+Configure a server under *File > Preferences > KNIME > OVF > Servers*.
 
-The update-site sources (`feature.xml`, `category.xml`) and the exact
-`p2.publisher` / `p2.director` commands used to build and validate the
-archives live under `dist/p2-sources/`.
+### Build outputs (for developers)
+
+Locally-built binaries land in `dist/` when you run the source build
+described below. The GitHub Pages site above is republished from those
+same artefacts by an Actions workflow in the `ovf-updates` repo. The p2
+publish inputs (`feature.xml`, `category.xml`) live under
+`dist/p2-sources/`.
 
 ## Building from source
 
