@@ -104,5 +104,4 @@ these were painful to diagnose and easy to re-break.
 
 ## License
 
-See `LICENSE` if/when added. No license header is set on the source yet;
-treat as proprietary until otherwise marked.
+MIT — see [`LICENSE`](LICENSE).

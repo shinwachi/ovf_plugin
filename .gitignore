@@ -1,8 +1,8 @@
 # Build artifacts
-org.knime.serverconnector/build/
-org.knime.serverconnector/bin/
-org.knime.serverconnector.413/build/
-org.knime.serverconnector.413/bin/
+org.ovf.serverconnector/build/
+org.ovf.serverconnector/bin/
+org.ovf.serverconnector.413/build/
+org.ovf.serverconnector.413/bin/
 
 # IDE
 .project

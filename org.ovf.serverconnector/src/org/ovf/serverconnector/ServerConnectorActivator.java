@@ -51,7 +51,7 @@ public class ServerConnectorActivator extends AbstractUIPlugin {
         super.start(bundleContext);
         instance = this;
 
-        String serverUrl = System.getProperty("knime.server.url", "http://knimeserver.wachilab.com");
+        String serverUrl = System.getProperty("knime.server.url", "http://your-knime-server.example.com");
         System.out.println("OVF Server Explorer plugin started. "
                 + "Legacy fallback URL (only used if never configured): " + serverUrl);
         // We intentionally do NOT seed a default server: it left every

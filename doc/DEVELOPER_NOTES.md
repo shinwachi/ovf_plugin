@@ -49,7 +49,7 @@ show a **stuck "Connecting…"** indicator forever. Adding a Local Drive server
 via preferences did nothing — the local files never appeared.
 
 **Root cause:** the activator called `ServerConfigStore.seedDefaultIfEmpty()`
-which wrote a hard-coded `http://knimeserver.wachilab.com` entry to the
+which wrote a hard-coded `http://your-knime-server.example.com` entry to the
 preference store on first launch. On any other network the URL was
 unreachable, DNS or connect blocked for the OS default timeout (30 s+ on
 Windows), and the status label never advanced. Meanwhile
@@ -147,7 +147,7 @@ error details showed:
 
 ```
 java.nio.file.InvalidPathException: Illegal char <:> at index 2:
-    /C:/Users/shinw/knime-workspace
+    /C:/Users/<you>/knime-workspace
     at sun.nio.fs.WindowsPathParser.normalize(...)
     at java.nio.file.Paths.get(...)
     at org.ovf.serverconnector.views.ServerExplorerView.startWorkspaceWatcher(...)
@@ -291,9 +291,9 @@ places: the plugin's Java code (`ServerClient` constructor default),
 (4.1.x JVM `-D` arg).
 
 Fixed by aligning all three sites on the traefik convention already in
-use for the xpra routes: `http://knimeserver.wachilab.com`. Same DNS
-resolution as `xpra.knimeserver.wachilab.com` and
-`xpra.knime413.wachilab.com` — resolvable from any container on the
+use for the xpra routes: `http://your-knime-server.example.com`. Same DNS
+resolution as `xpra.your-knime-server.example.com` and
+`xpra.your-knime413.example.com` — resolvable from any container on the
 `traefik` network, and browsable from the outside as well.
 
 ### 4.4 Distribution channels
@@ -304,8 +304,8 @@ Four artifacts are published for each KNIME version. All live in `dist/`:
 |---|---|---|
 | Dropin zip | `dist/ovf-serverconnector-5.x-<ver>.zip` | `dist/ovf-serverconnector-4.1.x-<ver>.zip` |
 | p2 update-site archive | `dist/ovf-serverconnector-5.x-<ver>-updatesite.zip` | `dist/ovf-serverconnector-4.1.x-<ver>-updatesite.zip` |
-| Live update-site URL | `http://updatesite.wachilab.com/5x/` | `http://updatesite.wachilab.com/4.1.x/` |
-| Raw downloads mirror | `http://updatesite.wachilab.com/downloads/` | same |
+| Live update-site URL | `http://updatesite.example.com/5x/` | `http://updatesite.example.com/4.1.x/` |
+| Raw downloads mirror | `http://updatesite.example.com/downloads/` | same |
 
 The **live URL** is served by the `updatesite` docker service (nginx +
 unzip on start; entrypoint at `updatesite/entrypoint.sh` extracts the
@@ -325,7 +325,7 @@ They exist for manually rehearsing the end-user install flow (dropin OR
 updatesite archive) before shipping. Handy for reproducing what a
 first-time installer sees.
 
-Access via `xpra.testvm5.wachilab.com` / `xpra.testvm413.wachilab.com`
+Access via `xpra.your-testvm5.example.com` / `xpra.your-testvm413.example.com`
 in a browser. Uninstall/reinstall cycles run against `/opt/knime` inside
 the container.
 
@@ -362,7 +362,7 @@ README, no bytecode change), no version bump is needed.
 
 **Original symptom (pre-fix):** *"Unable to read repository … cannot
 read content.xml"*. Log showed `Connection to
-https://updatesite.wachilab.com/5x/p2.index failed on
+https://updatesite.example.com/5x/p2.index failed on
 (certificate_unknown) PKIX path building failed`.
 
 **Root cause:** Eclipse 4.31's p2 transport tries HTTPS first as a
@@ -373,8 +373,8 @@ back to HTTP — the whole repository load aborted. The 4.1.x transport
 is older and lacks this heuristic, so 4.1.x URL installs work over
 HTTP without needing TLS.
 
-**Why not Let's Encrypt:** `updatesite.wachilab.com` resolves to the
-private IP `192.168.1.5`, so LE's HTTP-01 challenge can't reach the
+**Why not Let's Encrypt:** the update-site hostname resolves to a
+private RFC 1918 address, so LE's HTTP-01 challenge can't reach the
 host from the internet. The DNS is also manually managed with no API,
 so LE's DNS-01 challenge is impractical. Both flavors ruled out.
 
@@ -382,7 +382,7 @@ so LE's DNS-01 challenge is impractical. Both flavors ruled out.
 
 1. Generated a local root CA at `~/.mkcert/rootCA.pem` (10-year
    validity).
-2. Issued a `*.wachilab.com` + `wachilab.com` leaf cert signed by that
+2. Issued a `*.example.com` + `example.com` leaf cert signed by that
    CA, valid until 2028-10-07.
 3. Replaced the self-signed pair in `homelab_traefik/certs/` with the
    mkcert-issued leaf; traefik's file provider re-loaded automatically.
@@ -396,7 +396,7 @@ so LE's DNS-01 challenge is impractical. Both flavors ruled out.
 
 **Windows client setup (one-time per box):**
 
-1. Browse to `http://updatesite.wachilab.com/rootCA.crt`.
+1. Browse to `http://updatesite.example.com/rootCA.crt`.
 2. When the file downloads, right-click → *Install Certificate...*
 3. *Local Machine* → *Place all certificates in the following store*
    → **Trusted Root Certification Authorities** → Finish.
@@ -406,19 +406,19 @@ so LE's DNS-01 challenge is impractical. Both flavors ruled out.
 
    ```powershell
    cd "C:\Program Files\KNIME\plugins\org.knime.binary.jre.win32.x86_64_<ver>\jre\bin"
-   .\keytool -importcert -trustcacerts -noprompt -alias mkcert-wachilab `
+   .\keytool -importcert -trustcacerts -noprompt -alias mkcert-example `
        -file "$env:USERPROFILE\Downloads\rootCA.crt" `
        -keystore ..\lib\security\cacerts -storepass changeit
    ```
 
-After that, `https://updatesite.wachilab.com/5x/` works in *Install
-New Software > Add > Location*. Every other `*.wachilab.com` service
+After that, `https://updatesite.example.com/5x/` works in *Install
+New Software > Add > Location*. Every other `*.example.com` service
 (xpra tabs, etc.) also becomes properly TLS-trusted with no further
 work.
 
 **Validated:** fresh KNIME 5.x container, mkcert CA imported into
 KNIME's bundled JRE cacerts, `p2.director` installs from
-`https://updatesite.wachilab.com/5x/` cleanly (~6 seconds).
+`https://updatesite.example.com/5x/` cleanly (~6 seconds).
 
 **Fallback still available:** the archive install path
 (`ovf-serverconnector-5.x-<ver>-updatesite.zip` from `/downloads/`,

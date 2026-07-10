@@ -81,7 +81,7 @@ public final class ServerConfigStore {
      * empty), write a "Default" HTTP entry to the store so the user
      * always sees a usable starting point in the Servers page. The URL
      * comes from {@code -Dknime.server.url} when set, otherwise the
-     * shared traefik hostname {@code http://knimeserver.wachilab.com}
+     * shared traefik hostname {@code http://your-knime-server.example.com}
      * which both KNIME containers route through.
      *
      * <p>After the first seed the user may freely edit or delete this
@@ -95,7 +95,7 @@ public final class ServerConfigStore {
         boolean unseeded = (json == null || json.trim().isEmpty())
                 && (active == null || active.isEmpty());
         if (!unseeded) return;
-        String url = System.getProperty("knime.server.url", "http://knimeserver.wachilab.com");
+        String url = System.getProperty("knime.server.url", "http://your-knime-server.example.com");
         ServerConfig seed = new ServerConfig("Default", url, false, ServerConfig.Type.REMOTE);
         List<ServerConfig> one = new ArrayList<>(1);
         one.add(seed);

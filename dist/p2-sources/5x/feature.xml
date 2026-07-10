@@ -9,7 +9,7 @@
       filesystem workflow shares alongside KNIME Explorer.
    </description>
    <copyright>OVF</copyright>
-   <license>Proprietary</license>
+   <license>MIT</license>
    <plugin
          id="org.ovf.serverconnector"
          download-size="0"
