@@ -54,8 +54,17 @@ public class OpenWorkflowAction extends Action {
     private void openLocalWorkflow(WorkflowNode node) {
         try {
             String name = node.getName();
-            System.out.println("[ServerExplorer] Opening local workflow: " + name);
-            if (!KnimeExplorerRefresher.openWorkflowInEditor("/" + name)) {
+            // Full workspace-relative path (e.g. "/Example Workflows/Basic
+            // Examples/Data Blending"), not just the name: for a nested
+            // workflow "/" + name points at a nonexistent file store, which
+            // KNIME opens in a plain text editor instead of the workflow editor.
+            String path = node.getPath();
+            System.out.println("[ServerExplorer] Opening local workflow: " + path);
+            if (!new File(workspacePath + path, "workflow.knime").isFile()) {
+                showError("'" + name + "' is not a workflow (no workflow.knime found).");
+                return;
+            }
+            if (!KnimeExplorerRefresher.openWorkflowInEditor(path)) {
                 showError("Could not open workflow '" + name
                         + "'. Open it from KNIME Explorer instead.");
             }

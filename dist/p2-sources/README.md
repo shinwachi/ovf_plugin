@@ -3,10 +3,16 @@
 These `feature.xml` + `category.xml` files are the inputs that produce the
 Eclipse p2 update-site archives in `dist/`:
 
-- `knime-serverconnector-5.x-1.0.0-updatesite.zip`
-- `knime-serverconnector-4.1.x-1.0.0-updatesite.zip`
+- `ovf-serverconnector-5.x-<ver>-updatesite.zip`
+- `ovf-serverconnector-4.1.x-<ver>-updatesite.zip`
+
+`{5x,413}/INSTALL.txt` are the templates for the dropin zips' INSTALL.txt
+(`@VERSION@` and `@BUNDLE_VERSION@` are substituted at build time).
 
 ## Rebuild
+
+The maintainer's build script automates everything below (plus the dropin
+zips). The manual steps:
 
 The publish is run inside the container whose Eclipse matches the
 target KNIME version. Layout expected by the publisher:

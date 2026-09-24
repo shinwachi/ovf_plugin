@@ -132,6 +132,32 @@ the backend for changes.
   (baseline is reset so the next tick doesn't spuriously trigger a
   refresh against the new backend).
 
+### 1.6 Nested workspace workflows opened as a plain text file
+
+**Symptom (1.0.2, KNIME 5.11 and 4.1.3):** double-clicking a workflow under
+a folder in the *Workspace (local)* branch -- e.g. the built-in
+`Example Workflows/Basic Examples/Data Blending`, or a new workflow created
+inside a folder -- opened an empty text editor (paper icon on the tab)
+instead of the workflow editor. Workflows at the workspace root, and
+server workflows (downloaded to the root before opening), were fine.
+Opening the same workflow from KNIME Explorer was also fine.
+
+**Root cause:** `OpenWorkflowAction.openLocalWorkflow` passed
+`"/" + node.getName()` to `KnimeExplorerRefresher.openWorkflowInEditor`,
+dropping the parent folders. For a nested workflow that names a
+nonexistent LOCAL file store, and KNIME's `openEditor` falls back to the
+default text editor for it. Log line: `Opened workflow in editor: /Data
+Blending`.
+
+**Fix (1.0.3):** pass `node.getPath()` (already the full
+workspace-relative path; Delete and Rename used it correctly) and refuse
+with an error dialog if `<workspace><path>/workflow.knime` doesn't exist,
+so a bad path can never reach the text-editor fallback again. Verified
+in the GUI on stock KNIME 5.11.0 and 4.1.3: reproduced with 1.0.2, fixed
+with 1.0.3 / 1.0.3.413.
+
+Fix mirrored in both source trees.
+
 ---
 
 ## 2. Windows-specific fixes
@@ -493,6 +519,7 @@ upgrading from a pre-rename build re-configures from scratch.
 | `client/HttpServerBackend.java::stateSignature` | Signature endpoint client (§1.5) |
 | `client/LocalServerBackend.java::stateSignature` | Same for filesystem backend (§1.5) |
 | `actions/DeleteAction.java::run` | Multi-select iteration (§1.1) |
+| `actions/OpenWorkflowAction.java::openLocalWorkflow` | Full path for nested workflows (§1.6) |
 | `actions/UploadAction.java::uploadNode` | Off-UI-thread upload (SMB freeze) (§1.4) |
 | `actions/DownloadAction.java::downloadNode` | Off-UI-thread download (SMB freeze) (§1.4) |
 | `dnd/WorkflowDropAdapter.java::performDrop` | Multi-select drag (§1.2) |

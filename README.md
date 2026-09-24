@@ -45,9 +45,9 @@ If your KNIME can't reach GitHub, grab the archive zip and use
 - All zip downloads:
   <https://shinwachi.github.io/ovf-updates/downloads/>
 - Latest 5.x archive:
-  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.2-updatesite.zip>
+  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.3-updatesite.zip>
 - Latest 4.1.x archive:
-  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.2-updatesite.zip>
+  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.3-updatesite.zip>
 
 ### Dropin (last-resort fallback)
 

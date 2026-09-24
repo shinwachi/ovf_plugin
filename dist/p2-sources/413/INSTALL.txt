@@ -1,0 +1,131 @@
+OVF Server Explorer -- install instructions (KNIME 4.1.x)
+=========================================================
+
+Adds a Server Explorer view to KNIME that browses a remote HTTP
+workflow share or a local filesystem mount. This is NOT an official
+KNIME product; it is a third-party plugin under the org.ovf.* namespace.
+
+This build targets KNIME 4.1.x (Java 8 runtime, Eclipse 4.7 workbench).
+For KNIME 5.x use the 5.x zip instead.
+
+Contents of this zip:
+  serverconnector/
+    plugins/
+      org.ovf.serverconnector_@BUNDLE_VERSION@.jar
+
+After install the plugin lives at:
+  <knime-install>/dropins/serverconnector/plugins/org.ovf.serverconnector_@BUNDLE_VERSION@.jar
+
+
+-----------------------------------------------------------------
+Preferred: Install via Archived Update Site (all OSes)
+-----------------------------------------------------------------
+
+An Eclipse p2 update-site zip is also published:
+
+    ovf-serverconnector-4.1.x-@VERSION@-updatesite.zip
+
+Or a live URL if you host one:
+
+    http://<host>/4.1.x/    (e.g., http://updatesite.example.com/4.1.x/)
+
+Use either with KNIME's built-in installer:
+
+  1. In KNIME:  File > Install KNIME Extensions...   (or)
+                Help > Install New Software...
+  2. Click "Add..." next to the "Work with:" dropdown.
+  3. Either "Archive..." + pick the updatesite zip, or paste the URL
+     into the Location field. Name it "OVF Server Explorer" and Add.
+  4. Expand the "OVF" category, check the feature, Next, accept the
+     license, Finish. Restart when prompted.
+
+
+-----------------------------------------------------------------
+Alternative: dropin (Linux / macOS)
+-----------------------------------------------------------------
+
+1. Quit KNIME Analytics Platform.
+
+2. Find your KNIME install directory -- the folder that contains
+   knime / KNIME.app, knime.ini, plugins/ and (often) dropins/.
+
+3. Extract the zip into the dropins/ folder. From a terminal:
+
+       cd <knime-install>/dropins
+       unzip /path/to/ovf-serverconnector-4.1.x-@VERSION@.zip
+
+   (If dropins/ doesn't exist, create it: mkdir dropins)
+
+4. Launch KNIME once with -clean:
+
+       <knime-install>/knime -clean
+
+
+-----------------------------------------------------------------
+Alternative: dropin (Windows)
+-----------------------------------------------------------------
+
+1. Quit KNIME Analytics Platform.
+
+2. Find your KNIME install directory. Common locations:
+     C:\Program Files\KNIME\         (MSI installer -- needs admin)
+     C:\Users\<you>\KNIME\           (user install)
+
+3. Extract ovf-serverconnector-4.1.x-@VERSION@.zip. Right-click > Extract
+   All... to any folder. You'll get a serverconnector\ folder.
+
+4. Move that serverconnector\ folder into
+   <knime-install>\dropins\ so the layout is:
+
+       <knime-install>\dropins\serverconnector\plugins\org.ovf.serverconnector_@BUNDLE_VERSION@.jar
+
+5. Launch KNIME once with -clean:
+
+       cd "C:\Program Files\KNIME"
+       knime.exe -clean
+
+   Or right-click the KNIME shortcut > Properties, append ` -clean`
+   to the Target field, launch once, then remove it.
+
+
+-----------------------------------------------------------------
+Verify
+-----------------------------------------------------------------
+
+The view co-stacks as a tab next to "KNIME Explorer" in the Modeller
+perspective. After launch:
+
+  - Look at the pane that shows "KNIME Explorer" on the left.
+    There should be a second tab labelled "Server Explorer".
+  - If the pane is too narrow to show both tabs, widen it or click
+    the ">>" overflow chevron in the tab bar.
+
+If the tab isn't there, force it in:
+
+  Window > Show View > Other... > KNIME Views > Server Explorer
+
+If you installed via the update site (not dropin) and the tab still
+isn't showing, the perspective needs to pick up the new view
+extension. In KNIME 4.1.x:
+
+  Window > Reset Perspective...
+    -- or --
+  Close and reopen the Modeller perspective from
+  Window > Open Perspective > Other > KNIME Modeller
+
+Configure your server URL under:
+  File > Preferences > KNIME > OVF > Servers
+
+
+-----------------------------------------------------------------
+Uninstall
+-----------------------------------------------------------------
+
+If installed via the update site:
+  Help > About KNIME > Installation Details >
+    select "OVF Server Explorer" > Uninstall...
+
+If installed via dropin:
+  Quit KNIME, then delete:
+    <knime-install>/dropins/serverconnector
+  Restart KNIME with -clean once.

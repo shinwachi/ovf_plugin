@@ -2,7 +2,7 @@
 <feature
       id="org.ovf.serverconnector.feature"
       label="OVF Server Explorer"
-      version="1.0.2"
+      version="1.0.3"
       provider-name="OVF">
    <description>
       Server Explorer view for KNIME 5.x -- browse remote HTTP or local
