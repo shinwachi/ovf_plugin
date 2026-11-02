@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Install, check or remove the OVF Server Explorer plugin for KNIME on Linux.
 #
-#   ./install-ovf.sh                        ask for everything
+#   ./install-ovf.sh                        ask for everything, including which KNIME
 #   ./install-ovf.sh --knime DIR --check    report only, change nothing
 #   ./install-ovf.sh --knime DIR --mode admin|user [--uninstall] [--yes]
 #   ./install-ovf.sh --knime DIR --mode admin --apply-permissions
@@ -32,14 +32,166 @@ done
 die() { echo "ERROR: $*" >&2; exit 1; }
 confirm() { [ "$YES" = 1 ] && return 0; read -r -p "$1 [y/N] " a; [ "$a" = y ] || [ "$a" = Y ]; }
 
-if [ -z "$KNIME" ]; then
-    for d in /opt/knime /opt/knime_* /usr/local/knime* "$HOME"/knime*; do
-        [ -f "$d/knime" ] && { echo "Found KNIME at $d"; KNIME="$d"; break; }
+is_knime() { [ -f "$1/knime" ] && [ -d "$1/plugins" ] && [ -d "$1/configuration" ]; }
+
+knime_version() {
+    basename "$(ls -d "$1"/plugins/org.knime.core_* 2>/dev/null | head -1)" \
+        | sed -n 's/^org\.knime\.core_\([0-9]*\.[0-9]*\.[0-9]*\).*/\1/p'
+}
+
+# The private area KNIME uses for a read-only install. Its name holds the hash of
+# the install path (java.lang.String.hashCode), and the product id and version
+# when the folder has an .eclipseproduct file.
+private_area() {
+    local s="$1" i c h=0 prefix=""
+    for ((i = 0; i < ${#s}; i++)); do
+        printf -v c %d "'${s:i:1}"
+        h=$(( (h * 31 + c) & 0xFFFFFFFF ))
     done
-    [ -t 0 ] && [ "$YES" = 0 ] && {
-        read -r -p "KNIME folder (the one holding the 'knime' program) [$KNIME]: " a
-        [ -n "$a" ] && KNIME="$a"
-    }
+    [ "$h" -lt 2147483648 ] || h=$(( 4294967296 - h ))
+    if [ -f "$1/.eclipseproduct" ]; then
+        prefix="$(tr -d '\r' < "$1/.eclipseproduct" | awk -F= '$1 == "id" { i = $2 } $1 == "version" { v = $2 } END { if (i != "") print i "_" v "_" }')"
+    fi
+    echo "$HOME/.eclipse/${prefix}${h}_linux_gtk_x86_64"
+}
+
+listed_version() {
+    sed -n 's/^org\.ovf\.serverconnector,\([^,]*\),.*/\1/p' "$1/org.eclipse.equinox.simpleconfigurator/bundles.info" 2>/dev/null | head -1
+}
+
+# One line about a KNIME folder; returns 0 if this installer can use it.
+describe_knime() {
+    local ver major v
+    ver="$(knime_version "$1")"; major="${ver%%.*}"
+    if [ "$major" != "$EXPECT_MAJOR" ]; then
+        case "$major" in
+            4) printf 'KNIME %s, needs the 4.1.x installer' "$ver" ;;
+            5) printf 'KNIME %s, needs the 5.x installer' "$ver" ;;
+            *) printf 'KNIME %s, not supported' "${ver:-version unknown}" ;;
+        esac
+        return 1
+    fi
+    v="$(listed_version "$1/configuration")"
+    if [ -n "$v" ]; then printf 'KNIME %s, installed for everyone (%s)' "$ver" "$v"; return 0; fi
+    v="$(listed_version "$(private_area "$1")/configuration")"
+    if [ -n "$v" ]; then printf 'KNIME %s, installed for you (%s)' "$ver" "$v"; return 0; fi
+    printf 'KNIME %s, not installed' "$ver"
+}
+
+find_knimes() {
+    local roots=(/opt /usr/local /srv "$HOME") h
+    if [ -n "${SUDO_USER:-}" ]; then
+        h="$(getent passwd "$SUDO_USER" | cut -d: -f6)"
+        [ -z "$h" ] || roots+=("$h")
+    fi
+    find "${roots[@]}" -maxdepth 4 -name '.*' -prune -o -type f -name knime -perm /111 -print 2>/dev/null \
+        | while read -r f; do
+            d="$(cd "$(dirname "$f")" && pwd -P)" && is_knime "$d" && echo "$d"
+        done | sort -uV
+}
+
+# Returns 0 and sets KNIME if $1 is a KNIME folder this installer can use.
+use_knime() {
+    if ! is_knime "$1"; then echo "$1 is not a KNIME folder (expected knime, plugins/, configuration/)."; return 1; fi
+    if ! describe_knime "$1" >/dev/null; then echo "$1: $(describe_knime "$1")."; return 1; fi
+    KNIME="$1"
+}
+
+# Returns 0 and sets KNIME from a file picker. Without a desktop, asks for the path.
+pick_knime() {
+    local f rc=127
+    echo "Select the program called knime in the KNIME folder."
+    if [ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" ]; then
+        if command -v zenity >/dev/null 2>&1; then
+            f="$(zenity --file-selection --title="Select the knime program" --filename="/opt/" 2>/dev/null)"; rc=$?
+        elif command -v kdialog >/dev/null 2>&1; then
+            f="$(kdialog --title "Select the knime program" --getopenfilename /opt 2>/dev/null)"; rc=$?
+        fi
+    fi
+    case "$rc" in
+        0) ;;
+        127|255)
+            echo "No file picker can open here. It needs a desktop, and zenity or kdialog."
+            read -r -p "Type the KNIME folder, or press Enter to go back: " f || die "no KNIME folder chosen"
+            [ -n "$f" ] || return 1
+            f="${f/#\~/$HOME}" ;;
+        *) echo "Nothing selected."; return 1 ;;
+    esac
+    [ -d "$f" ] || f="$(dirname "$f")"
+    use_knime "$f"
+}
+
+# Lists what a scan finds. Returns 0 once one is chosen, 1 to go back.
+scan_knimes() {
+    local found=() usable=() d i a default="" n=0
+    echo "Scanning this computer..."
+    mapfile -t found < <(find_knimes)
+    for d in ${found[@]+"${found[@]}"}; do
+        describe_knime "$d" >/dev/null && usable+=("$d")
+    done
+    echo
+    if [ "${#found[@]}" -gt 0 ]; then
+        echo "KNIME folders on this machine:"
+        for d in "${found[@]}"; do
+            n=$((n + 1))
+            printf '  %d) %s\n     %s\n' "$n" "$d" "$(describe_knime "$d")"
+        done
+    else
+        echo "No KNIME folder found in the usual places."
+    fi
+    [ "${#usable[@]}" != 1 ] || for i in "${!found[@]}"; do
+        [ "${found[$i]}" = "${usable[0]}" ] && default=$((i + 1))
+    done
+    while :; do
+        read -r -p "Which KNIME? Type a number, p for a file picker, or a folder path${default:+ [$default]}: " a || die "no KNIME folder chosen"
+        a="${a:-$default}"
+        case "$a" in
+            '') continue ;;
+            p|P) if pick_knime; then return 0; fi; continue ;;
+            *[!0-9]*) d="${a/#\~/$HOME}" ;;
+            *) if [ "$a" -ge 1 ] && [ "$a" -le "${#found[@]}" ]; then d="${found[$((a - 1))]}"; else echo "Enter a number from the list, p, or a folder path."; continue; fi ;;
+        esac
+        if use_knime "$d"; then
+            [ "${#found[@]}" -lt 2 ] || OTHERS=1
+            return 0
+        fi
+    done
+}
+
+# Several KNIME versions can live on one machine, so never assume which one is meant.
+choose_knime() {
+    local usable=() d a
+    if [ "$YES" = 1 ] || [ ! -t 0 ]; then
+        while read -r d; do
+            describe_knime "$d" >/dev/null && usable+=("$d")
+        done < <(find_knimes)
+        if [ "${#usable[@]}" = 1 ]; then
+            KNIME="${usable[0]}"
+            echo "Found KNIME at $KNIME"
+            return
+        fi
+        [ "${#usable[@]}" -gt 1 ] || die "no KNIME folder found for this installer; pass --knime DIR"
+        echo "Found several KNIME folders:" >&2
+        printf '  %s\n' "${usable[@]}" >&2
+        die "say which one with --knime DIR"
+    fi
+    while :; do
+        echo
+        echo "How do you want to find KNIME?"
+        echo "  1) Scan this computer and choose from a list"
+        echo "  2) Select it myself with a file picker"
+        read -r -p "Choice, or a folder path [1]: " a || die "no KNIME folder chosen"
+        case "${a:-1}" in
+            1) if scan_knimes; then return; fi ;;
+            2) if pick_knime; then return; fi ;;
+            *) if use_knime "${a/#\~/$HOME}"; then return; fi ;;
+        esac
+    done
+}
+
+OTHERS=0
+if [ -z "$KNIME" ]; then
+    choose_knime
 fi
 [ -n "$KNIME" ] || die "KNIME folder not found; pass --knime DIR"
 KNIME="$(cd "$KNIME" 2>/dev/null && pwd -P)" || die "no such folder"
@@ -63,8 +215,7 @@ if touch "$PROBE" 2>/dev/null; then
 else
     STATE=readonly
 fi
-ID="$(ls -d "$HOME"/.eclipse/*_linux_gtk_x86_64 2>/dev/null | head -1)"
-[ -n "$ID" ] || ID="$HOME/.eclipse/<id>_linux_gtk_x86_64"
+ID="$(private_area "$KNIME")"
 
 # knime.ini can move KNIME's configuration elsewhere. The director doesn't read
 # knime.ini, so a just-for-me install has to be told, or KNIME never sees the plugin.
@@ -81,9 +232,11 @@ Where the files are
     Program files, shared by everyone on this machine.
     An all-users install puts the plugin in its plugins/ folder.
   Your private area $ID
-    Created by KNIME. A just-for-me install puts the plugin in plugins/ here.
+    Created by KNIME, one per KNIME folder. A just-for-me install puts the plugin
+    in plugins/ here.
   Your workspace    the folder KNIME asks for at startup, by default ~/knime-workspace
-    Your layout and settings: .metadata/. Each person needs their own.
+    Your layout and settings: .metadata/. Each person needs their own. Installing
+    doesn't change it and it needs no update. Your server list is saved in it.
 
 Recommended permissions
   KNIME folder      owner root; everyone else read and execute only, for all
@@ -100,7 +253,7 @@ TXT
 }
 
 echo
-echo "KNIME folder: $KNIME (KNIME $MAJOR.x)"
+echo "KNIME folder: $KNIME (KNIME $(knime_version "$KNIME"))"
 case "$STATE" in
     readonly) echo "This account:  can't write to it. This is the recommended setup." ;;
     writable) echo "This account:  can write to it." ;;
@@ -322,6 +475,7 @@ else
         echo "Restart KNIME. The Server Explorer tab appears next to KNIME Explorer."
         [ "$EXPECT_MAJOR" = 5 ] && echo "It's in the classic interface. In the Modern UI: Menu > Switch to classic user interface"
         echo "If you closed it before: View > Other... > KNIME Views > Server Explorer"
+        [ "$OTHERS" = 0 ] || echo "Other KNIME folders on this machine weren't changed. To add it to one, run this again."
     fi
 fi
 rm -f "$LOG"

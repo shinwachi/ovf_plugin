@@ -24,11 +24,12 @@ Windows, Linux and macOS with diagrams. Its source is in
 
 ### Installer (recommended on Windows and Linux)
 
-The installer zip asks who should get the plugin (all users or just you), checks
-the KNIME folder's permissions, and explains any failure:
+The installer zip scans for KNIME or lets you select it in a file picker, asks who
+should get the plugin (all users or just you), checks the KNIME folder's
+permissions, and explains any failure:
 
-- [5.x installer](https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.4-installer.zip)
-- [4.1.x installer](https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.4-installer.zip)
+- [5.x installer](https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.5-installer.zip)
+- [4.1.x installer](https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.5-installer.zip)
 
 Extract it, then run `install-ovf.cmd` (Windows) or `./install-ovf.sh` (Linux).
 The tab is only in KNIME 5's classic interface. In the Modern UI: *Menu > Switch
@@ -64,9 +65,9 @@ If your KNIME can't reach GitHub, grab the archive zip and use
 - All zip downloads:
   <https://shinwachi.github.io/ovf-updates/downloads/>
 - Latest 5.x archive:
-  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.4-updatesite.zip>
+  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.5-updatesite.zip>
 - Latest 4.1.x archive:
-  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.4-updatesite.zip>
+  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.5-updatesite.zip>
 
 ### Dropin (last-resort fallback)
 

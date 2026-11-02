@@ -47,7 +47,10 @@ to any folder, then:
   Linux     All users: sudo ./install-ovf.sh
             Just me:   ./install-ovf.sh
 
-It asks for the KNIME folder and who gets the plugin, checks the folder's
+It offers to scan this computer for KNIME and list what it finds, or to let you
+select knime.exe (Windows) or knime (Linux) in a file picker. You can also type
+the folder. Run it once for each KNIME that should have the plugin.
+Then it asks who gets the plugin, checks the folder's
 permissions, installs, then lists where the files are. To only see the report,
 changing nothing:
 
@@ -132,6 +135,10 @@ ovf-serverconnector-4.1.x-@VERSION@.zip so that this file exists, and start KNIM
 once with -clean:
 
     <KNIME folder>/dropins/serverconnector/plugins/org.ovf.serverconnector_@BUNDLE_VERSION@.jar
+
+
+Workspaces need no change, for either kind of install. The plugin adds its tab
+when a workspace opens. Each workspace keeps its own list of servers.
 
 
 -----------------------------------------------------------------

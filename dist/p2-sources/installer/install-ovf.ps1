@@ -1,6 +1,6 @@
 # Install, check or remove the OVF Server Explorer plugin for KNIME on Windows.
 #
-#   install-ovf.cmd                          ask for everything
+#   install-ovf.cmd                          ask for everything, including which KNIME
 #   install-ovf.cmd -Knime DIR -Check        report only, change nothing
 #   install-ovf.cmd -Knime DIR -Mode admin|user [-Uninstall] [-Yes]
 #   install-ovf.cmd -Knime DIR -Mode admin -ApplyPermissions
@@ -34,22 +34,212 @@ function Test-Admin {
         [Security.Principal.WindowsBuiltInRole]::Administrator)
 }
 
-if (-not $Knime) {
-    $candidates = @()
-    foreach ($root in @($env:ProgramFiles, "C:\Program Files", $UserHome, "/opt")) {
-        if ($root -and (Test-Path $root)) {
-            $candidates += Get-ChildItem -Path $root -Directory -Filter "knime*" -ErrorAction SilentlyContinue |
-                ForEach-Object { $_.FullName }
+function Test-KnimeFolder($d) {
+    (Test-Path -LiteralPath (Join-Path $d $Exe) -ErrorAction SilentlyContinue) -and
+    (Test-Path -LiteralPath (Join-Path $d "plugins") -ErrorAction SilentlyContinue) -and
+    (Test-Path -LiteralPath (Join-Path $d "configuration") -ErrorAction SilentlyContinue)
+}
+function Get-KnimeVersion($d) {
+    $core = Get-ChildItem -LiteralPath (Join-Path $d "plugins") -Filter "org.knime.core_*" -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($core -and $core.Name -match '^org\.knime\.core_(\d+\.\d+\.\d+)') { return $Matches[1] }
+    return ""
+}
+# The path with the case it has on disk, as KNIME's hash below depends on it.
+function Get-RealPath($p) {
+    if (-not $OnWindows) { return $p }
+    $root = [IO.Path]::GetPathRoot($p)
+    $cur = if ($root -match '^[a-zA-Z]:') { $root.ToUpper() } else { $root }
+    foreach ($seg in $p.Substring($root.Length).Split('\') | Where-Object { $_ }) {
+        $e = Get-ChildItem -LiteralPath $cur -Filter $seg -Force -ErrorAction SilentlyContinue | Select-Object -First 1
+        if (-not $e) { return $p }
+        $cur = $e.FullName
+    }
+    return $cur
+}
+# The private area KNIME uses for a read-only install. Its name holds the hash of
+# the install path (java.lang.String.hashCode), and the product id and version
+# when the folder has an .eclipseproduct file.
+function Get-PrivateArea($d) {
+    [long]$h = 0
+    foreach ($c in (Get-RealPath $d).ToCharArray()) { $h = ($h * 31 + [int]$c) -band [long]4294967295 }
+    if ($h -ge [long]2147483648) { $h = [long]4294967296 - $h }
+    $prefix = ""
+    $product = Join-Path $d ".eclipseproduct"
+    if (Test-Path -LiteralPath $product) {
+        $id = ""; $v = ""
+        foreach ($l in Get-Content -LiteralPath $product) {
+            if ($l -match '^id=(.*)$') { $id = $Matches[1] }
+            elseif ($l -match '^version=(.*)$') { $v = $Matches[1] }
+        }
+        if ($id) { $prefix = $id + "_" + $v + "_" }
+    }
+    $arch = if ($OnWindows) { "win32_win32_x86_64" } else { "linux_gtk_x86_64" }
+    return Join-Path (Join-Path $UserHome ".eclipse") ($prefix + $h + "_" + $arch)
+}
+function Get-ListedVersion($area) {
+    $b = Join-Path (Join-Path (Join-Path $area "configuration") "org.eclipse.equinox.simpleconfigurator") "bundles.info"
+    if (-not (Test-Path -LiteralPath $b)) { return "" }
+    $m = Select-String -LiteralPath $b -Pattern '^org\.ovf\.serverconnector,([^,]*),' | Select-Object -First 1
+    if ($m) { return $m.Matches[0].Groups[1].Value }
+    return ""
+}
+function Get-KnimeUsable($d) { return (Get-KnimeVersion $d).Split('.')[0] -eq $ExpectMajor }
+function Get-KnimeSummary($d) {
+    $ver = Get-KnimeVersion $d
+    $major = $ver.Split('.')[0]
+    if ($major -ne $ExpectMajor) {
+        if ($major -eq "4") { return "KNIME $ver, needs the 4.1.x installer" }
+        if ($major -eq "5") { return "KNIME $ver, needs the 5.x installer" }
+        return "KNIME $ver, not supported"
+    }
+    $v = Get-ListedVersion $d
+    if ($v) { return "KNIME $ver, installed for everyone ($v)" }
+    $v = Get-ListedVersion (Get-PrivateArea $d)
+    if ($v) { return "KNIME $ver, installed for you ($v)" }
+    return "KNIME $ver, not installed"
+}
+function Find-Knimes {
+    $roots = @($env:ProgramFiles, ${env:ProgramW6432}, ${env:ProgramFiles(x86)}, $UserHome)
+    if ($env:LOCALAPPDATA) { $roots += Join-Path $env:LOCALAPPDATA "Programs" }
+    if ($OnWindows) {
+        $roots += [IO.DriveInfo]::GetDrives() | Where-Object { $_.DriveType -eq "Fixed" } | ForEach-Object { $_.RootDirectory.FullName }
+        $users = Join-Path $env:SystemDrive "Users"
+        foreach ($u in Get-ChildItem -LiteralPath $users -Directory -ErrorAction SilentlyContinue) {
+            $roots += $u.FullName
+            foreach ($sub in "Desktop", "Documents", "Downloads") { $roots += Join-Path $u.FullName $sub }
+        }
+    } else {
+        $roots += "/opt", "/usr/local", "/srv"
+    }
+    $found = @()
+    foreach ($root in $roots | Where-Object { $_ } | Select-Object -Unique) {
+        if (-not (Test-Path -LiteralPath $root -ErrorAction SilentlyContinue)) { continue }
+        foreach ($d in Get-ChildItem -LiteralPath $root -Directory -ErrorAction SilentlyContinue) {
+            if ($d.Name -in "Windows", "AppData") { continue }
+            if (Test-KnimeFolder $d.FullName) { $found += $d.FullName; continue }
+            foreach ($d2 in Get-ChildItem -LiteralPath $d.FullName -Directory -ErrorAction SilentlyContinue) {
+                if (Test-KnimeFolder $d2.FullName) { $found += $d2.FullName }
+            }
         }
     }
-    foreach ($c in $candidates) {
-        if (Test-Path (Join-Path $c $Exe)) { $Knime = $c; break }
+    if ($OnWindows) {
+        # KNIME's Windows installer can put it anywhere, but leaves a Start menu shortcut.
+        $shell = New-Object -ComObject WScript.Shell
+        foreach ($m in @($env:ProgramData, $env:APPDATA) | Where-Object { $_ }) {
+            $menu = Join-Path $m "Microsoft\Windows\Start Menu\Programs"
+            foreach ($l in Get-ChildItem -LiteralPath $menu -Recurse -Filter "*knime*.lnk" -ErrorAction SilentlyContinue) {
+                $t = $shell.CreateShortcut($l.FullName).TargetPath
+                if ($t) { $t = Split-Path $t; if (Test-KnimeFolder $t) { $found += $t } }
+            }
+        }
     }
-    if (-not $Yes) {
-        $a = Read-Host "KNIME folder (the one holding $Exe) [$Knime]"
-        if ($a) { $Knime = $a }
+    return @($found | Sort-Object -Unique)
+}
+# Returns the folder if it's a KNIME this installer can use, otherwise says why.
+function Test-Choice($d) {
+    if (-not (Test-KnimeFolder $d)) { Write-Host "$d is not a KNIME folder (expected $Exe, plugins, configuration)."; return $null }
+    if (-not (Get-KnimeUsable $d)) { Write-Host "$d`: $(Get-KnimeSummary $d)."; return $null }
+    return $d
+}
+# Returns the program chosen in a file picker, "" if cancelled, $null if none can open.
+function Show-FilePicker {
+    try {
+        Add-Type -AssemblyName System.Windows.Forms
+        $owner = New-Object System.Windows.Forms.Form
+        $owner.TopMost = $true
+        $dlg = New-Object System.Windows.Forms.OpenFileDialog
+        $dlg.Title = "Select knime.exe in the KNIME folder"
+        $dlg.Filter = "KNIME program (knime.exe)|knime.exe|All files (*.*)|*.*"
+        $dlg.InitialDirectory = $env:ProgramFiles
+        $picked = ""
+        if ($dlg.ShowDialog($owner) -eq "OK") { $picked = $dlg.FileName }
+        $owner.Dispose()
+        return $picked
+    } catch { return $null }
+}
+function Select-WithPicker {
+    Write-Host "Select knime.exe in the KNIME folder. If you can't see the window, check behind this one."
+    $f = Show-FilePicker
+    if ($null -eq $f) {
+        Write-Host "No file picker can open here."
+        $f = Read-Host "Type the KNIME folder, or press Enter to go back"
+        if (-not $f) { return $null }
+        $f = $f.Trim().Trim('"').TrimEnd('\')
+    } elseif (-not $f) {
+        Write-Host "Nothing selected."
+        return $null
+    }
+    if (Test-Path -LiteralPath $f -PathType Leaf) { $f = Split-Path $f }
+    return Test-Choice $f
+}
+# Lists what a scan finds. Returns the chosen folder, or $null to go back.
+function Select-FromScan {
+    Write-Host "Scanning this computer..."
+    $found = @(Find-Knimes)
+    $usable = @($found | Where-Object { Get-KnimeUsable $_ })
+    Write-Host ""
+    if ($found.Count) {
+        Write-Host "KNIME folders on this machine:"
+        for ($i = 0; $i -lt $found.Count; $i++) {
+            Write-Host ("  {0}) {1}" -f ($i + 1), $found[$i])
+            Write-Host ("     " + (Get-KnimeSummary $found[$i]))
+        }
+    } else {
+        Write-Host "No KNIME folder found in the usual places."
+    }
+    $default = ""
+    if ($usable.Count -eq 1) { $default = [string]([array]::IndexOf($found, $usable[0]) + 1) }
+    while ($true) {
+        $prompt = "Which KNIME? Type a number, p for a file picker, or a folder path"
+        if ($default) { $prompt += " [$default]" }
+        $a = Read-Host $prompt
+        if (-not $a) { $a = $default }
+        if (-not $a) { continue }
+        $a = $a.Trim().Trim('"').TrimEnd('\')
+        if ($a -eq "p") {
+            $d = Select-WithPicker
+            if ($d) { return $d }
+            continue
+        }
+        if ($a -match '^\d+$') {
+            if ([int]$a -lt 1 -or [int]$a -gt $found.Count) { Write-Host "Enter a number from the list, p, or a folder path."; continue }
+            $d = $found[[int]$a - 1]
+        } else { $d = $a }
+        $d = Test-Choice $d
+        if ($d) {
+            if ($found.Count -gt 1) { $script:Others = $true }
+            return $d
+        }
     }
 }
+# Several KNIME versions can live on one machine, so never assume which one is meant.
+function Select-Knime {
+    if ($Yes) {
+        $usable = @(Find-Knimes | Where-Object { Get-KnimeUsable $_ })
+        if ($usable.Count -eq 1) { Write-Host "Found KNIME at $($usable[0])"; return $usable[0] }
+        if ($usable.Count -eq 0) { Die "no KNIME folder found for this installer; pass -Knime DIR" }
+        Write-Host "Found several KNIME folders:"
+        $usable | ForEach-Object { Write-Host "  $_" }
+        Die "say which one with -Knime DIR"
+    }
+    while ($true) {
+        Write-Host ""
+        Write-Host "How do you want to find KNIME?"
+        Write-Host "  1) Scan this computer and choose from a list"
+        Write-Host "  2) Select it myself with a file picker"
+        $a = Read-Host "Choice, or a folder path [1]"
+        if (-not $a) { $a = "1" }
+        $a = $a.Trim().Trim('"').TrimEnd('\')
+        $d = $null
+        if ($a -eq "1") { $d = Select-FromScan }
+        elseif ($a -eq "2") { $d = Select-WithPicker }
+        else { $d = Test-Choice $a }
+        if ($d) { return $d }
+    }
+}
+
+$Others = $false
+if (-not $Knime) { $Knime = Select-Knime }
 if (-not $Knime) { Die "KNIME folder not found; pass -Knime DIR" }
 $Knime = $Knime.Trim('"').TrimEnd('\')
 if (-not (Test-Path (Join-Path $Knime $Exe)) -or
@@ -57,7 +247,7 @@ if (-not (Test-Path (Join-Path $Knime $Exe)) -or
     -not (Test-Path (Join-Path $Knime "configuration"))) {
     Die "$Knime is not a KNIME folder (expected $Exe, plugins, configuration)"
 }
-$Knime = (Resolve-Path $Knime).ProviderPath
+$Knime = Get-RealPath (Resolve-Path $Knime).ProviderPath
 $Plugins = Join-Path $Knime "plugins"
 
 $core = Get-ChildItem $Plugins -Filter "org.knime.core_*" | Select-Object -First 1
@@ -85,9 +275,7 @@ try {
     }
 } catch { }
 
-$Private = Get-ChildItem (Join-Path $UserHome ".eclipse") -Directory -ErrorAction SilentlyContinue |
-    Select-Object -First 1 -ExpandProperty FullName
-if (-not $Private) { $Private = (Join-Path $UserHome ".eclipse") + "\<id>_win32_win32_x86_64" }
+$Private = Get-PrivateArea $Knime
 
 # knime.ini can move KNIME's configuration elsewhere. The director doesn't read
 # knime.ini, so a just-for-me install has to be told, or KNIME never sees the plugin.
@@ -106,11 +294,12 @@ Where the files are
     Program files, shared by everyone on this machine.
     An all-users install puts the plugin in its plugins folder.
   Your private area  $Private
-    Created by KNIME. A just-for-me install puts the plugin in plugins here.
-    To open it, paste the path into the File Explorer address bar.
+    Created by KNIME, one per KNIME folder. A just-for-me install puts the plugin
+    in plugins here. To open it, paste the path into the File Explorer address bar.
   Your workspace     the folder KNIME asks for at startup, by default
                      $UserHome\knime-workspace
-    Your layout and settings: .metadata. Each person needs their own.
+    Your layout and settings: .metadata. Each person needs their own. Installing
+    doesn't change it and it needs no update. Your server list is saved in it.
 
 Recommended permissions
   KNIME folder       Administrators and SYSTEM: Full control.
@@ -131,7 +320,7 @@ Recommended permissions
 }
 
 Write-Host ""
-Write-Host "KNIME folder: $Knime (KNIME $Major.x)"
+Write-Host "KNIME folder: $Knime (KNIME $(Get-KnimeVersion $Knime))"
 switch ($State) {
     "readonly" { Write-Host "This account:  can't write to it. This is the recommended setup." }
     "writable" { Write-Host "This account:  can write to it." }
@@ -395,6 +584,7 @@ if ($Uninstall) {
         Write-Host "Restart KNIME. The Server Explorer tab appears next to KNIME Explorer."
         if ($ExpectMajor -eq "5") { Write-Host "It's in the classic interface. In the Modern UI: Menu > Switch to classic user interface" }
         Write-Host "If you closed it before: View > Other... > KNIME Views > Server Explorer"
+        if ($Others) { Write-Host "Other KNIME folders on this machine weren't changed. To add it to one, run this again." }
     }
 }
 Remove-Item $Log -ErrorAction SilentlyContinue

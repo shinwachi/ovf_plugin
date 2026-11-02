@@ -1,0 +1,13 @@
+digraph several {
+  rankdir=LR; nodesep=0.22; ranksep=0.6; bgcolor="white"; margin=0.1;
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, margin="0.16,0.09", color="#5b6b7b", fillcolor="#eef2f6", fontcolor="#1d2733"];
+  edge [color="#5b6b7b", fontname="Helvetica", fontsize=11, fontcolor="#1d2733"];
+  i4 [label="4.1.x installer\nrun once", fillcolor="#fff4d6", color="#b98a00"];
+  i5 [label="5.x installer\nrun once per KNIME", fillcolor="#fff4d6", color="#b98a00"];
+  k4 [label="KNIME 4.1.3\nits own plugin copy", fillcolor="#dff3e3", color="#2d8a46"];
+  k5 [label="KNIME 5.8\nits own plugin copy", fillcolor="#dff3e3", color="#2d8a46"];
+  k6 [label="KNIME 5.11\nits own plugin copy", fillcolor="#dff3e3", color="#2d8a46"];
+  w [label="Your workspaces\nNever changed by the installer.", fillcolor="#e4ecfa", color="#3564b0"];
+  i4 -> k4; i5 -> k5; i5 -> k6;
+  k4 -> w [style=dashed, arrowhead=none]; k5 -> w [style=dashed, arrowhead=none]; k6 -> w [style=dashed, arrowhead=none];
+}

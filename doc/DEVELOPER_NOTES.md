@@ -499,6 +499,10 @@ label at the next start. After a hard kill the layout may hold the plain label.
 `EModelService.find` still returns it. `place()` always calls `showView` for that
 reason; don't skip it because the element exists.
 
+**Workspaces need no update step.** The install only touches the KNIME folder or
+the private area, and `ViewBootstrap` adds the tab per workspace at startup. The
+server list lives in the workspace (instance scope), so each workspace has its own.
+
 ### 6.3 Preferences file is keyed on Bundle-SymbolicName
 
 Old-build prefs from `org.knime.serverconnector` were stored under
@@ -507,6 +511,16 @@ After the rename to `org.ovf.serverconnector`, the new bundle looks in
 `org.ovf.serverconnector.prefs` and does not see the old servers list.
 This is intentional (namespaces are separate) but means anyone
 upgrading from a pre-rename build re-configures from scratch.
+
+### 6.4 The private area's name can be computed
+
+For a read-only KNIME, the private area is
+`~/.eclipse/[<id>_<version>_]<hash>_<os>_<ws>_<arch>`. `<hash>` is the absolute value of
+`String.hashCode()` of the KNIME folder's canonical path, and `<id>_<version>_` comes
+from `.eclipseproduct` if the file exists (5.x has it, 4.1.3 doesn't). `install-ovf`
+uses this to report status per KNIME, so it doesn't have to guess on a machine with
+several. Moving the folder changes the name, which is why a moved KNIME loses
+just-for-me plugins. On Windows the case of the path counts.
 
 ---
 

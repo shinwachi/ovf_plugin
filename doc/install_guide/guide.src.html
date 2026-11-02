@@ -68,7 +68,7 @@
 <body>
 
 <h1>Install OVF Server Explorer</h1>
-<p class="lead">Version 1.0.4, for KNIME on Windows, Linux and macOS. Adds a Server Explorer tab next to KNIME Explorer. This is a third-party plugin, not a KNIME product.</p>
+<p class="lead">Version 1.0.5, for KNIME on Windows, Linux and macOS. Adds a Server Explorer tab next to KNIME Explorer. This is a third-party plugin, not a KNIME product.</p>
 
 <nav aria-label="Contents"><ol>
   <li><a href="#download">Get the right download</a></li>
@@ -88,10 +88,10 @@
 <div class="scroll"><table>
   <tr><th>Your KNIME</th><th>Installer (Windows, Linux)</th><th>Update-site address (macOS, or KNIME's wizard)</th></tr>
   <tr><td><b>5.x</b></td>
-      <td><a href="https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.4-installer.zip">5.x installer zip</a></td>
+      <td><a href="https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.5-installer.zip">5.x installer zip</a></td>
       <td><code>https://shinwachi.github.io/ovf-updates/5x/</code></td></tr>
   <tr><td><b>4.1 or 4.2</b></td>
-      <td><a href="https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.4-installer.zip">4.1.x installer zip</a></td>
+      <td><a href="https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.5-installer.zip">4.1.x installer zip</a></td>
       <td><code>https://shinwachi.github.io/ovf-updates/4.1.x/</code></td></tr>
 </table></div>
 <p>No internet on the KNIME computer? Copy the zip over. It has everything inside. All files are on the <a href="https://shinwachi.github.io/ovf-updates/downloads/">downloads page</a>.</p>
@@ -101,13 +101,29 @@
 <p><span class="tag all">All users</span> is the better choice when people share one KNIME: there is one copy to look after, and it keeps working when an administrator changes KNIME.
 <span class="tag me">Just me</span> needs no rights, but each person installs and updates their own copy, and it stops loading if an administrator later changes KNIME (<a href="#trouble">section 8</a> has the fix).</p>
 
+<h3>If you have several KNIME versions</h3>
+<p>The installer offers two ways to choose, and changes only the KNIME you choose. Run it once for each KNIME that should have the plugin, using the matching zip.</p>
+<ul>
+  <li><b>Scan</b> lists every KNIME it finds, with its version and whether it already has the plugin. Pick one by number. It looks in the usual places, so a KNIME somewhere unusual may not be listed.</li>
+  <li><b>File picker</b> lets you select <code>knime.exe</code> (Windows) or <code>knime</code> (Linux) yourself. On Linux it needs a desktop, and <code>zenity</code> or <code>kdialog</code>. If no picker can open, for example over SSH, you can type the folder instead.</li>
+</ul>
+<figure><div class="card"><!--svg:several Each KNIME gets its own copy of the plugin from the matching installer. Workspaces are separate and the installer never changes them.--></div></figure>
+<pre><code>KNIME folders on this machine:
+  1) C:\Program Files\knime_4.1.3
+     KNIME 4.1.3, needs the 4.1.x installer
+  2) C:\Program Files\knime_5.8.1
+     KNIME 5.8.1, installed for you (1.0.5)
+  3) C:\Tools\KNIME Analytics
+     KNIME 5.8.1, not installed
+Which KNIME? Type a number, p for a file picker, or a folder path:</code></pre>
+
 <h2 id="windows">3. Windows</h2>
 <h3><span class="tag all">All users</span> You need administrator rights</h3>
 <ol class="steps all">
   <li><b>Close KNIME</b>, and ask anyone else using it to close it too.</li>
   <li><b>Extract the zip.</b> Right-click it &rsaquo; <b>Extract All...</b> Running from inside the zip doesn't work.</li>
   <li>In the extracted folder, right-click <code>install-ovf.cmd</code> &rsaquo; <b>Run as administrator</b>.</li>
-  <li><b>Answer two questions.</b> Press Enter to accept the KNIME folder, or type its path. Then type <code>1</code>.</li>
+  <li><b>Choose your KNIME:</b> type <code>1</code> to scan and pick from a list, or <code>2</code> for a file picker. Then type <code>1</code> for who gets it.</li>
   <li><b>Restart KNIME.</b> Do this for everyone using it.</li>
 </ol>
 <p>Then set the recommended folder permissions, so ordinary users can't change KNIME by accident. In an administrator Command Prompt, from the extracted folder:</p>
@@ -118,7 +134,7 @@
   <li><b>Close KNIME.</b></li>
   <li><b>Extract the zip.</b> Right-click it &rsaquo; <b>Extract All...</b></li>
   <li>In the extracted folder, <b>double-click</b> <code>install-ovf.cmd</code>.</li>
-  <li><b>Answer two questions.</b> Press Enter to accept the KNIME folder, or type its path. Then type <code>2</code>.</li>
+  <li><b>Choose your KNIME:</b> type <code>1</code> to scan and pick from a list, or <code>2</code> for a file picker. Then type <code>2</code> for who gets it.</li>
   <li><b>Restart KNIME.</b></li>
 </ol>
 
@@ -131,10 +147,10 @@
   <li><b>Close KNIME</b>, and ask anyone else using it to close it too.</li>
   <li><b>Extract the zip</b> into a new folder, then go there.</li>
   <li><b>Run</b> <code>sudo ./install-ovf.sh</code></li>
-  <li><b>Answer two questions.</b> Press Enter to accept the KNIME folder, or type its path. Then type <code>1</code>.</li>
+  <li><b>Choose your KNIME:</b> type <code>1</code> to scan and pick from a list, or <code>2</code> for a file picker. Then type <code>1</code> for who gets it.</li>
   <li><b>Restart KNIME.</b> Do this for everyone using it.</li>
 </ol>
-<pre><code>unzip ovf-serverconnector-5.x-1.0.4-installer.zip -d ovf-installer
+<pre><code>unzip ovf-serverconnector-5.x-1.0.5-installer.zip -d ovf-installer
 cd ovf-installer
 sudo ./install-ovf.sh --knime /opt/knime --mode admin --apply-permissions</code></pre>
 <p>This one command also sets the recommended folder permissions. Change <code>5.x</code> to <code>4.1.x</code> and <code>/opt/knime</code> to your KNIME folder as needed.</p>
@@ -144,7 +160,7 @@ sudo ./install-ovf.sh --knime /opt/knime --mode admin --apply-permissions</code>
   <li><b>Close KNIME.</b></li>
   <li><b>Extract the zip</b> into a new folder, then go there.</li>
   <li><b>Run</b> <code>./install-ovf.sh</code> without sudo.</li>
-  <li><b>Answer two questions.</b> Press Enter to accept the KNIME folder, or type its path. Then type <code>2</code>.</li>
+  <li><b>Choose your KNIME:</b> type <code>1</code> to scan and pick from a list, or <code>2</code> for a file picker. Then type <code>2</code> for who gets it.</li>
   <li><b>Restart KNIME.</b></li>
 </ol>
 <p>The KNIME folder is the one holding the <code>knime</code> program, <code>knime.ini</code> and <code>plugins</code>.</p>
@@ -163,8 +179,8 @@ sudo ./install-ovf.sh --knime /opt/knime --mode admin --apply-permissions</code>
 <h2 id="worked">6. Check that it worked</h2>
 <div class="note"><b>KNIME 5:</b> the tab is only in the classic user interface. If KNIME opens in the Modern UI (a dark bar with Home, Preferences and Menu at the top), click <b>Menu &rsaquo; Switch to classic user interface</b>. KNIME reopens with the tab. To go back, click <b>Open KNIME Modern UI</b> at the top right.</div>
 <p>When the installer succeeds, it prints a line like one of these:</p>
-<pre><code>Installed for everyone: C:\Program Files\KNIME\plugins\org.ovf.serverconnector_1.0.4.413.jar
-Installed: C:\Users\you\.eclipse\1637230351_win32_win32_x86_64\plugins\org.ovf.serverconnector_1.0.4.413.jar
+<pre><code>Installed for everyone: C:\Program Files\KNIME\plugins\org.ovf.serverconnector_1.0.5.413.jar
+Installed: C:\Users\you\.eclipse\1637230351_win32_win32_x86_64\plugins\org.ovf.serverconnector_1.0.5.413.jar
 
 Restart KNIME. The Server Explorer tab appears next to KNIME Explorer.</code></pre>
 <figure><div class="card"><img src="@img:success.png@" alt="Top left of the KNIME window: the Server Explorer tab is open next to KNIME Explorer, showing No server configured and the local workspace."></div>
@@ -179,6 +195,13 @@ Restart KNIME. The Server Explorer tab appears next to KNIME Explorer.</code></p
   <tr><td><b>Private area</b>, one per person</td><td><code>C:\Users\you\.eclipse\&lt;id&gt;</code><br><code>~/.eclipse/&lt;id&gt;</code></td><td>Only that person. KNIME creates it. Don't change or share it.</td></tr>
   <tr><td><b>Workspace</b>, one per person</td><td><code>C:\Users\you\knime-workspace</code><br><code>~/knime-workspace</code></td><td>Only that person. Two people can't have one workspace open at once.</td></tr>
 </table></div>
+<h3>Workspaces need nothing</h3>
+<p>The installer never asks for a workspace and never changes one, so an administrator can install for all users without touching anyone's. The first time a workspace opens in a KNIME with the plugin, the plugin adds its own tab, including in workspaces that already have a saved layout.</p>
+<ul>
+  <li><b>Your server list is saved in the workspace.</b> A new workspace starts with no servers, so add them again there.</li>
+  <li><b>A KNIME without the plugin can still open the workspace.</b> It shows a red <b>Server Explorer (needs OVF plugin)</b> tab. Nothing is lost: the tab works again next time you use a KNIME with the plugin.</li>
+</ul>
+<h3>Check a KNIME</h3>
 <p>To see this report for your own computer without changing anything:</p>
 <pre><code>install-ovf.cmd -Knime "C:\Program Files\KNIME" -Check
 ./install-ovf.sh --knime /opt/knime --check</code></pre>
@@ -219,13 +242,15 @@ sudo ./install-ovf.sh --knime /opt/knime --mode admin --apply-permissions</code>
 <h2 id="tested">10. What this was tested on</h2>
 <div class="scroll"><table>
   <tr><th>Platform</th><th>KNIME</th><th>Result</th></tr>
-  <tr><td>Linux</td><td>4.1.3</td><td>All users and Just me: install, update from 1.0.3, remove. Tab checked.</td></tr>
-  <tr><td>Linux</td><td>5.8.1</td><td>All users and Just me: install, update from 1.0.3. Tab checked in the classic UI.</td></tr>
+  <tr><td>Linux</td><td>4.1.3</td><td>All users and Just me: install, update from 1.0.3 and 1.0.4, remove. Tab checked.</td></tr>
+  <tr><td>Linux</td><td>5.8.1</td><td>All users and Just me: install, update from 1.0.3 and 1.0.4. Tab checked in the classic UI.</td></tr>
   <tr><td>Windows Server 2022</td><td>4.1.3</td><td>All users and Just me: install, remove, permissions. Tab checked.</td></tr>
   <tr><td>Windows Server 2022</td><td>5.8.1</td><td>All users and Just me: install, remove, permissions. Tab checked in the classic UI. The test machine couldn't run the Modern UI, with or without the plugin.</td></tr>
-  <tr><td>Any</td><td>4.2.3</td><td>The 4.1.x plugin installs. The 1.0.4 installer wasn't tried on it.</td></tr>
+  <tr><td>Linux</td><td>4.1.3 and three copies of 5.8.1</td><td>Scan and file picker (zenity), including cancelling and wrong selections. Only the chosen KNIME changed. Workspaces tested as described in section 7.</td></tr>
+  <tr><td>Windows Server 2022</td><td>Seven 4.1.3 folders and two 5.8.1</td><td>Scan and file picker. Only the chosen KNIME changed. Update from 1.0.4 on 5.8.1, tab checked on 4.1.3 and 5.8.1.</td></tr>
+  <tr><td>Any</td><td>4.2.3</td><td>The 4.1.x plugin installs. The 1.0.5 installer wasn't tried on it.</td></tr>
 </table></div>
-<p>Not tested: macOS, Windows 10 and 11, other KNIME versions, domain Group Policy, antivirus software, roaming profiles, and KNIME on a remote file server.</p>
+<p>Not tested: macOS, Windows 10 and 11, other KNIME versions, one workspace used in both KNIME 4 and KNIME 5, domain Group Policy, antivirus software, roaming profiles, and KNIME on a remote file server.</p>
 
 </body>
 </html>
