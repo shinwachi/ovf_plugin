@@ -80,6 +80,7 @@
   <li><a href="#where">Where the files go, and permissions</a></li>
   <li><a href="#trouble">If something goes wrong</a></li>
   <li><a href="#update">Update or remove</a></li>
+  <li><a href="#open">If people still have KNIME open</a></li>
   <li><a href="#tested">What this was tested on</a></li>
 </ol></nav>
 
@@ -277,7 +278,7 @@ Which KNIME? Type a number, p for a file picker, or a folder path:</code></pre>
 <h2 id="windows">3. Windows</h2>
 <h3><span class="tag all">All users</span> You need administrator rights</h3>
 <ol class="steps all">
-  <li><b>Close KNIME</b>, and ask anyone else using it to close it too.</li>
+  <li><b>Close KNIME</b>, and ask anyone else using it to close it too. If someone can't, you can still install: see <a href="#open">section 10</a>.</li>
   <li><b>Extract the zip.</b> Right-click it &rsaquo; <b>Extract All...</b> Running from inside the zip doesn't work.</li>
   <li>In the extracted folder, right-click <code>install-ovf.cmd</code> &rsaquo; <b>Run as administrator</b>.</li>
   <li><b>Choose your KNIME:</b> type <code>1</code> to scan and pick from a list, or <code>2</code> for a file picker. Then type <code>1</code> for who gets it.</li>
@@ -301,7 +302,7 @@ Which KNIME? Type a number, p for a file picker, or a folder path:</code></pre>
 <h2 id="linux">4. Linux</h2>
 <h3><span class="tag all">All users</span> You need sudo</h3>
 <ol class="steps all">
-  <li><b>Close KNIME</b>, and ask anyone else using it to close it too.</li>
+  <li><b>Close KNIME</b>, and ask anyone else using it to close it too. If someone can't, you can still install: see <a href="#open">section 10</a>.</li>
   <li><b>Extract the zip</b> into a new folder, then go there.</li>
   <li><b>Run</b> <code>sudo ./install-ovf.sh</code></li>
   <li><b>Choose your KNIME:</b> type <code>1</code> to scan and pick from a list, or <code>2</code> for a file picker. Then type <code>1</code> for who gets it.</li>
@@ -594,13 +595,44 @@ sudo ./install-ovf.sh --knime /opt/knime --mode admin --apply-permissions</code>
 <h2 id="update">9. Update or remove</h2>
 <p><b>Update:</b> download the new zip and run the installer the same way you did the first time. It replaces the old version. With Just me, each person does this for themselves. Along the way you may see <code>Cannot complete the install because of a conflicting dependency</code>, followed by <code>Replacing the installed version...</code> That is normal.</p>
 <div class="note">If you installed Just me and an administrator then installs for all users, your own old copy keeps loading. Run the installer as Just me once to bring it up to date.</div>
-<p><b>Remove:</b> close KNIME, then use the same mode you installed with:</p>
+<p><b>Remove:</b> close KNIME, then use the same mode you installed with. For an all-users change, ask everyone else to close it too (<a href="#open">section 10</a>).</p>
 <pre><code>install-ovf.cmd -Knime "C:\Program Files\KNIME" -Mode admin -Uninstall    (or -Mode user)
 ./install-ovf.sh --knime /opt/knime --mode admin --uninstall              (or --mode user)</code></pre>
 <p>If you used the wizard: <b>Help &rsaquo; About KNIME &rsaquo; Installation Details</b>, select <b>OVF Server Explorer</b>, click <b>Uninstall...</b></p>
 <p>If a tab then shows an error, close it. Your workflows aren't affected.</p>
 
-<h2 id="tested">10. What this was tested on</h2>
+<h2 id="open">10. If people still have KNIME open</h2>
+<p>This is about <span class="tag all">All users</span> installs, updates and removals. Asking everyone to close KNIME first is the safest way, but it isn't required. <b>You can install anyway and ask people to restart.</b> The installer lets you do this.</p>
+
+<h3>Why the steps ask people to close KNIME</h3>
+<p>KNIME reads its list of plugins only when it starts. A KNIME that is already open doesn't notice an install. It keeps using the version it started with, and the jar file for that version, until it restarts. Closing KNIME first avoids the problems in the table below, and makes sure everyone is on the new version straight away.</p>
+
+<h3>What happens if someone doesn't close it</h3>
+<div class="scroll"><table>
+  <tr><th>While KNIME is open, you...</th><th>What that person sees</th><th>What to do</th></tr>
+  <tr><td>Install for the first time</td><td>KNIME carries on, without the tab.</td><td>Restart. The tab appears.</td></tr>
+  <tr><td>Update to a new version</td><td>KNIME carries on with the old version, and the plugin keeps working. The old jar stays on disk.</td><td>Restart to get the new version.</td></tr>
+  <tr><td><b>Change it again before they restart:</b> a second update, a reinstall, or a removal</td><td>This change can delete the old jar they're still using. The tab may look normal, but a part of the plugin they haven't used yet can fail. For example, the server settings page shows <code>Unable to create the selected preference page</code>. KNIME itself stays open.</td><td>Restart. This clears the error. To avoid it, get everyone restarted before you change anything again.</td></tr>
+  <tr><td>Remove the plugin</td><td>KNIME carries on. After a restart, the tab shows <code>Could not create the view</code>.</td><td>Close that tab.</td></tr>
+  <tr><td>Someone starts KNIME during the install, which takes a few seconds</td><td>In the one try made, KNIME started normally, without the new version.</td><td>Restart.</td></tr>
+</table></div>
+<p>No KNIME closed or lost its window in any of these tests. Save your work and restart if you see an error in the plugin. What the tests didn't cover is a workflow running, or one opened from a server with unsaved changes, at the moment the jar is deleted.</p>
+
+<h3>Install anyway and ask people to restart</h3>
+<ol class="steps all">
+  <li><b>Run the installer as usual.</b> If KNIME is running, it says <code>KNIME appears to be running</code> and asks <code>Continue anyway?</code></li>
+  <li><b>Type <code>y</code>.</b> Typing anything else stops and changes nothing. With <code>--yes</code> or <code>-Yes</code>, it continues without asking.</li>
+  <li><b>Ask everyone to save their work and restart KNIME.</b> You have to tell them yourself: nothing inside KNIME says a new version is waiting.</li>
+  <li><b>Check who still has it open</b> (commands below), and wait for them before you change anything again.</li>
+</ol>
+<pre><code>Windows, in an administrator PowerShell:
+  Get-Process knime -IncludeUserName | Select-Object UserName, Id
+
+Linux:
+  ps -eo user,args | grep '[/]plugins/org.knime.binary.jre' | cut -c1-70</code></pre>
+<div class="note"><b>The installer's warning only covers this computer.</b> It can't see KNIME running on other computers from a shared network folder. On Windows it also reacts to KNIME running from any folder, not just the one you chose.</div>
+
+<h2 id="tested">11. What this was tested on</h2>
 <div class="scroll"><table>
   <tr><th>Platform</th><th>KNIME</th><th>Result</th></tr>
   <tr><td>Linux</td><td>4.1.3</td><td>All users and Just me: install, update from 1.0.3 and 1.0.4, remove. Tab checked.</td></tr>
@@ -609,6 +641,7 @@ sudo ./install-ovf.sh --knime /opt/knime --mode admin --apply-permissions</code>
   <tr><td>Windows Server 2022</td><td>5.8.1</td><td>All users and Just me: install, remove, permissions. Tab checked in the classic UI. The test machine couldn't run the Modern UI, with or without the plugin.</td></tr>
   <tr><td>Linux</td><td>4.1.3 and three copies of 5.8.1</td><td>Scan and file picker (zenity), including cancelling and wrong selections. Only the chosen KNIME changed. Workspaces tested as described in section 7.</td></tr>
   <tr><td>Windows Server 2022</td><td>Seven 4.1.3 folders and two 5.8.1</td><td>Scan and file picker. Only the chosen KNIME changed. Update from 1.0.4 on 5.8.1, tab checked on 4.1.3 and 5.8.1.</td></tr>
+  <tr><td>Linux and Windows Server 2022</td><td>4.1.3 and 5.8.1</td><td>All-users update from 1.0.4 to 1.0.5 and removal, with two other people's KNIME open. Deleting a jar in use made the settings page fail on 4.1.3, on both systems. On 5.8.1 it kept working, because that jar happened to still be open, so don't count on this. A second update, tested on Linux with nobody's KNIME open, deleted the older jar too.</td></tr>
   <tr><td>Any</td><td>4.2.3</td><td>The 4.1.x plugin installs. The 1.0.5 installer wasn't tried on it.</td></tr>
 </table></div>
 <p>Not tested: macOS, Windows 10 and 11, other KNIME versions, one workspace used in both KNIME 4 and KNIME 5, domain Group Policy, antivirus software, roaming profiles, and KNIME on a remote file server.</p>
