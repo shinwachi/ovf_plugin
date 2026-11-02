@@ -258,7 +258,7 @@ product in *Installed Software*.
   `KNIME Views` category so it sits next to KNIME Explorer).
 - The view's Show View category (`org.knime.workbench.ui.category`) —
   intentional reuse of KNIME's category so the view appears in the same
-  *Window > Show View > Other > KNIME Views* group as KNIME Explorer.
+  *View > Other... > KNIME Views* group as KNIME Explorer.
 - `File > Preferences > KNIME > OVF > Servers` — the preference page
   nests under the KNIME root because that's where KNIME conventionally
   puts prefs; only the top-level page name is OVF-branded.
@@ -324,7 +324,7 @@ resolution as `xpra.your-knime-server.example.com` and
 
 ### 4.4 Distribution channels
 
-Four artifacts are built per KNIME version. Local build outputs land
+Three zips are built per KNIME version (dropin, update site, installer). Local build outputs land
 in `dist/`; the public copies are served from a separate distribution
 repo, [`ovf-updates`](https://github.com/shinwachi/ovf-updates), via
 GitHub Pages:
@@ -336,7 +336,7 @@ GitHub Pages:
 | Live update-site URL (public) | `https://shinwachi.github.io/ovf-updates/5x/` | `https://shinwachi.github.io/ovf-updates/4.1.x/` |
 | Raw downloads mirror (public) | `https://shinwachi.github.io/ovf-updates/downloads/` | same |
 
-To ship a new release, copy the four `dist/*.zip` files into the
+To ship a new release, copy the `dist/*.zip` files into the
 `ovf-updates` repo's `dist/` directory, commit, push. The `publish-pages`
 Actions workflow there rebuilds the site tree (extracts the update-site
 zips into `/5x/` and `/4.1.x/`, mirrors the raw zips into `/downloads/`)
@@ -473,25 +473,31 @@ KNIME's bundled JRE cacerts, `p2.director` installs from
 therefore doesn't need the CA installed. Recommend it for one-off
 installs where importing the CA isn't worth the setup cost.
 
-### 6.2 4.1.x doesn't apply `perspectiveExtension` to cached perspectives
+### 6.2 `perspectiveExtension` doesn't apply to saved layouts
 
-**Symptom on 4.1.x:** after installing via the update site into an
-already-open KNIME, the Server Explorer view doesn't appear stacked
-next to KNIME Explorer (as declared in `plugin.xml`); the workbench
-places it in whatever pane it feels like, or doesn't render it at all
-until the user hits *Window > Reset Perspective*.
+**Symptom (before 1.0.4):** a user who had already run KNIME installs the
+plugin, restarts, and has no Server Explorer tab. The workbench only applies
+`perspectiveExtension` to a perspective with no saved layout in
+`<workspace>/.metadata/.plugins/org.eclipse.e4.workbench/workbench.xmi`.
 
-**Root cause:** the e3-compat workbench in Eclipse 4.7 doesn't re-apply
-`perspectiveExtension` contributions to perspectives it has cached. The
-runtime `tryCoStack()` code in `ServerConnectorActivator` uses the e4
-`EModelService` API to reparent the view's `MPart` into KNIME Explorer's
-`MPartStack`, which works on 5.x but not on the e3-compat 4.1.x
-workbench.
+*Reset Perspective* was not a fix: `tryCoStack()`, called from
+`ServerExplorerView.init()`, moved the part while the stack was rendering. That
+threw `Widget has the wrong parent` and blanked the whole window on 4.1.3.
 
-**Workaround:** on 4.1.x, users either *Window > Reset Perspective* to
-force the extension to apply, or drag the Server Explorer tab into the
-KNIME Explorer pane by hand (it sticks across restarts). The dropin zip
-INSTALL.txt documents both.
+**Fix (1.0.4):** `ViewBootstrap`, an `org.eclipse.ui.startup` hook, adds the tab
+once the workbench is up, and again after a reset. It acts only in a perspective
+that contains KNIME Explorer, so the 5.x Modern UI is left alone. The plugin now
+loads at every KNIME start.
+
+**Without the plugin:** the saved layout still lists the view, so that KNIME
+shows `Could not create the view`. None of our code runs there, so the only
+channel is what's stored in the layout: at exit `ViewBootstrap` writes the label
+`Server Explorer (needs OVF plugin)` and an explanatory tooltip, and restores the
+label at the next start. After a hard kill the layout may hold the plain label.
+
+**Closing that tab** only hides the placeholder (`toBeRendered=false`), so
+`EModelService.find` still returns it. `place()` always calls `showView` for that
+reason; don't skip it because the element exists.
 
 ### 6.3 Preferences file is keyed on Bundle-SymbolicName
 

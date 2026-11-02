@@ -15,10 +15,29 @@ page and full instructions:
 
 **<https://shinwachi.github.io/ovf-updates/>**
 
-### Update-site URL (recommended)
+### Step-by-step guide
 
-Point KNIME at the URL for your version — no download step, in-place
-updates on future releases:
+The [install guide](https://shinwachi.github.io/ovf-updates/install.html)
+([PDF](https://shinwachi.github.io/ovf-updates/install.pdf)) walks through
+Windows, Linux and macOS with diagrams. Its source is in
+[`doc/install_guide/`](doc/install_guide/).
+
+### Installer (recommended on Windows and Linux)
+
+The installer zip asks who should get the plugin (all users or just you), checks
+the KNIME folder's permissions, and explains any failure:
+
+- [5.x installer](https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.4-installer.zip)
+- [4.1.x installer](https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.4-installer.zip)
+
+Extract it, then run `install-ovf.cmd` (Windows) or `./install-ovf.sh` (Linux).
+The tab is only in KNIME 5's classic interface. In the Modern UI: *Menu > Switch
+to classic user interface*.
+
+### Update-site URL
+
+Point KNIME at the URL for your version, with no download step. The wizard can't
+choose who gets the plugin: it depends on whether you can write to the KNIME folder.
 
 | KNIME | URL to paste into *Install New Software > Add > Location* |
 | ----- | --------------------------------------------------------- |
@@ -45,9 +64,9 @@ If your KNIME can't reach GitHub, grab the archive zip and use
 - All zip downloads:
   <https://shinwachi.github.io/ovf-updates/downloads/>
 - Latest 5.x archive:
-  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.3-updatesite.zip>
+  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.4-updatesite.zip>
 - Latest 4.1.x archive:
-  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.3-updatesite.zip>
+  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.4-updatesite.zip>
 
 ### Dropin (last-resort fallback)
 
@@ -59,10 +78,10 @@ Extract into `<knime-install>/dropins/`, then launch KNIME once with
 ### After install
 
 Look for a *Server Explorer* tab next to **KNIME Explorer** in the
-Modeller perspective. If the tab isn't visible:
-*Window > Show View > Other... > KNIME Views > Server Explorer*.
+Modeller perspective (on KNIME 5, the classic interface). If the tab isn't visible:
+*View > Other... > KNIME Views > Server Explorer*.
 
-Configure a server under *File > Preferences > KNIME > OVF > Servers*.
+Configure a server under *File > Preferences > Server Connector > Servers*.
 
 ### Build outputs (for developers)
 

@@ -5,17 +5,18 @@ import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
+import org.ovf.serverconnector.InstallInfo;
 import org.ovf.serverconnector.ServerConnectorActivator;
 
 /**
- * Preference page accessed via Window > Preferences > Server Connector.
+ * Preference page accessed via File > Preferences > Server Connector.
  */
 public class ServerConnectorPreferencePage extends FieldEditorPreferencePage
         implements IWorkbenchPreferencePage {
 
     public ServerConnectorPreferencePage() {
         super(GRID);
-        setDescription("Server Explorer behavior");
+        setDescription("Server Explorer behavior\n\n" + InstallInfo.describe());
     }
 
     @Override

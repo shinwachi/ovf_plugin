@@ -2,11 +2,20 @@
 <feature
       id="org.ovf.serverconnector.feature"
       label="OVF Server Explorer"
-      version="1.0.3"
+      version="1.0.4"
       provider-name="OVF">
    <description>
       Server Explorer view for KNIME 5.x -- browse remote HTTP or local
       filesystem workflow shares alongside KNIME Explorer.
+
+      Who gets it depends on the KNIME folder, not on a choice in this wizard:
+      if you cannot write to the folder, it installs for your account only and
+      other people using this KNIME will not see it. To install for all users,
+      or to check the folder's permissions first, use install-ovf from the
+      installer zip instead of this wizard.
+
+      The tab appears next to KNIME Explorer after restart. If it does not:
+      View > Other... > KNIME Views > Server Explorer.
    </description>
    <copyright>OVF</copyright>
    <license>MIT</license>

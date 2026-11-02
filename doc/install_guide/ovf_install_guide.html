@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Install OVF Server Explorer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1d2733; --muted: #5b6b7b; --line: #d5dce3; --soft: #f3f5f8;
+    --all: #2d8a46; --all-soft: #e9f6ec; --me: #3564b0; --me-soft: #e9f0fb;
+    --warn: #b98a00; --warn-soft: #fff7e0; --link: #1f5fbf;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14181d; --fg: #e4e9ee; --muted: #9dabb8; --line: #36404a; --soft: #1e242b;
+      --all: #62c280; --all-soft: #18291e; --me: #84aee8; --me-soft: #18233a;
+      --warn: #e0b83f; --warn-soft: #2c2610; --link: #84aee8;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto; max-width: 52rem; padding: 2rem 16px 4rem;
+    background: var(--bg); color: var(--fg);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  h1 { font-size: 2rem; margin: 0 0 .25rem; line-height: 1.2; }
+  h2 { font-size: 1.4rem; margin: 2.75rem 0 .6rem; padding-top: .9rem; border-top: 1px solid var(--line); }
+  h3 { font-size: 1.08rem; margin: 1.6rem 0 .5rem; }
+  p { margin: .6rem 0; }
+  a { color: var(--link); }
+  .lead { color: var(--muted); margin-top: 0; }
+  code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .88em; }
+  code { background: var(--soft); padding: .08em .3em; border-radius: 3px; overflow-wrap: anywhere; }
+  pre { background: var(--soft); padding: .7rem .9rem; border-radius: 6px; overflow-x: auto; margin: .6rem 0; }
+  pre code { background: none; padding: 0; overflow-wrap: normal; }
+  table { border-collapse: collapse; width: 100%; margin: .8rem 0; font-size: .95rem; }
+  th, td { text-align: left; vertical-align: top; padding: .45rem .6rem; border-bottom: 1px solid var(--line); }
+  th { background: var(--soft); }
+  .scroll { overflow-x: auto; }
+  nav { background: var(--soft); border-radius: 8px; padding: .7rem 1rem; margin: 1.2rem 0; }
+  nav ol { margin: 0; padding-left: 1.3rem; columns: 2; }
+  @media (max-width: 34rem) { nav ol { columns: 1; } }
+  figure { margin: 1rem 0; }
+  figure .card { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: .5rem; text-align: center; overflow-x: auto; }
+  figure img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+  figcaption { color: var(--muted); font-size: .88rem; margin-top: .35rem; }
+  .steps { list-style: none; counter-reset: s; padding: 0; margin: .8rem 0; display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); }
+  .steps li { counter-increment: s; position: relative; border: 1px solid var(--line); border-top: 4px solid var(--c); border-radius: 8px; padding: .55rem .7rem .7rem; background: var(--tint); font-size: .94rem; }
+  .steps li::before { content: counter(s); display: block; font-weight: 700; color: var(--c); font-size: 1.15rem; }
+  .steps li:not(:last-child)::after { content: "\2192"; position: absolute; right: -19px; top: 42%; color: var(--muted); font-size: 1.05rem; }
+  @media (max-width: 34rem) { .steps { grid-template-columns: 1fr; } .steps li:not(:last-child)::after { content: "\2193"; right: 46%; top: auto; bottom: -24px; } }
+  .all { --c: var(--all); --tint: var(--all-soft); }
+  .me { --c: var(--me); --tint: var(--me-soft); }
+  .note { border-left: 4px solid var(--warn); background: var(--warn-soft); padding: .55rem .8rem; border-radius: 0 6px 6px 0; margin: .9rem 0; }
+  .tag { font-size: .78rem; font-weight: 700; padding: .1em .45em; border-radius: 4px; color: var(--c); background: var(--tint); border: 1px solid var(--c); white-space: nowrap; }
+  @media print {
+    body { max-width: none; padding: 0; font-size: 11pt; }
+    nav { display: none; }
+    h2 { break-after: avoid; } h3 { break-after: avoid; }
+    figure, .steps, tr, pre, .note { break-inside: avoid; }
+    tr:first-child { break-after: avoid; }
+    pre, pre code { white-space: pre-wrap; overflow-wrap: anywhere; }
+    figure { margin: .6rem 0; }
+  }
+  @page { margin: 16mm; }
+</style>
+</head>
+<body>
+
+<h1>Install OVF Server Explorer</h1>
+<p class="lead">Version 1.0.4, for KNIME on Windows, Linux and macOS. Adds a Server Explorer tab next to KNIME Explorer. This is a third-party plugin, not a KNIME product.</p>
+
+<nav aria-label="Contents"><ol>
+  <li><a href="#download">Get the right download</a></li>
+  <li><a href="#choose">Choose how to install</a></li>
+  <li><a href="#windows">Windows</a></li>
+  <li><a href="#linux">Linux</a></li>
+  <li><a href="#macos">macOS</a></li>
+  <li><a href="#worked">Check that it worked</a></li>
+  <li><a href="#where">Where the files go, and permissions</a></li>
+  <li><a href="#trouble">If something goes wrong</a></li>
+  <li><a href="#update">Update or remove</a></li>
+  <li><a href="#tested">What this was tested on</a></li>
+</ol></nav>
+
+<h2 id="download">1. Get the right download</h2>
+<p>Find your KNIME version under <b>Help &rsaquo; About KNIME</b>, then download the installer for it. There are two builds, and the installer refuses the wrong one.</p>
+<div class="scroll"><table>
+  <tr><th>Your KNIME</th><th>Installer (Windows, Linux)</th><th>Update-site address (macOS, or KNIME's wizard)</th></tr>
+  <tr><td><b>5.x</b></td>
+      <td><a href="https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.4-installer.zip">5.x installer zip</a></td>
+      <td><code>https://shinwachi.github.io/ovf-updates/5x/</code></td></tr>
+  <tr><td><b>4.1 or 4.2</b></td>
+      <td><a href="https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.4-installer.zip">4.1.x installer zip</a></td>
+      <td><code>https://shinwachi.github.io/ovf-updates/4.1.x/</code></td></tr>
+</table></div>
+<p>No internet on the KNIME computer? Copy the zip over. It has everything inside. All files are on the <a href="https://shinwachi.github.io/ovf-updates/downloads/">downloads page</a>.</p>
+
+<h2 id="choose">2. Choose how to install</h2>
+<figure><div class="card"><svg role="img" aria-label="Decision chart. macOS uses KNIME's wizard. On Windows or Linux, if others share the KNIME folder and you have administrator rights, choose All users. If you are the only user, choose Just me. If you share it without rights, ask an administrator." style="width:649pt;max-width:100%;height:auto"
+ viewBox="7.20 7.20 641.70 323.20" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(11.2 319.2)">
+
+<polygon fill="white" stroke="none" points="-4,4 -4,-312 630.5,-312 630.5,4 -4,4"/>
+<!-- q1 -->
+<g id="node1" class="node">
+<path fill="#fff4d6" stroke="#b98a00" d="M544,-308C544,-308 397,-308 397,-308 391,-308 385,-302 385,-296 385,-296 385,-284 385,-284 385,-278 391,-272 397,-272 397,-272 544,-272 544,-272 550,-272 556,-278 556,-284 556,-284 556,-296 556,-296 556,-302 550,-308 544,-308"/>
+<text text-anchor="middle" x="470.5" y="-286.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">What is your computer?</text>
+</g>
+<!-- q2 -->
+<g id="node2" class="node">
+<path fill="#fff4d6" stroke="#b98a00" d="M417,-230C417,-230 268,-230 268,-230 262,-230 256,-224 256,-218 256,-218 256,-202 256,-202 256,-196 262,-190 268,-190 268,-190 417,-190 417,-190 423,-190 429,-196 429,-202 429,-202 429,-218 429,-218 429,-224 423,-230 417,-230"/>
+<text text-anchor="middle" x="342.5" y="-213.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Does anyone else use</text>
+<text text-anchor="middle" x="342.5" y="-200.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">this same KNIME folder?</text>
+</g>
+<!-- q1&#45;&gt;q2 -->
+<g id="edge1" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M412.652,-271.813C402.853,-267.705 393.084,-262.791 384.5,-257 376.768,-251.783 369.479,-244.86 363.211,-237.973"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="365.533,-235.306 356.358,-230.008 360.227,-239.871 365.533,-235.306"/>
+<text text-anchor="middle" x="439" y="-248.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1d2733"> &#160;Windows or Linux</text>
+</g>
+<!-- mac -->
+<g id="node4" class="node">
+<path fill="#e4ecfa" stroke="#3564b0" d="M614.5,-230C614.5,-230 466.5,-230 466.5,-230 460.5,-230 454.5,-224 454.5,-218 454.5,-218 454.5,-202 454.5,-202 454.5,-196 460.5,-190 466.5,-190 466.5,-190 614.5,-190 614.5,-190 620.5,-190 626.5,-196 626.5,-202 626.5,-202 626.5,-218 626.5,-218 626.5,-224 620.5,-230 614.5,-230"/>
+<text text-anchor="middle" x="540.5" y="-213.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">macOS</text>
+<text text-anchor="middle" x="540.5" y="-200.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Use KNIME&#39;s own wizard</text>
+</g>
+<!-- q1&#45;&gt;mac -->
+<g id="edge2" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M486.035,-271.689C495.002,-261.697 506.469,-248.921 516.565,-237.67"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="519.215,-239.958 523.289,-230.178 514.005,-235.282 519.215,-239.958"/>
+<text text-anchor="middle" x="535" y="-248.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1d2733"> &#160;macOS</text>
+</g>
+<!-- q3 -->
+<g id="node3" class="node">
+<path fill="#fff4d6" stroke="#b98a00" d="M264.5,-141.5C264.5,-141.5 136.5,-141.5 136.5,-141.5 130.5,-141.5 124.5,-135.5 124.5,-129.5 124.5,-129.5 124.5,-113.5 124.5,-113.5 124.5,-107.5 130.5,-101.5 136.5,-101.5 136.5,-101.5 264.5,-101.5 264.5,-101.5 270.5,-101.5 276.5,-107.5 276.5,-113.5 276.5,-113.5 276.5,-129.5 276.5,-129.5 276.5,-135.5 270.5,-141.5 264.5,-141.5"/>
+<text text-anchor="middle" x="200.5" y="-124.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Do you have</text>
+<text text-anchor="middle" x="200.5" y="-111.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">administrator rights?</text>
+</g>
+<!-- q2&#45;&gt;q3 -->
+<g id="edge3" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M310.986,-189.803C290.211,-177.148 262.824,-160.465 240.515,-146.875"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="242.287,-143.857 231.926,-141.643 238.646,-149.835 242.287,-143.857"/>
+<text text-anchor="middle" x="297.5" y="-166.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1d2733"> &#160;Yes</text>
+</g>
+<!-- me -->
+<g id="node6" class="node">
+<path fill="#e4ecfa" stroke="#3564b0" d="M467.5,-148C467.5,-148 313.5,-148 313.5,-148 307.5,-148 301.5,-142 301.5,-136 301.5,-136 301.5,-107 301.5,-107 301.5,-101 307.5,-95 313.5,-95 313.5,-95 467.5,-95 467.5,-95 473.5,-95 479.5,-101 479.5,-107 479.5,-107 479.5,-136 479.5,-136 479.5,-142 473.5,-148 467.5,-148"/>
+<text text-anchor="middle" x="390.5" y="-131.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">JUST ME</text>
+<text text-anchor="middle" x="390.5" y="-118.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Only you get the plugin.</text>
+<text text-anchor="middle" x="390.5" y="-105.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">No special rights needed.</text>
+</g>
+<!-- q2&#45;&gt;me -->
+<g id="edge4" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M353.153,-189.803C358.461,-180.237 365.046,-168.37 371.202,-157.276"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="374.443,-158.65 376.234,-148.208 368.322,-155.253 374.443,-158.65"/>
+<text text-anchor="middle" x="406.5" y="-166.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1d2733"> &#160;No, only me</text>
+</g>
+<!-- all -->
+<g id="node5" class="node">
+<path fill="#dff3e3" stroke="#2d8a46" d="M167,-53C167,-53 12,-53 12,-53 6,-53 0,-47 0,-41 0,-41 0,-12 0,-12 0,-6 6,-0 12,-0 12,-0 167,-0 167,-0 173,-0 179,-6 179,-12 179,-12 179,-41 179,-41 179,-47 173,-53 167,-53"/>
+<text text-anchor="middle" x="89.5" y="-36.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">ALL USERS</text>
+<text text-anchor="middle" x="89.5" y="-23.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Everyone gets the plugin.</text>
+<text text-anchor="middle" x="89.5" y="-10.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">You do it once.</text>
+</g>
+<!-- q3&#45;&gt;all -->
+<g id="edge5" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M177.77,-101.456C163.489,-89.4905 144.698,-73.7469 128.125,-59.8618"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="130.111,-56.9589 120.198,-53.2195 125.615,-62.3246 130.111,-56.9589"/>
+<text text-anchor="middle" x="165.5" y="-71.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1d2733"> &#160;Yes</text>
+</g>
+<!-- ask -->
+<g id="node7" class="node">
+<path fill="#fde8e4" stroke="#c0492f" d="M406.5,-53C406.5,-53 216.5,-53 216.5,-53 210.5,-53 204.5,-47 204.5,-41 204.5,-41 204.5,-12 204.5,-12 204.5,-6 210.5,-0 216.5,-0 216.5,-0 406.5,-0 406.5,-0 412.5,-0 418.5,-6 418.5,-12 418.5,-12 418.5,-41 418.5,-41 418.5,-47 412.5,-53 406.5,-53"/>
+<text text-anchor="middle" x="311.5" y="-36.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Ask your administrator to do</text>
+<text text-anchor="middle" x="311.5" y="-23.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">ALL USERS. Until then, JUST ME</text>
+<text text-anchor="middle" x="311.5" y="-10.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">works for you alone.</text>
+</g>
+<!-- q3&#45;&gt;ask -->
+<g id="edge6" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M223.23,-101.456C237.511,-89.4905 256.302,-73.7469 272.875,-59.8618"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="275.385,-62.3246 280.802,-53.2195 270.889,-56.9589 275.385,-62.3246"/>
+<text text-anchor="middle" x="275" y="-71.2" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1d2733"> &#160;No</text>
+</g>
+</g>
+</svg>
+</div></figure>
+<p><span class="tag all">All users</span> is the better choice when people share one KNIME: there is one copy to look after, and it keeps working when an administrator changes KNIME.
+<span class="tag me">Just me</span> needs no rights, but each person installs and updates their own copy, and it stops loading if an administrator later changes KNIME (<a href="#trouble">section 8</a> has the fix).</p>
+
+<h2 id="windows">3. Windows</h2>
+<h3><span class="tag all">All users</span> You need administrator rights</h3>
+<ol class="steps all">
+  <li><b>Close KNIME</b>, and ask anyone else using it to close it too.</li>
+  <li><b>Extract the zip.</b> Right-click it &rsaquo; <b>Extract All...</b> Running from inside the zip doesn't work.</li>
+  <li>In the extracted folder, right-click <code>install-ovf.cmd</code> &rsaquo; <b>Run as administrator</b>.</li>
+  <li><b>Answer two questions.</b> Press Enter to accept the KNIME folder, or type its path. Then type <code>1</code>.</li>
+  <li><b>Restart KNIME.</b> Do this for everyone using it.</li>
+</ol>
+<p>Then set the recommended folder permissions, so ordinary users can't change KNIME by accident. In an administrator Command Prompt, from the extracted folder:</p>
+<pre><code>install-ovf.cmd -Knime "C:\Program Files\KNIME" -Mode admin -ApplyPermissions</code></pre>
+
+<h3><span class="tag me">Just me</span> No special rights needed</h3>
+<ol class="steps me">
+  <li><b>Close KNIME.</b></li>
+  <li><b>Extract the zip.</b> Right-click it &rsaquo; <b>Extract All...</b></li>
+  <li>In the extracted folder, <b>double-click</b> <code>install-ovf.cmd</code>.</li>
+  <li><b>Answer two questions.</b> Press Enter to accept the KNIME folder, or type its path. Then type <code>2</code>.</li>
+  <li><b>Restart KNIME.</b></li>
+</ol>
+
+<p>The KNIME folder is the one holding <code>knime.exe</code>. To find it, right-click the KNIME shortcut &rsaquo; <b>Open file location</b>.</p>
+<div class="note">If Windows warns about a downloaded file, choose <b>More info &rsaquo; Run anyway</b>. If your organization's policy blocks the script, ask your administrator: they need to allow or sign <code>install-ovf.ps1</code>.</div>
+
+<h2 id="linux">4. Linux</h2>
+<h3><span class="tag all">All users</span> You need sudo</h3>
+<ol class="steps all">
+  <li><b>Close KNIME</b>, and ask anyone else using it to close it too.</li>
+  <li><b>Extract the zip</b> into a new folder, then go there.</li>
+  <li><b>Run</b> <code>sudo ./install-ovf.sh</code></li>
+  <li><b>Answer two questions.</b> Press Enter to accept the KNIME folder, or type its path. Then type <code>1</code>.</li>
+  <li><b>Restart KNIME.</b> Do this for everyone using it.</li>
+</ol>
+<pre><code>unzip ovf-serverconnector-5.x-1.0.4-installer.zip -d ovf-installer
+cd ovf-installer
+sudo ./install-ovf.sh --knime /opt/knime --mode admin --apply-permissions</code></pre>
+<p>This one command also sets the recommended folder permissions. Change <code>5.x</code> to <code>4.1.x</code> and <code>/opt/knime</code> to your KNIME folder as needed.</p>
+
+<h3><span class="tag me">Just me</span> No special rights needed</h3>
+<ol class="steps me">
+  <li><b>Close KNIME.</b></li>
+  <li><b>Extract the zip</b> into a new folder, then go there.</li>
+  <li><b>Run</b> <code>./install-ovf.sh</code> without sudo.</li>
+  <li><b>Answer two questions.</b> Press Enter to accept the KNIME folder, or type its path. Then type <code>2</code>.</li>
+  <li><b>Restart KNIME.</b></li>
+</ol>
+<p>The KNIME folder is the one holding the <code>knime</code> program, <code>knime.ini</code> and <code>plugins</code>.</p>
+
+<h2 id="macos">5. macOS</h2>
+<div class="note"><b>Not tested on macOS.</b> The plugin has no Windows- or Linux-specific code, so it's expected to work, but nobody has confirmed it. The installer scripts don't support macOS, so use KNIME's own wizard.</div>
+<ol class="steps me">
+  <li><b>Open the wizard:</b> File &rsaquo; <b>Install KNIME Extensions...</b> In KNIME 5's Modern UI: <b>Menu &rsaquo; Install extensions</b>.</li>
+  <li>Click <b>Add...</b>, then paste the update-site address from <a href="#download">section 1</a> into <b>Location</b>. Click <b>Add</b>.</li>
+  <li>Tick <b>OVF Server Explorer</b>, click <b>Next</b>, accept the license, click <b>Finish</b>.</li>
+  <li>KNIME warns that the plugin is unsigned. Choose <b>Install anyway</b>.</li>
+  <li><b>Restart KNIME</b> when asked.</li>
+</ol>
+<p>The wizard also works on Windows and Linux, but it can't ask who the plugin is for. It installs for everyone if you can write to the KNIME folder, and otherwise for you alone.</p>
+
+<h2 id="worked">6. Check that it worked</h2>
+<div class="note"><b>KNIME 5:</b> the tab is only in the classic user interface. If KNIME opens in the Modern UI (a dark bar with Home, Preferences and Menu at the top), click <b>Menu &rsaquo; Switch to classic user interface</b>. KNIME reopens with the tab. To go back, click <b>Open KNIME Modern UI</b> at the top right.</div>
+<p>When the installer succeeds, it prints a line like one of these:</p>
+<pre><code>Installed for everyone: C:\Program Files\KNIME\plugins\org.ovf.serverconnector_1.0.4.413.jar
+Installed: C:\Users\you\.eclipse\1637230351_win32_win32_x86_64\plugins\org.ovf.serverconnector_1.0.4.413.jar
+
+Restart KNIME. The Server Explorer tab appears next to KNIME Explorer.</code></pre>
+<figure><div class="card"><img src="data:image/png;base64,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" alt="Top left of the KNIME window: the Server Explorer tab is open next to KNIME Explorer, showing No server configured and the local workspace."></div>
+<figcaption>The Server Explorer tab, next to KNIME Explorer, after clicking it. This shows a new install with no server set up yet.</figcaption></figure>
+<p>To connect to a server, click the gear icon in the tab, or go to <b>File &rsaquo; Preferences &rsaquo; Server Connector &rsaquo; Servers</b>. The <b>Server Connector</b> page also says who has the plugin and where its files are.</p>
+
+<h2 id="where">7. Where the files go, and permissions</h2>
+<figure><div class="card"><svg role="img" aria-label="All users: the plugin goes in the KNIME folder and everyone gets it. Just me: it goes in your private area and only you get it." style="width:482pt;max-width:100%;height:auto"
+ viewBox="7.20 7.20 475.20 323.20" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(11.2 319.2)">
+
+<polygon fill="white" stroke="none" points="-4,4 -4,-312 464,-312 464,4 -4,4"/>
+<g id="clust1" class="cluster">
+<path fill="#f2f6fd" stroke="#3564b0" d="M20,-8C20,-8 440,-8 440,-8 446,-8 452,-14 452,-20 452,-20 452,-114 452,-114 452,-120 446,-126 440,-126 440,-126 20,-126 20,-126 14,-126 8,-120 8,-114 8,-114 8,-20 8,-20 8,-14 14,-8 20,-8"/>
+<text text-anchor="middle" x="70.5" y="-111.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">JUST ME install</text>
+</g>
+<g id="clust2" class="cluster">
+<path fill="#f1faf3" stroke="#2d8a46" d="M28.5,-126C28.5,-126 413,-126 413,-126 419,-126 425,-132 425,-138 425,-138 425,-288 425,-288 425,-294 419,-300 413,-300 413,-300 28.5,-300 28.5,-300 22.5,-300 16.5,-294 16.5,-288 16.5,-288 16.5,-138 16.5,-138 16.5,-132 22.5,-126 28.5,-126"/>
+<text text-anchor="middle" x="88" y="-285.6" font-family="Helvetica,sans-Serif" font-weight="bold" font-size="13.00">ALL USERS install</text>
+</g>
+<!-- b -->
+<g id="node1" class="node">
+<path fill="#e4ecfa" stroke="#3564b0" d="M224,-80.5C224,-80.5 20,-80.5 20,-80.5 14,-80.5 8,-74.5 8,-68.5 8,-68.5 8,-41.5 8,-41.5 8,-35.5 14,-29.5 20,-29.5 20,-29.5 224,-29.5 224,-29.5 230,-29.5 236,-35.5 236,-41.5 236,-41.5 236,-68.5 236,-68.5 236,-74.5 230,-80.5 224,-80.5"/>
+<text text-anchor="start" x="20" y="-64.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Your private area \ plugins</text>
+<text text-anchor="start" x="20" y="-51.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">C:\Users\you\.eclipse\&lt;id&gt;\plugins</text>
+<text text-anchor="start" x="20" y="-38.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">~/.eclipse/&lt;id&gt;/plugins</text>
+</g>
+<!-- b1 -->
+<g id="node2" class="node">
+<path fill="white" stroke="#5b6b7b" d="M384,-44C384,-44 354,-44 354,-44 348,-44 342,-38 342,-32 342,-32 342,-20 342,-20 342,-14 348,-8 354,-8 354,-8 384,-8 384,-8 390,-8 396,-14 396,-20 396,-20 396,-32 396,-32 396,-38 390,-44 384,-44"/>
+<text text-anchor="middle" x="369" y="-22.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">You</text>
+</g>
+<!-- b&#45;&gt;b1 -->
+<g id="edge1" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M236.177,-41.6035C270.625,-37.526 306.062,-33.3314 331.507,-30.3196"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="332.249,-33.7563 341.768,-29.105 331.426,-26.8048 332.249,-33.7563"/>
+</g>
+<!-- b2 -->
+<g id="node3" class="node">
+<path fill="#fde8e4" stroke="#c0492f" d="M440,-104C440,-104 298,-104 298,-104 292,-104 286,-98 286,-92 286,-92 286,-78 286,-78 286,-72 292,-66 298,-66 298,-66 440,-66 440,-66 446,-66 452,-72 452,-78 452,-78 452,-92 452,-92 452,-98 446,-104 440,-104"/>
+<text text-anchor="middle" x="369" y="-88.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Colleague: no plugin</text>
+<text text-anchor="middle" x="369" y="-75.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">(installs their own copy)</text>
+</g>
+<!-- b&#45;&gt;b2 -->
+<g id="edge2" class="edge">
+<path fill="none" stroke="#c0492f" stroke-dasharray="5,2" d="M236.177,-68.8584C251.029,-70.677 266.064,-72.518 280.403,-74.2739"/>
+<polygon fill="#c0492f" stroke="#c0492f" points="285.268,-69.8322 284.053,-79.7581 282.067,-79.515 283.283,-69.5891 285.268,-69.8322"/>
+<polyline fill="none" stroke="#c0492f" points="285.653,-74.9167 280.69,-74.3089 "/>
+</g>
+<!-- a -->
+<g id="node4" class="node">
+<path fill="#dff3e3" stroke="#2d8a46" d="M215.5,-227.5C215.5,-227.5 28.5,-227.5 28.5,-227.5 22.5,-227.5 16.5,-221.5 16.5,-215.5 16.5,-215.5 16.5,-188.5 16.5,-188.5 16.5,-182.5 22.5,-176.5 28.5,-176.5 28.5,-176.5 215.5,-176.5 215.5,-176.5 221.5,-176.5 227.5,-182.5 227.5,-188.5 227.5,-188.5 227.5,-215.5 227.5,-215.5 227.5,-221.5 221.5,-227.5 215.5,-227.5"/>
+<text text-anchor="start" x="28.5" y="-211.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">KNIME folder \ plugins</text>
+<text text-anchor="start" x="28.5" y="-198.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">C:\Program Files\KNIME\plugins</text>
+<text text-anchor="start" x="28.5" y="-185.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">/opt/knime/plugins</text>
+</g>
+<!-- a1 -->
+<g id="node5" class="node">
+<path fill="white" stroke="#5b6b7b" d="M384,-162C384,-162 354,-162 354,-162 348,-162 342,-156 342,-150 342,-150 342,-138 342,-138 342,-132 348,-126 354,-126 354,-126 384,-126 384,-126 390,-126 396,-132 396,-138 396,-138 396,-150 396,-150 396,-156 390,-162 384,-162"/>
+<text text-anchor="middle" x="369" y="-140.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">You</text>
+</g>
+<!-- a&#45;&gt;a1 -->
+<g id="edge3" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M227.613,-177.235C264.863,-168.416 304.368,-159.064 331.949,-152.534"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="332.982,-155.887 341.907,-150.177 331.369,-149.075 332.982,-155.887"/>
+</g>
+<!-- a2 -->
+<g id="node6" class="node">
+<path fill="white" stroke="#5b6b7b" d="M399,-220C399,-220 339,-220 339,-220 333,-220 327,-214 327,-208 327,-208 327,-196 327,-196 327,-190 333,-184 339,-184 339,-184 399,-184 399,-184 405,-184 411,-190 411,-196 411,-196 411,-208 411,-208 411,-214 405,-220 399,-220"/>
+<text text-anchor="middle" x="369" y="-198.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Colleague</text>
+</g>
+<!-- a&#45;&gt;a2 -->
+<g id="edge4" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M227.613,-202C258.362,-202 290.648,-202 316.495,-202"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="316.791,-205.5 326.791,-202 316.791,-198.5 316.791,-205.5"/>
+</g>
+<!-- a3 -->
+<g id="node7" class="node">
+<path fill="white" stroke="#5b6b7b" d="M413,-278C413,-278 325,-278 325,-278 319,-278 313,-272 313,-266 313,-266 313,-254 313,-254 313,-248 319,-242 325,-242 325,-242 413,-242 413,-242 419,-242 425,-248 425,-254 425,-254 425,-266 425,-266 425,-272 419,-278 413,-278"/>
+<text text-anchor="middle" x="369" y="-256.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">New colleague</text>
+</g>
+<!-- a&#45;&gt;a3 -->
+<g id="edge5" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M227.613,-226.765C253.104,-232.8 279.651,-239.085 302.71,-244.544"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="302.166,-248.011 312.703,-246.909 303.779,-241.2 302.166,-248.011"/>
+</g>
+</g>
+</svg>
+</div></figure>
+<div class="scroll"><table>
+  <tr><th>What</th><th>Where</th><th>Who should have access</th></tr>
+  <tr><td><b>KNIME folder</b></td><td><code>C:\Program Files\KNIME</code><br><code>/opt/knime</code></td><td>Administrators: full control. Everyone else: read and execute only, on all files inside.</td></tr>
+  <tr><td><b>Private area</b>, one per person</td><td><code>C:\Users\you\.eclipse\&lt;id&gt;</code><br><code>~/.eclipse/&lt;id&gt;</code></td><td>Only that person. KNIME creates it. Don't change or share it.</td></tr>
+  <tr><td><b>Workspace</b>, one per person</td><td><code>C:\Users\you\knime-workspace</code><br><code>~/knime-workspace</code></td><td>Only that person. Two people can't have one workspace open at once.</td></tr>
+</table></div>
+<p>To see this report for your own computer without changing anything:</p>
+<pre><code>install-ovf.cmd -Knime "C:\Program Files\KNIME" -Check
+./install-ovf.sh --knime /opt/knime --check</code></pre>
+<p>Two permission settings cause most problems:</p>
+<ul>
+  <li><b>Users can create files but not change them.</b> This is the Windows default if KNIME is unzipped into a folder under <code>C:\</code> instead of Program Files. Installs fail, nodes go missing, and the second person's KNIME may not start.</li>
+  <li><b>Everyone has full control.</b> One user can uninstall the plugin for everybody.</li>
+</ul>
+<p>An administrator can fix both with the permissions option:</p>
+<pre><code>install-ovf.cmd -Knime "C:\KNIME" -Mode admin -ApplyPermissions
+sudo ./install-ovf.sh --knime /opt/knime --mode admin --apply-permissions</code></pre>
+
+<h2 id="trouble">8. If something goes wrong</h2>
+<figure><div class="card"><svg role="img" aria-label="Five symptoms and their fixes, repeated in the table below and in this section's text." style="width:785pt;max-width:100%;height:auto"
+ viewBox="7.20 7.20 778.20 296.70" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(11.2 292.7)">
+
+<polygon fill="white" stroke="none" points="-4,4 -4,-285.5 767,-285.5 767,4 -4,4"/>
+<!-- s -->
+<g id="node1" class="node">
+<path fill="#fff4d6" stroke="#b98a00" d="M66,-159.5C66,-159.5 12,-159.5 12,-159.5 6,-159.5 0,-153.5 0,-147.5 0,-147.5 0,-133.5 0,-133.5 0,-127.5 6,-121.5 12,-121.5 12,-121.5 66,-121.5 66,-121.5 72,-121.5 78,-127.5 78,-133.5 78,-133.5 78,-147.5 78,-147.5 78,-153.5 72,-159.5 66,-159.5"/>
+<text text-anchor="middle" x="39" y="-143.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">What do</text>
+<text text-anchor="middle" x="39" y="-130.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">you see?</text>
+</g>
+<!-- a -->
+<g id="node2" class="node">
+<path fill="#fde8e4" stroke="#c0492f" d="M296,-273.5C296,-273.5 130,-273.5 130,-273.5 124,-273.5 118,-267.5 118,-261.5 118,-261.5 118,-249.5 118,-249.5 118,-243.5 124,-237.5 130,-237.5 130,-237.5 296,-237.5 296,-237.5 302,-237.5 308,-243.5 308,-249.5 308,-249.5 308,-261.5 308,-261.5 308,-267.5 302,-273.5 296,-273.5"/>
+<text text-anchor="middle" x="213" y="-252.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">The installer printed ERROR</text>
+</g>
+<!-- s&#45;&gt;a -->
+<g id="edge1" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M53.4588,-159.533C67.5831,-178.228 91.4024,-206.366 118,-223.5 123.648,-227.138 129.754,-230.41 136.048,-233.343"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="134.808,-236.62 145.374,-237.401 137.601,-230.202 134.808,-236.62"/>
+</g>
+<!-- b -->
+<g id="node3" class="node">
+<path fill="#fde8e4" stroke="#c0492f" d="M282,-215.5C282,-215.5 144,-215.5 144,-215.5 138,-215.5 132,-209.5 132,-203.5 132,-203.5 132,-191.5 132,-191.5 132,-185.5 138,-179.5 144,-179.5 144,-179.5 282,-179.5 282,-179.5 288,-179.5 294,-185.5 294,-191.5 294,-191.5 294,-203.5 294,-203.5 294,-209.5 288,-215.5 282,-215.5"/>
+<text text-anchor="middle" x="213" y="-194.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">No Server Explorer tab</text>
+</g>
+<!-- s&#45;&gt;b -->
+<g id="edge3" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M78.023,-153.869C90.7141,-158.276 104.946,-163.158 118,-167.5 126.714,-170.398 135.901,-173.398 144.98,-176.33"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="144.171,-179.747 154.762,-179.477 146.314,-173.083 144.171,-179.747"/>
+</g>
+<!-- c -->
+<g id="node4" class="node">
+<path fill="#fde8e4" stroke="#c0492f" d="M263,-159.5C263,-159.5 163,-159.5 163,-159.5 157,-159.5 151,-153.5 151,-147.5 151,-147.5 151,-133.5 151,-133.5 151,-127.5 157,-121.5 163,-121.5 163,-121.5 263,-121.5 263,-121.5 269,-121.5 275,-127.5 275,-133.5 275,-133.5 275,-147.5 275,-147.5 275,-153.5 269,-159.5 263,-159.5"/>
+<text text-anchor="middle" x="213" y="-143.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Red tab and a</text>
+<text text-anchor="middle" x="213" y="-130.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Migration wizard</text>
+</g>
+<!-- s&#45;&gt;c -->
+<g id="edge5" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M78.1724,-140.5C96.6272,-140.5 119.39,-140.5 140.876,-140.5"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="140.966,-144 150.966,-140.5 140.966,-137 140.966,-144"/>
+</g>
+<!-- d -->
+<g id="node5" class="node">
+<path fill="#fde8e4" stroke="#c0492f" d="M295,-105.5C295,-105.5 131,-105.5 131,-105.5 125,-105.5 119,-99.5 119,-93.5 119,-93.5 119,-79.5 119,-79.5 119,-73.5 125,-67.5 131,-67.5 131,-67.5 295,-67.5 295,-67.5 301,-67.5 307,-73.5 307,-79.5 307,-79.5 307,-93.5 307,-93.5 307,-99.5 301,-105.5 295,-105.5"/>
+<text text-anchor="middle" x="213" y="-89.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Red tab or &quot;Could not</text>
+<text text-anchor="middle" x="213" y="-76.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">create the view&quot;, no wizard</text>
+</g>
+<!-- s&#45;&gt;d -->
+<g id="edge7" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M78.3472,-126.768C90.9332,-122.384 105.021,-117.607 118,-113.5 123.261,-111.835 128.701,-110.158 134.191,-108.498"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="135.518,-111.754 144.096,-105.536 133.512,-105.048 135.518,-111.754"/>
+</g>
+<!-- e -->
+<g id="node6" class="node">
+<path fill="#fde8e4" stroke="#c0492f" d="M276.5,-48.5C276.5,-48.5 149.5,-48.5 149.5,-48.5 143.5,-48.5 137.5,-42.5 137.5,-36.5 137.5,-36.5 137.5,-22.5 137.5,-22.5 137.5,-16.5 143.5,-10.5 149.5,-10.5 149.5,-10.5 276.5,-10.5 276.5,-10.5 282.5,-10.5 288.5,-16.5 288.5,-22.5 288.5,-22.5 288.5,-36.5 288.5,-36.5 288.5,-42.5 282.5,-48.5 276.5,-48.5"/>
+<text text-anchor="middle" x="213" y="-32.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">KNIME won&#39;t start, or</text>
+<text text-anchor="middle" x="213" y="-19.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">&quot;See the log file null&quot;</text>
+</g>
+<!-- s&#45;&gt;e -->
+<g id="edge9" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M53.7575,-121.488C67.9384,-103.174 91.6445,-75.8989 118,-59.5 121.868,-57.0933 125.947,-54.8628 130.151,-52.798"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="131.866,-55.863 139.521,-48.5382 128.969,-49.4906 131.866,-55.863"/>
+</g>
+<!-- a1 -->
+<g id="node7" class="node">
+<path fill="#dff3e3" stroke="#2d8a46" d="M689,-281.5C689,-281.5 422,-281.5 422,-281.5 416,-281.5 410,-275.5 410,-269.5 410,-269.5 410,-255.5 410,-255.5 410,-249.5 416,-243.5 422,-243.5 422,-243.5 689,-243.5 689,-243.5 695,-243.5 701,-249.5 701,-255.5 701,-255.5 701,-269.5 701,-269.5 701,-275.5 695,-281.5 689,-281.5"/>
+<text text-anchor="start" x="422" y="-265.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Read the lines under it. They say what to do.</text>
+<text text-anchor="start" x="422" y="-252.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Common messages are in the table below.</text>
+</g>
+<!-- a&#45;&gt;a1 -->
+<g id="edge2" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M308.396,-257.441C336.722,-258.023 368.57,-258.678 399.721,-259.318"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="399.736,-262.819 409.806,-259.525 399.88,-255.82 399.736,-262.819"/>
+</g>
+<!-- b1 -->
+<g id="node8" class="node">
+<path fill="#dff3e3" stroke="#2d8a46" d="M751,-227C751,-227 360,-227 360,-227 354,-227 348,-221 348,-215 348,-215 348,-188 348,-188 348,-182 354,-176 360,-176 360,-176 751,-176 751,-176 757,-176 763,-182 763,-188 763,-188 763,-215 763,-215 763,-221 757,-227 751,-227"/>
+<text text-anchor="start" x="360" y="-211.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Restart KNIME. KNIME 5: Menu &gt; Switch to classic user interface.</text>
+<text text-anchor="start" x="360" y="-198.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Same user account as the install?</text>
+<text text-anchor="start" x="360" y="-185.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Then View &gt; Other... &gt; KNIME Views &gt; Server Explorer &gt; Open</text>
+</g>
+<!-- b&#45;&gt;b1 -->
+<g id="edge4" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M294.263,-198.443C307.891,-198.603 322.599,-198.776 337.845,-198.955"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="337.895,-202.456 347.936,-199.073 337.977,-195.456 337.895,-202.456"/>
+</g>
+<!-- c1 -->
+<g id="node9" class="node">
+<path fill="#dff3e3" stroke="#2d8a46" d="M722.5,-159.5C722.5,-159.5 388.5,-159.5 388.5,-159.5 382.5,-159.5 376.5,-153.5 376.5,-147.5 376.5,-147.5 376.5,-133.5 376.5,-133.5 376.5,-127.5 382.5,-121.5 388.5,-121.5 388.5,-121.5 722.5,-121.5 722.5,-121.5 728.5,-121.5 734.5,-127.5 734.5,-133.5 734.5,-133.5 734.5,-147.5 734.5,-147.5 734.5,-153.5 728.5,-159.5 722.5,-159.5"/>
+<text text-anchor="start" x="388.5" y="-143.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">An administrator changed this KNIME. Finish the wizard,</text>
+<text text-anchor="start" x="388.5" y="-130.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">or Cancel it and run the installer again as Just me.</text>
+</g>
+<!-- c&#45;&gt;c1 -->
+<g id="edge6" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M275.268,-140.5C301.296,-140.5 333.186,-140.5 365.991,-140.5"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="366.196,-144 376.196,-140.5 366.196,-137 366.196,-144"/>
+</g>
+<!-- d1 -->
+<g id="node10" class="node">
+<path fill="#dff3e3" stroke="#2d8a46" d="M708.5,-105.5C708.5,-105.5 402.5,-105.5 402.5,-105.5 396.5,-105.5 390.5,-99.5 390.5,-93.5 390.5,-93.5 390.5,-79.5 390.5,-79.5 390.5,-73.5 396.5,-67.5 402.5,-67.5 402.5,-67.5 708.5,-67.5 708.5,-67.5 714.5,-67.5 720.5,-73.5 720.5,-79.5 720.5,-79.5 720.5,-93.5 720.5,-93.5 720.5,-99.5 714.5,-105.5 708.5,-105.5"/>
+<text text-anchor="start" x="402.5" y="-89.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">This KNIME doesn&#39;t have the plugin. Nothing is lost.</text>
+<text text-anchor="start" x="402.5" y="-76.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Install it, or close the tab.</text>
+</g>
+<!-- d&#45;&gt;d1 -->
+<g id="edge8" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M307.043,-86.5C329.815,-86.5 354.925,-86.5 380.155,-86.5"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="380.203,-90.0001 390.203,-86.5 380.203,-83.0001 380.203,-90.0001"/>
+</g>
+<!-- e1 -->
+<g id="node11" class="node">
+<path fill="#dff3e3" stroke="#2d8a46" d="M684.5,-51C684.5,-51 426.5,-51 426.5,-51 420.5,-51 414.5,-45 414.5,-39 414.5,-39 414.5,-12 414.5,-12 414.5,-6 420.5,-3.55271e-15 426.5,-3.55271e-15 426.5,-3.55271e-15 684.5,-3.55271e-15 684.5,-3.55271e-15 690.5,-3.55271e-15 696.5,-6 696.5,-12 696.5,-12 696.5,-39 696.5,-39 696.5,-45 690.5,-51 684.5,-51"/>
+<text text-anchor="start" x="426.5" y="-35.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">The KNIME folder&#39;s permissions are wrong.</text>
+<text text-anchor="start" x="426.5" y="-22.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">An administrator runs the installer with</text>
+<text text-anchor="start" x="426.5" y="-9.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">the permissions option (section 7).</text>
+</g>
+<!-- e&#45;&gt;e1 -->
+<g id="edge10" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M288.724,-28.6222C322.743,-28.2225 364.285,-27.7345 404.325,-27.2642"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="404.509,-30.7623 414.467,-27.145 404.427,-23.7628 404.509,-30.7623"/>
+</g>
+</g>
+</svg>
+</div></figure>
+<p>The installer's messages usually name the cause. These are the common ones:</p>
+<div class="scroll"><table>
+  <tr><th>It says</th><th>What to do</th></tr>
+  <tr><td>this installer is for KNIME 4.x but ... is KNIME 5.x</td><td>You have the wrong zip. Download the other one (<a href="#download">section 1</a>).</td></tr>
+  <tr><td>... is missing, and it belongs to another extension</td><td>Another extension is damaged, not this plugin. Ask an administrator to restore or remove that extension, or to install this plugin for all users.</td></tr>
+  <tr><td>The plugin was installed for everyone, but its jar is gone</td><td>An administrator runs the all-users install again.</td></tr>
+  <tr><td>can create files in it but can't change KNIME's own files</td><td>An administrator fixes the permissions (<a href="#where">section 7</a>).</td></tr>
+  <tr><td>another install was probably running</td><td>Wait for it to finish, then run the installer again.</td></tr>
+  <tr><td>can't be read ... It may be damaged</td><td>Download the installer zip again.</td></tr>
+  <tr><td>knime.ini sets KNIME's configuration</td><td>Take the <code>-configuration</code> lines out of <code>knime.ini</code>, install, then put them back. A Just me install handles this by itself.</td></tr>
+  <tr><td>can't create a temporary file</td><td>Free some space there, or point <code>TEMP</code> (Windows) or <code>TMPDIR</code> (Linux) at a folder you can write to.</td></tr>
+</table></div>
+<p>If the message doesn't help, send your administrator the <code>Full log</code> file named at the end of the installer's output.</p>
+
+<h2 id="update">9. Update or remove</h2>
+<p><b>Update:</b> download the new zip and run the installer the same way you did the first time. It replaces the old version. With Just me, each person does this for themselves. Along the way you may see <code>Cannot complete the install because of a conflicting dependency</code>, followed by <code>Replacing the installed version...</code> That is normal.</p>
+<div class="note">If you installed Just me and an administrator then installs for all users, your own old copy keeps loading. Run the installer as Just me once to bring it up to date.</div>
+<p><b>Remove:</b> close KNIME, then use the same mode you installed with:</p>
+<pre><code>install-ovf.cmd -Knime "C:\Program Files\KNIME" -Mode admin -Uninstall    (or -Mode user)
+./install-ovf.sh --knime /opt/knime --mode admin --uninstall              (or --mode user)</code></pre>
+<p>If you used the wizard: <b>Help &rsaquo; About KNIME &rsaquo; Installation Details</b>, select <b>OVF Server Explorer</b>, click <b>Uninstall...</b></p>
+<p>If a tab then shows an error, close it. Your workflows aren't affected.</p>
+
+<h2 id="tested">10. What this was tested on</h2>
+<div class="scroll"><table>
+  <tr><th>Platform</th><th>KNIME</th><th>Result</th></tr>
+  <tr><td>Linux</td><td>4.1.3</td><td>All users and Just me: install, update from 1.0.3, remove. Tab checked.</td></tr>
+  <tr><td>Linux</td><td>5.8.1</td><td>All users and Just me: install, update from 1.0.3. Tab checked in the classic UI.</td></tr>
+  <tr><td>Windows Server 2022</td><td>4.1.3</td><td>All users and Just me: install, remove, permissions. Tab checked.</td></tr>
+  <tr><td>Windows Server 2022</td><td>5.8.1</td><td>All users and Just me: install, remove, permissions. Tab checked in the classic UI. The test machine couldn't run the Modern UI, with or without the plugin.</td></tr>
+  <tr><td>Any</td><td>4.2.3</td><td>The 4.1.x plugin installs. The 1.0.4 installer wasn't tried on it.</td></tr>
+</table></div>
+<p>Not tested: macOS, Windows 10 and 11, other KNIME versions, domain Group Policy, antivirus software, roaming profiles, and KNIME on a remote file server.</p>
+
+</body>
+</html>

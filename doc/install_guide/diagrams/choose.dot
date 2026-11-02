@@ -1,0 +1,19 @@
+digraph choose {
+  rankdir=TB; nodesep=0.35; ranksep=0.42; bgcolor="white"; margin=0.1;
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, margin="0.18,0.10", color="#5b6b7b", fillcolor="#eef2f6", fontcolor="#1d2733"];
+  edge [fontname="Helvetica", fontsize=11, color="#5b6b7b", fontcolor="#1d2733"];
+  q1 [label="What is your computer?", shape=box, fillcolor="#fff4d6", color="#b98a00"];
+  q2 [label="Does anyone else use\nthis same KNIME folder?", fillcolor="#fff4d6", color="#b98a00"];
+  q3 [label="Do you have\nadministrator rights?", fillcolor="#fff4d6", color="#b98a00"];
+  mac [label="macOS\nUse KNIME's own wizard", fillcolor="#e4ecfa", color="#3564b0"];
+  all [label="ALL USERS\nEveryone gets the plugin.\nYou do it once.", fillcolor="#dff3e3", color="#2d8a46"];
+  me [label="JUST ME\nOnly you get the plugin.\nNo special rights needed.", fillcolor="#e4ecfa", color="#3564b0"];
+  ask [label="Ask your administrator to do\nALL USERS. Until then, JUST ME\nworks for you alone.", fillcolor="#fde8e4", color="#c0492f"];
+  q1 -> q2 [label="  Windows or Linux"];
+  q1 -> mac [label="  macOS"];
+  q2 -> q3 [label="  Yes"];
+  q2 -> me [label="  No, only me"];
+  q3 -> all [label="  Yes"];
+  q3 -> ask [label="  No"];
+  {rank=same; q2; mac}
+}

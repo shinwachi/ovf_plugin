@@ -6,8 +6,13 @@ Eclipse p2 update-site archives in `dist/`:
 - `ovf-serverconnector-5.x-<ver>-updatesite.zip`
 - `ovf-serverconnector-4.1.x-<ver>-updatesite.zip`
 
-`{5x,413}/INSTALL.txt` are the templates for the dropin zips' INSTALL.txt
-(`@VERSION@` and `@BUNDLE_VERSION@` are substituted at build time).
+`{5x,413}/INSTALL.txt` are the templates for the INSTALL.txt in the dropin and
+installer zips (`@VERSION@` and `@BUNDLE_VERSION@` are substituted at build time).
+
+`installer/` holds the `install-ovf` scripts for the
+`ovf-serverconnector-<label>-<ver>-installer.zip` archives, which also contain the
+update-site zip (`@KNIME_MAJOR@` is substituted at build time). The p2 wizard can't
+take a custom page, so the admin-or-user choice lives in these scripts.
 
 ## Rebuild
 

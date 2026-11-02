@@ -51,11 +51,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
 import org.ovf.serverconnector.actions.CopyUrlAction;
@@ -84,7 +81,7 @@ import org.ovf.serverconnector.util.WorkflowContentIndex.Field;
  * workflow repository and the local KNIME workspace. Users can browse, upload,
  * download, and delete workflows between the two.
  *
- * Open via: Window > Show View > Other > Server Connector > Server Explorer
+ * Open via: View > Other... > KNIME Views > Server Explorer
  */
 public class ServerExplorerView extends ViewPart {
 
@@ -130,22 +127,6 @@ public class ServerExplorerView extends ViewPart {
     // Generation counter so an in-flight scan's result is dropped if
     // the user typed more characters after we kicked off the scan.
     private final AtomicInteger searchGeneration = new AtomicInteger(0);
-
-    @Override
-    public void init(IViewSite site, IMemento memento) throws PartInitException {
-        super.init(site, memento);
-        // Move our MPart into KNIME Explorer's PartStack *before* the
-        // renderer creates any SWT widgets. Reparenting in the model
-        // here is purely a tree edit; the renderer then materializes the
-        // widget under the new parent. Doing the same move after
-        // createPartControl reparents a live GTK widget tree and SIGABRTs
-        // the JVM with no hs_err.
-        try {
-            ServerConnectorActivator.getInstance().tryCoStack(site.getWorkbenchWindow());
-        } catch (Throwable t) {
-            System.err.println("[ServerExplorer] Co-stack at init() failed (non-fatal): " + t);
-        }
-    }
 
     @Override
     public void createPartControl(Composite parent) {

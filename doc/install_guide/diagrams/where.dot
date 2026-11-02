@@ -1,0 +1,15 @@
+digraph where {
+  rankdir=LR; nodesep=0.3; ranksep=0.7; bgcolor="white"; compound=true; margin=0.1;
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, margin="0.16,0.09", color="#5b6b7b", fillcolor="#eef2f6", fontcolor="#1d2733"];
+  edge [fontname="Helvetica", fontsize=11, color="#5b6b7b", fontcolor="#1d2733"];
+  subgraph cluster_b { label="JUST ME install"; labeljust=l; fontname="Helvetica-Bold"; fontsize=13; style="rounded,filled"; color="#3564b0"; fillcolor="#f2f6fd";
+    b [label="Your private area \\ plugins\lC:\\Users\\you\\.eclipse\\<id>\\plugins\l~/.eclipse/<id>/plugins\l", fillcolor="#e4ecfa", color="#3564b0"];
+    b1 [label="You", fillcolor="white"]; b2 [label="Colleague: no plugin\n(installs their own copy)", fillcolor="#fde8e4", color="#c0492f"];
+    b -> b1; b -> b2 [style=dashed, color="#c0492f", arrowhead=tee];
+  }
+  subgraph cluster_a { label="ALL USERS install"; labeljust=l; fontname="Helvetica-Bold"; fontsize=13; style="rounded,filled"; color="#2d8a46"; fillcolor="#f1faf3";
+    a [label="KNIME folder \\ plugins\lC:\\Program Files\\KNIME\\plugins\l/opt/knime/plugins\l", fillcolor="#dff3e3", color="#2d8a46"];
+    a1 [label="You", fillcolor="white"]; a2 [label="Colleague", fillcolor="white"]; a3 [label="New colleague", fillcolor="white"];
+    a -> a1; a -> a2; a -> a3;
+  }
+}

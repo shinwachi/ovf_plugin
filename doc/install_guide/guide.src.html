@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Install OVF Server Explorer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1d2733; --muted: #5b6b7b; --line: #d5dce3; --soft: #f3f5f8;
+    --all: #2d8a46; --all-soft: #e9f6ec; --me: #3564b0; --me-soft: #e9f0fb;
+    --warn: #b98a00; --warn-soft: #fff7e0; --link: #1f5fbf;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14181d; --fg: #e4e9ee; --muted: #9dabb8; --line: #36404a; --soft: #1e242b;
+      --all: #62c280; --all-soft: #18291e; --me: #84aee8; --me-soft: #18233a;
+      --warn: #e0b83f; --warn-soft: #2c2610; --link: #84aee8;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto; max-width: 52rem; padding: 2rem 16px 4rem;
+    background: var(--bg); color: var(--fg);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  h1 { font-size: 2rem; margin: 0 0 .25rem; line-height: 1.2; }
+  h2 { font-size: 1.4rem; margin: 2.75rem 0 .6rem; padding-top: .9rem; border-top: 1px solid var(--line); }
+  h3 { font-size: 1.08rem; margin: 1.6rem 0 .5rem; }
+  p { margin: .6rem 0; }
+  a { color: var(--link); }
+  .lead { color: var(--muted); margin-top: 0; }
+  code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .88em; }
+  code { background: var(--soft); padding: .08em .3em; border-radius: 3px; overflow-wrap: anywhere; }
+  pre { background: var(--soft); padding: .7rem .9rem; border-radius: 6px; overflow-x: auto; margin: .6rem 0; }
+  pre code { background: none; padding: 0; overflow-wrap: normal; }
+  table { border-collapse: collapse; width: 100%; margin: .8rem 0; font-size: .95rem; }
+  th, td { text-align: left; vertical-align: top; padding: .45rem .6rem; border-bottom: 1px solid var(--line); }
+  th { background: var(--soft); }
+  .scroll { overflow-x: auto; }
+  nav { background: var(--soft); border-radius: 8px; padding: .7rem 1rem; margin: 1.2rem 0; }
+  nav ol { margin: 0; padding-left: 1.3rem; columns: 2; }
+  @media (max-width: 34rem) { nav ol { columns: 1; } }
+  figure { margin: 1rem 0; }
+  figure .card { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: .5rem; text-align: center; overflow-x: auto; }
+  figure img { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+  figcaption { color: var(--muted); font-size: .88rem; margin-top: .35rem; }
+  .steps { list-style: none; counter-reset: s; padding: 0; margin: .8rem 0; display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); }
+  .steps li { counter-increment: s; position: relative; border: 1px solid var(--line); border-top: 4px solid var(--c); border-radius: 8px; padding: .55rem .7rem .7rem; background: var(--tint); font-size: .94rem; }
+  .steps li::before { content: counter(s); display: block; font-weight: 700; color: var(--c); font-size: 1.15rem; }
+  .steps li:not(:last-child)::after { content: "\2192"; position: absolute; right: -19px; top: 42%; color: var(--muted); font-size: 1.05rem; }
+  @media (max-width: 34rem) { .steps { grid-template-columns: 1fr; } .steps li:not(:last-child)::after { content: "\2193"; right: 46%; top: auto; bottom: -24px; } }
+  .all { --c: var(--all); --tint: var(--all-soft); }
+  .me { --c: var(--me); --tint: var(--me-soft); }
+  .note { border-left: 4px solid var(--warn); background: var(--warn-soft); padding: .55rem .8rem; border-radius: 0 6px 6px 0; margin: .9rem 0; }
+  .tag { font-size: .78rem; font-weight: 700; padding: .1em .45em; border-radius: 4px; color: var(--c); background: var(--tint); border: 1px solid var(--c); white-space: nowrap; }
+  @media print {
+    body { max-width: none; padding: 0; font-size: 11pt; }
+    nav { display: none; }
+    h2 { break-after: avoid; } h3 { break-after: avoid; }
+    figure, .steps, tr, pre, .note { break-inside: avoid; }
+    tr:first-child { break-after: avoid; }
+    pre, pre code { white-space: pre-wrap; overflow-wrap: anywhere; }
+    figure { margin: .6rem 0; }
+  }
+  @page { margin: 16mm; }
+</style>
+</head>
+<body>
+
+<h1>Install OVF Server Explorer</h1>
+<p class="lead">Version 1.0.4, for KNIME on Windows, Linux and macOS. Adds a Server Explorer tab next to KNIME Explorer. This is a third-party plugin, not a KNIME product.</p>
+
+<nav aria-label="Contents"><ol>
+  <li><a href="#download">Get the right download</a></li>
+  <li><a href="#choose">Choose how to install</a></li>
+  <li><a href="#windows">Windows</a></li>
+  <li><a href="#linux">Linux</a></li>
+  <li><a href="#macos">macOS</a></li>
+  <li><a href="#worked">Check that it worked</a></li>
+  <li><a href="#where">Where the files go, and permissions</a></li>
+  <li><a href="#trouble">If something goes wrong</a></li>
+  <li><a href="#update">Update or remove</a></li>
+  <li><a href="#tested">What this was tested on</a></li>
+</ol></nav>
+
+<h2 id="download">1. Get the right download</h2>
+<p>Find your KNIME version under <b>Help &rsaquo; About KNIME</b>, then download the installer for it. There are two builds, and the installer refuses the wrong one.</p>
+<div class="scroll"><table>
+  <tr><th>Your KNIME</th><th>Installer (Windows, Linux)</th><th>Update-site address (macOS, or KNIME's wizard)</th></tr>
+  <tr><td><b>5.x</b></td>
+      <td><a href="https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.4-installer.zip">5.x installer zip</a></td>
+      <td><code>https://shinwachi.github.io/ovf-updates/5x/</code></td></tr>
+  <tr><td><b>4.1 or 4.2</b></td>
+      <td><a href="https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.4-installer.zip">4.1.x installer zip</a></td>
+      <td><code>https://shinwachi.github.io/ovf-updates/4.1.x/</code></td></tr>
+</table></div>
+<p>No internet on the KNIME computer? Copy the zip over. It has everything inside. All files are on the <a href="https://shinwachi.github.io/ovf-updates/downloads/">downloads page</a>.</p>
+
+<h2 id="choose">2. Choose how to install</h2>
+<figure><div class="card"><!--svg:choose Decision chart. macOS uses KNIME's wizard. On Windows or Linux, if others share the KNIME folder and you have administrator rights, choose All users. If you are the only user, choose Just me. If you share it without rights, ask an administrator.--></div></figure>
+<p><span class="tag all">All users</span> is the better choice when people share one KNIME: there is one copy to look after, and it keeps working when an administrator changes KNIME.
+<span class="tag me">Just me</span> needs no rights, but each person installs and updates their own copy, and it stops loading if an administrator later changes KNIME (<a href="#trouble">section 8</a> has the fix).</p>
+
+<h2 id="windows">3. Windows</h2>
+<h3><span class="tag all">All users</span> You need administrator rights</h3>
+<ol class="steps all">
+  <li><b>Close KNIME</b>, and ask anyone else using it to close it too.</li>
+  <li><b>Extract the zip.</b> Right-click it &rsaquo; <b>Extract All...</b> Running from inside the zip doesn't work.</li>
+  <li>In the extracted folder, right-click <code>install-ovf.cmd</code> &rsaquo; <b>Run as administrator</b>.</li>
+  <li><b>Answer two questions.</b> Press Enter to accept the KNIME folder, or type its path. Then type <code>1</code>.</li>
+  <li><b>Restart KNIME.</b> Do this for everyone using it.</li>
+</ol>
+<p>Then set the recommended folder permissions, so ordinary users can't change KNIME by accident. In an administrator Command Prompt, from the extracted folder:</p>
+<pre><code>install-ovf.cmd -Knime "C:\Program Files\KNIME" -Mode admin -ApplyPermissions</code></pre>
+
+<h3><span class="tag me">Just me</span> No special rights needed</h3>
+<ol class="steps me">
+  <li><b>Close KNIME.</b></li>
+  <li><b>Extract the zip.</b> Right-click it &rsaquo; <b>Extract All...</b></li>
+  <li>In the extracted folder, <b>double-click</b> <code>install-ovf.cmd</code>.</li>
+  <li><b>Answer two questions.</b> Press Enter to accept the KNIME folder, or type its path. Then type <code>2</code>.</li>
+  <li><b>Restart KNIME.</b></li>
+</ol>
+
+<p>The KNIME folder is the one holding <code>knime.exe</code>. To find it, right-click the KNIME shortcut &rsaquo; <b>Open file location</b>.</p>
+<div class="note">If Windows warns about a downloaded file, choose <b>More info &rsaquo; Run anyway</b>. If your organization's policy blocks the script, ask your administrator: they need to allow or sign <code>install-ovf.ps1</code>.</div>
+
+<h2 id="linux">4. Linux</h2>
+<h3><span class="tag all">All users</span> You need sudo</h3>
+<ol class="steps all">
+  <li><b>Close KNIME</b>, and ask anyone else using it to close it too.</li>
+  <li><b>Extract the zip</b> into a new folder, then go there.</li>
+  <li><b>Run</b> <code>sudo ./install-ovf.sh</code></li>
+  <li><b>Answer two questions.</b> Press Enter to accept the KNIME folder, or type its path. Then type <code>1</code>.</li>
+  <li><b>Restart KNIME.</b> Do this for everyone using it.</li>
+</ol>
+<pre><code>unzip ovf-serverconnector-5.x-1.0.4-installer.zip -d ovf-installer
+cd ovf-installer
+sudo ./install-ovf.sh --knime /opt/knime --mode admin --apply-permissions</code></pre>
+<p>This one command also sets the recommended folder permissions. Change <code>5.x</code> to <code>4.1.x</code> and <code>/opt/knime</code> to your KNIME folder as needed.</p>
+
+<h3><span class="tag me">Just me</span> No special rights needed</h3>
+<ol class="steps me">
+  <li><b>Close KNIME.</b></li>
+  <li><b>Extract the zip</b> into a new folder, then go there.</li>
+  <li><b>Run</b> <code>./install-ovf.sh</code> without sudo.</li>
+  <li><b>Answer two questions.</b> Press Enter to accept the KNIME folder, or type its path. Then type <code>2</code>.</li>
+  <li><b>Restart KNIME.</b></li>
+</ol>
+<p>The KNIME folder is the one holding the <code>knime</code> program, <code>knime.ini</code> and <code>plugins</code>.</p>
+
+<h2 id="macos">5. macOS</h2>
+<div class="note"><b>Not tested on macOS.</b> The plugin has no Windows- or Linux-specific code, so it's expected to work, but nobody has confirmed it. The installer scripts don't support macOS, so use KNIME's own wizard.</div>
+<ol class="steps me">
+  <li><b>Open the wizard:</b> File &rsaquo; <b>Install KNIME Extensions...</b> In KNIME 5's Modern UI: <b>Menu &rsaquo; Install extensions</b>.</li>
+  <li>Click <b>Add...</b>, then paste the update-site address from <a href="#download">section 1</a> into <b>Location</b>. Click <b>Add</b>.</li>
+  <li>Tick <b>OVF Server Explorer</b>, click <b>Next</b>, accept the license, click <b>Finish</b>.</li>
+  <li>KNIME warns that the plugin is unsigned. Choose <b>Install anyway</b>.</li>
+  <li><b>Restart KNIME</b> when asked.</li>
+</ol>
+<p>The wizard also works on Windows and Linux, but it can't ask who the plugin is for. It installs for everyone if you can write to the KNIME folder, and otherwise for you alone.</p>
+
+<h2 id="worked">6. Check that it worked</h2>
+<div class="note"><b>KNIME 5:</b> the tab is only in the classic user interface. If KNIME opens in the Modern UI (a dark bar with Home, Preferences and Menu at the top), click <b>Menu &rsaquo; Switch to classic user interface</b>. KNIME reopens with the tab. To go back, click <b>Open KNIME Modern UI</b> at the top right.</div>
+<p>When the installer succeeds, it prints a line like one of these:</p>
+<pre><code>Installed for everyone: C:\Program Files\KNIME\plugins\org.ovf.serverconnector_1.0.4.413.jar
+Installed: C:\Users\you\.eclipse\1637230351_win32_win32_x86_64\plugins\org.ovf.serverconnector_1.0.4.413.jar
+
+Restart KNIME. The Server Explorer tab appears next to KNIME Explorer.</code></pre>
+<figure><div class="card"><img src="@img:success.png@" alt="Top left of the KNIME window: the Server Explorer tab is open next to KNIME Explorer, showing No server configured and the local workspace."></div>
+<figcaption>The Server Explorer tab, next to KNIME Explorer, after clicking it. This shows a new install with no server set up yet.</figcaption></figure>
+<p>To connect to a server, click the gear icon in the tab, or go to <b>File &rsaquo; Preferences &rsaquo; Server Connector &rsaquo; Servers</b>. The <b>Server Connector</b> page also says who has the plugin and where its files are.</p>
+
+<h2 id="where">7. Where the files go, and permissions</h2>
+<figure><div class="card"><!--svg:where All users: the plugin goes in the KNIME folder and everyone gets it. Just me: it goes in your private area and only you get it.--></div></figure>
+<div class="scroll"><table>
+  <tr><th>What</th><th>Where</th><th>Who should have access</th></tr>
+  <tr><td><b>KNIME folder</b></td><td><code>C:\Program Files\KNIME</code><br><code>/opt/knime</code></td><td>Administrators: full control. Everyone else: read and execute only, on all files inside.</td></tr>
+  <tr><td><b>Private area</b>, one per person</td><td><code>C:\Users\you\.eclipse\&lt;id&gt;</code><br><code>~/.eclipse/&lt;id&gt;</code></td><td>Only that person. KNIME creates it. Don't change or share it.</td></tr>
+  <tr><td><b>Workspace</b>, one per person</td><td><code>C:\Users\you\knime-workspace</code><br><code>~/knime-workspace</code></td><td>Only that person. Two people can't have one workspace open at once.</td></tr>
+</table></div>
+<p>To see this report for your own computer without changing anything:</p>
+<pre><code>install-ovf.cmd -Knime "C:\Program Files\KNIME" -Check
+./install-ovf.sh --knime /opt/knime --check</code></pre>
+<p>Two permission settings cause most problems:</p>
+<ul>
+  <li><b>Users can create files but not change them.</b> This is the Windows default if KNIME is unzipped into a folder under <code>C:\</code> instead of Program Files. Installs fail, nodes go missing, and the second person's KNIME may not start.</li>
+  <li><b>Everyone has full control.</b> One user can uninstall the plugin for everybody.</li>
+</ul>
+<p>An administrator can fix both with the permissions option:</p>
+<pre><code>install-ovf.cmd -Knime "C:\KNIME" -Mode admin -ApplyPermissions
+sudo ./install-ovf.sh --knime /opt/knime --mode admin --apply-permissions</code></pre>
+
+<h2 id="trouble">8. If something goes wrong</h2>
+<figure><div class="card"><!--svg:trouble Five symptoms and their fixes, repeated in the table below and in this section's text.--></div></figure>
+<p>The installer's messages usually name the cause. These are the common ones:</p>
+<div class="scroll"><table>
+  <tr><th>It says</th><th>What to do</th></tr>
+  <tr><td>this installer is for KNIME 4.x but ... is KNIME 5.x</td><td>You have the wrong zip. Download the other one (<a href="#download">section 1</a>).</td></tr>
+  <tr><td>... is missing, and it belongs to another extension</td><td>Another extension is damaged, not this plugin. Ask an administrator to restore or remove that extension, or to install this plugin for all users.</td></tr>
+  <tr><td>The plugin was installed for everyone, but its jar is gone</td><td>An administrator runs the all-users install again.</td></tr>
+  <tr><td>can create files in it but can't change KNIME's own files</td><td>An administrator fixes the permissions (<a href="#where">section 7</a>).</td></tr>
+  <tr><td>another install was probably running</td><td>Wait for it to finish, then run the installer again.</td></tr>
+  <tr><td>can't be read ... It may be damaged</td><td>Download the installer zip again.</td></tr>
+  <tr><td>knime.ini sets KNIME's configuration</td><td>Take the <code>-configuration</code> lines out of <code>knime.ini</code>, install, then put them back. A Just me install handles this by itself.</td></tr>
+  <tr><td>can't create a temporary file</td><td>Free some space there, or point <code>TEMP</code> (Windows) or <code>TMPDIR</code> (Linux) at a folder you can write to.</td></tr>
+</table></div>
+<p>If the message doesn't help, send your administrator the <code>Full log</code> file named at the end of the installer's output.</p>
+
+<h2 id="update">9. Update or remove</h2>
+<p><b>Update:</b> download the new zip and run the installer the same way you did the first time. It replaces the old version. With Just me, each person does this for themselves. Along the way you may see <code>Cannot complete the install because of a conflicting dependency</code>, followed by <code>Replacing the installed version...</code> That is normal.</p>
+<div class="note">If you installed Just me and an administrator then installs for all users, your own old copy keeps loading. Run the installer as Just me once to bring it up to date.</div>
+<p><b>Remove:</b> close KNIME, then use the same mode you installed with:</p>
+<pre><code>install-ovf.cmd -Knime "C:\Program Files\KNIME" -Mode admin -Uninstall    (or -Mode user)
+./install-ovf.sh --knime /opt/knime --mode admin --uninstall              (or --mode user)</code></pre>
+<p>If you used the wizard: <b>Help &rsaquo; About KNIME &rsaquo; Installation Details</b>, select <b>OVF Server Explorer</b>, click <b>Uninstall...</b></p>
+<p>If a tab then shows an error, close it. Your workflows aren't affected.</p>
+
+<h2 id="tested">10. What this was tested on</h2>
+<div class="scroll"><table>
+  <tr><th>Platform</th><th>KNIME</th><th>Result</th></tr>
+  <tr><td>Linux</td><td>4.1.3</td><td>All users and Just me: install, update from 1.0.3, remove. Tab checked.</td></tr>
+  <tr><td>Linux</td><td>5.8.1</td><td>All users and Just me: install, update from 1.0.3. Tab checked in the classic UI.</td></tr>
+  <tr><td>Windows Server 2022</td><td>4.1.3</td><td>All users and Just me: install, remove, permissions. Tab checked.</td></tr>
+  <tr><td>Windows Server 2022</td><td>5.8.1</td><td>All users and Just me: install, remove, permissions. Tab checked in the classic UI. The test machine couldn't run the Modern UI, with or without the plugin.</td></tr>
+  <tr><td>Any</td><td>4.2.3</td><td>The 4.1.x plugin installs. The 1.0.4 installer wasn't tried on it.</td></tr>
+</table></div>
+<p>Not tested: macOS, Windows 10 and 11, other KNIME versions, domain Group Policy, antivirus software, roaming profiles, and KNIME on a remote file server.</p>
+
+</body>
+</html>

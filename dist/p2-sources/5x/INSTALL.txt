@@ -1,131 +1,192 @@
 OVF Server Explorer -- install instructions (KNIME 5.x)
-========================================================
+=======================================================
 
 Adds a Server Explorer view to KNIME that browses a remote HTTP
 workflow share or a local filesystem mount. This is NOT an official
 KNIME product; it is a third-party plugin under the org.ovf.* namespace.
 
-This build targets KNIME 5.x (Java 17 runtime). For KNIME 4.1.x use
-the 4.1.x zip instead.
+This build targets KNIME 5.x (Java 17 runtime).
+For KNIME 4.1.x use the 4.1.x zip instead.
 
-Contents of this zip:
-  serverconnector/
-    plugins/
-      org.ovf.serverconnector_@BUNDLE_VERSION@.jar
 
-After install the plugin lives at:
-  <knime-install>/dropins/serverconnector/plugins/org.ovf.serverconnector_@BUNDLE_VERSION@.jar
+A guide with pictures: INSTALL-GUIDE.html in the installer zip, or
+https://shinwachi.github.io/ovf-updates/install.html
 
 
 -----------------------------------------------------------------
-Preferred: Install via Archived Update Site (all OSes)
+Step 1: choose who gets the plugin
 -----------------------------------------------------------------
 
-An Eclipse p2 update-site zip is also published:
+  All users (admin)   Installs into the KNIME folder. Everyone using this
+                      KNIME gets it. Use this when people share one KNIME.
+                      You need administrator rights.
 
-    ovf-serverconnector-5.x-@VERSION@-updatesite.zip
+  Just me (user)      Installs into your own home folder. Nobody else sees
+                      it. You need no special rights. Each person has to
+                      repeat it, and each gets their own copy to update.
+                      If an administrator later changes this KNIME, the plugin
+                      stops loading until you finish KNIME's Migration wizard
+                      or run the installer again.
 
-Or a live URL if you host one:
-
-    http://<host>/5x/    (e.g., http://updatesite.example.com/5x/)
-
-Use either with KNIME's built-in installer:
-
-  1. In KNIME:  File > Install KNIME Extensions...   (or)
-                Help > Install New Software...
-  2. Click "Add..." next to the "Work with:" dropdown.
-  3. Either "Archive..." + pick the updatesite zip, or paste the URL
-     into the Location field. Name it "OVF Server Explorer" and Add.
-  4. Expand the "OVF" category, check the feature, Next, accept the
-     license, Finish. Restart when prompted.
+If you are not sure and you have administrator rights, choose All users.
 
 
 -----------------------------------------------------------------
-Alternative: dropin (Linux / macOS)
+Step 2: run the installer
 -----------------------------------------------------------------
 
-1. Quit KNIME Analytics Platform.
+Quit KNIME, extract the installer zip
 
-2. Find your KNIME install directory -- the folder that contains
-   knime / KNIME.app, knime.ini, plugins/ and (often) dropins/.
+    ovf-serverconnector-5.x-@VERSION@-installer.zip
 
-3. Extract the zip into the dropins/ folder. From a terminal:
+to any folder, then:
 
-       cd <knime-install>/dropins
-       unzip /path/to/ovf-serverconnector-5.x-@VERSION@.zip
+  Windows   All users: right-click install-ovf.cmd > Run as administrator
+            Just me:   double-click install-ovf.cmd
 
-   (If dropins/ doesn't exist, create it: mkdir dropins)
+  Linux     All users: sudo ./install-ovf.sh
+            Just me:   ./install-ovf.sh
 
-4. Launch KNIME once with -clean so the plugin cache picks up the
-   new bundle:
+It asks for the KNIME folder and who gets the plugin, checks the folder's
+permissions, installs, then lists where the files are. To only see the report,
+changing nothing:
 
-       <knime-install>/knime -clean
+    install-ovf.cmd -Knime "C:\Program Files\KNIME" -Check
+    ./install-ovf.sh --knime /opt/knime --check
 
-
------------------------------------------------------------------
-Alternative: dropin (Windows)
------------------------------------------------------------------
-
-1. Quit KNIME Analytics Platform.
-
-2. Find your KNIME install directory. Common locations:
-     C:\Program Files\KNIME\         (MSI installer -- needs admin)
-     C:\Users\<you>\KNIME\           (user install)
-
-3. Extract ovf-serverconnector-5.x-@VERSION@.zip. Right-click > Extract
-   All... to any folder. You'll get a serverconnector\ folder.
-
-4. Move that serverconnector\ folder into
-   <knime-install>\dropins\ so the layout is:
-
-       <knime-install>\dropins\serverconnector\plugins\org.ovf.serverconnector_@BUNDLE_VERSION@.jar
-
-5. Launch KNIME once with -clean:
-
-       cd "C:\Program Files\KNIME"
-       knime.exe -clean
-
-   Or right-click the KNIME shortcut > Properties, append ` -clean`
-   to the Target field, launch once, then remove it.
+Restart KNIME. The Server Explorer tab appears next to KNIME Explorer.
+The tab is only in the classic user interface. If KNIME opens in the Modern UI:
+Menu > Switch to classic user interface.
 
 
 -----------------------------------------------------------------
-Verify
+Where the files are, and who should have access
 -----------------------------------------------------------------
 
-The view co-stacks as a tab next to "KNIME Explorer" in the Modeller
-perspective. After launch:
+To find the KNIME folder: it holds knime.exe (Windows) or knime (Linux), and
+knime.ini, plugins and configuration. On Windows, right-click the KNIME
+shortcut > Open file location. Common places:
 
-  - Look at the pane that shows "KNIME Explorer" on the left.
-    There should be a second tab labelled "Server Explorer".
-  - If the pane is too narrow to show both tabs, widen it or click
-    the ">>" overflow chevron in the tab bar.
+    C:\Program Files\KNIME        /opt/knime
 
-If the tab isn't there, force it in:
+  What              Where                                  Who needs access
+  ----------------  -------------------------------------  --------------------
+  KNIME folder      as above                               Admins: full control
+  (program files;                                          Everyone else: read
+  all-users plugin                                         and execute only, on
+  in plugins)                                              all files inside
 
-  Window > Show View > Other... > KNIME Views > Server Explorer
+  Private area      Windows: C:\Users\<you>\.eclipse\<id>  Only that person.
+  (just-for-me      Linux:   ~/.eclipse/<id>               KNIME creates it.
+  plugin in                                                Don't change or share
+  plugins; one                                             it.
+  per person)
 
-If you installed via the update site (not dropin) and the tab still
-isn't showing, the perspective may need to pick up the new view
-extension:
+  Workspace         KNIME asks at startup. By default:     Only that person.
+  (layout and       Windows: C:\Users\<you>\knime-workspace  Two people must not
+  settings in       Linux:   ~/knime-workspace             open one workspace
+  .metadata)                                               at once.
 
-  Window > Perspective > Reset Perspective...  (5.x)
-    -- or --
-  Close and reopen the Modeller perspective.
+<id> is a number followed by the platform, such as 1877637008_linux_gtk_x86_64.
+If you can't see .eclipse, paste the path into File Explorer's address bar.
 
-Configure your server URL under:
-  File > Preferences > KNIME > OVF > Servers
+To set the KNIME folder permissions as recommended, as an administrator:
+
+  Windows (Command Prompt; or add -ApplyPermissions to the installer):
+
+    icacls "C:\Program Files\KNIME" /reset /T /C /Q
+    icacls "C:\Program Files\KNIME" /inheritance:r /grant:r *S-1-5-32-544:(OI)(CI)F *S-1-5-18:(OI)(CI)F *S-1-5-32-545:(OI)(CI)RX
+
+    Check it under right-click the folder > Properties > Security.
+
+  Linux (or add --apply-permissions to the installer):
+
+    sudo chown -R root:root /opt/knime
+    sudo chmod -R go-w,a+rX /opt/knime
+
+Permissions that cause trouble on the KNIME folder:
+
+  Users can create files but not change them
+      KNIME can't lock its own files: installs fail or do nothing, and nodes go
+      missing from the Node Repository. The installer reports this and stops.
+      On Windows this is the default if KNIME is unzipped outside Program Files,
+      for example into a folder under C:\. Use the commands above to fix it.
+
+  Users can change everything (Everyone: Full control)
+      One user can uninstall the plugin for everybody. And if the files one
+      user creates can't be changed by the next, the next user's KNIME may not
+      start. The usual error is "See the log file null".
+
+
+-----------------------------------------------------------------
+Other ways to install
+-----------------------------------------------------------------
+
+KNIME's own wizard (File > Install KNIME Extensions..., Add..., Archive...,
+pick ovf-serverconnector-5.x-@VERSION@-updatesite.zip). It can't ask who the
+plugin is for: if you can't write to the KNIME folder it installs for you only;
+if you can, it installs for everyone. KNIME warns that the plugin is unsigned:
+choose Install anyway. A live site also works:
+https://shinwachi.github.io/ovf-updates/5x/
+
+Dropin, for all users (administrator): quit KNIME, extract
+ovf-serverconnector-5.x-@VERSION@.zip so that this file exists, and start KNIME
+once with -clean:
+
+    <KNIME folder>/dropins/serverconnector/plugins/org.ovf.serverconnector_@BUNDLE_VERSION@.jar
+
+
+-----------------------------------------------------------------
+If something looks wrong
+-----------------------------------------------------------------
+
+No Server Explorer tab
+    Check you are in the same account the plugin was installed for, and that
+    you restarted KNIME. If you closed the tab earlier, it stays closed:
+    View > Other... > KNIME Views > Server Explorer > Open
+
+Red Server Explorer tab and a Migration wizard
+    Your just-for-me copy stopped loading because an administrator changed this
+    KNIME. Finish the wizard, or cancel it and run the installer again.
+
+"knime.ini sets KNIME's configuration" when installing for all users
+    An all-users install would damage that setting and KNIME wouldn't start.
+    Take the -configuration lines out of knime.ini, install, then put them back.
+    A just-for-me install handles the setting by itself.
+
+Which install do I have?
+    File > Preferences > Server Connector says who has it, and where the files
+    are.
+
+"Server Explorer (needs OVF plugin)" with a red mark, or "Could not create the
+view: org.ovf.serverconnector.views.ServerExplorerView"
+    This workspace was used with the plugin, and this KNIME doesn't have it.
+    Nothing is lost. Install the plugin, or close that tab. The tab returns
+    next time you use this workspace in a KNIME that has the plugin.
+
+KNIME won't start, or the Node Repository is short of nodes
+    The KNIME folder's permissions are the likely cause. Run the installer's
+    check, above.
+
+
+-----------------------------------------------------------------
+Configure
+-----------------------------------------------------------------
+
+File > Preferences > Server Connector > Servers
 
 
 -----------------------------------------------------------------
 Uninstall
 -----------------------------------------------------------------
 
-If installed via the update site:
-  Help > About KNIME > Installation Details >
-    select "OVF Server Explorer" > Uninstall...
+Run the installer the same way you installed, with one more option:
 
-If installed via dropin:
-  Quit KNIME, then delete:
-    <knime-install>/dropins/serverconnector
-  Restart KNIME with -clean once.
+    install-ovf.cmd -Knime "<KNIME folder>" -Mode admin -Uninstall   (or user)
+    ./install-ovf.sh --knime <KNIME folder> --mode admin --uninstall  (or user)
+
+If you used the wizard: Help > About KNIME > Installation Details > select
+"OVF Server Explorer" > Uninstall...
+
+If you used the dropin: quit KNIME, delete <KNIME folder>/dropins/serverconnector,
+and start KNIME once with -clean.

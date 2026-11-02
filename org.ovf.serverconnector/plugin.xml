@@ -4,7 +4,7 @@
    <extension
          point="org.eclipse.ui.views">
       <!-- Reuse KNIME's UI view category so we appear in the same
-           Window > Show View group as KNIME Explorer. -->
+           View > Other... group as KNIME Explorer. -->
       <view
             id="org.ovf.serverconnector.views.ServerExplorerView"
             name="Server Explorer"
@@ -39,16 +39,15 @@
          point="org.eclipse.ui.perspectiveExtensions">
       <perspectiveExtension
             targetID="org.knime.workbench.ui.ModellerPerspective">
-         <view
-               id="org.ovf.serverconnector.views.ServerExplorerView"
-               closeable="true"
-               visible="true"
-               relationship="stack"
-               relative="org.knime.workbench.explorer.view">
-         </view>
          <viewShortcut
                id="org.ovf.serverconnector.views.ServerExplorerView">
          </viewShortcut>
       </perspectiveExtension>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="org.ovf.serverconnector.ViewBootstrap">
+      </startup>
    </extension>
 </plugin>

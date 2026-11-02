@@ -1,0 +1,19 @@
+digraph trouble {
+  rankdir=LR; nodesep=0.22; ranksep=0.55; bgcolor="white"; margin=0.1;
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, margin="0.16,0.09", color="#5b6b7b", fillcolor="#eef2f6", fontcolor="#1d2733"];
+  edge [color="#5b6b7b"];
+  s [label="What do\nyou see?", fillcolor="#fff4d6", color="#b98a00"];
+  node [fillcolor="#fde8e4", color="#c0492f"];
+  a [label="The installer printed ERROR"];
+  b [label="No Server Explorer tab"];
+  c [label="Red tab and a\nMigration wizard"];
+  d [label="Red tab or \"Could not\ncreate the view\", no wizard"];
+  e [label="KNIME won't start, or\n\"See the log file null\""];
+  node [fillcolor="#dff3e3", color="#2d8a46"];
+  a1 [label="Read the lines under it. They say what to do.\lCommon messages are in the table below.\l"];
+  b1 [label="Restart KNIME. KNIME 5: Menu > Switch to classic user interface.\lSame user account as the install?\lThen View > Other... > KNIME Views > Server Explorer > Open\l"];
+  c1 [label="An administrator changed this KNIME. Finish the wizard,\lor Cancel it and run the installer again as Just me.\l"];
+  d1 [label="This KNIME doesn't have the plugin. Nothing is lost.\lInstall it, or close the tab.\l"];
+  e1 [label="The KNIME folder's permissions are wrong.\lAn administrator runs the installer with\lthe permissions option (section 7).\l"];
+  s -> a -> a1; s -> b -> b1; s -> c -> c1; s -> d -> d1; s -> e -> e1;
+}
