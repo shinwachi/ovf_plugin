@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>OVF Server Explorer User Guide</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* Plain CSS only: the in-app copy may be shown by Internet Explorer 11. */
+  * { box-sizing: border-box; }
+  body {
+    margin: 0 auto; max-width: 54rem; padding: 2rem 16px 4rem;
+    background: #ffffff; color: #1d2733;
+    font-size: 16px; line-height: 1.55;
+    /* The first list is for KNIME's help window on Windows, which ignores the second. */
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  h1 { font-size: 2rem; margin: 0 0 .25rem; line-height: 1.2; }
+  h2 { font-size: 1.4rem; margin: 2.75rem 0 .6rem; padding-top: .9rem; border-top: 1px solid #d5dce3; }
+  h3 { font-size: 1.08rem; margin: 1.6rem 0 .5rem; }
+  p { margin: .6rem 0; }
+  a { color: #1f5fbf; }
+  .lead { color: #5b6b7b; margin-top: 0; }
+  code { font-family: Consolas, "SF Mono", Menlo, monospace; font-size: .88em; background: #f3f5f8; padding: .08em .3em; border-radius: 3px; word-wrap: break-word; }
+  table { border-collapse: collapse; width: 100%; margin: .8rem 0; font-size: .95rem; }
+  th, td { text-align: left; vertical-align: top; padding: .45rem .6rem; border-bottom: 1px solid #d5dce3; }
+  th { background: #f3f5f8; }
+  nav { background: #f3f5f8; border-radius: 8px; padding: .7rem 1rem; margin: 1.2rem 0; }
+  nav ol { margin: 0; padding-left: 1.3rem; -webkit-columns: 2; columns: 2; }
+  figure { margin: 1rem 0; }
+  figure img { max-width: 100%; height: auto; display: block; margin: 0 auto; border: 1px solid #d5dce3; border-radius: 6px; }
+  figcaption { color: #5b6b7b; font-size: .88rem; margin-top: .35rem; text-align: center; }
+  .note { border-left: 4px solid #b98a00; background: #fff7e0; padding: .55rem .8rem; margin: .9rem 0; }
+  .tip { border-left: 4px solid #2d8a46; background: #e9f6ec; padding: .55rem .8rem; margin: .9rem 0; }
+  ol.how li, ul li { margin: .25rem 0; }
+  .side { overflow: hidden; }
+  .side figure { float: right; width: 46%; margin: .2rem 0 .8rem 1.2rem; }
+  .side table { width: 50%; }
+  kbd { font-family: inherit; font-size: .85em; border: 1px solid #b8c2cc; border-bottom-width: 2px; border-radius: 3px; padding: 0 .3em; background: #fff; }
+  @media (max-width: 40rem) { nav ol { -webkit-columns: 1; columns: 1; } .side figure { float: none; width: auto; margin: 1rem 0; } .side table { width: 100%; } }
+  @media (prefers-color-scheme: dark) {
+    body.web { background: #14181d; color: #e4e9ee; }
+    body.web a { color: #84aee8; }
+    body.web .lead, body.web figcaption { color: #9dabb8; }
+    body.web code, body.web th, body.web nav { background: #1e242b; }
+    body.web th, body.web td, body.web h2 { border-color: #36404a; }
+    body.web .note { background: #2c2610; }
+    body.web .tip { background: #18291e; }
+    body.web kbd { background: #1e242b; border-color: #36404a; }
+  }
+  @media print {
+    body { max-width: none; padding: 0; font-size: 10.5pt; }
+    nav, .noprint { display: none; }
+    h2, h3 { page-break-after: avoid; }
+    figure, tr, .note, .tip { page-break-inside: avoid; }
+    figure img { max-height: 120mm; width: auto; }
+    .side figure { width: 44%; }
+    .side table { width: 52%; }
+  }
+  @page { margin: 16mm; }
+</style>
+</head>
+<body>
+
+<h1>OVF Server Explorer User Guide</h1>
+<p class="lead">Version 1.0.7, for KNIME 4.1 and later, and KNIME 5 in the classic user interface. Server Explorer is a third-party plugin, not a KNIME product. To install or update it, see the <a href="https://shinwachi.github.io/ovf-updates/install.html">install guide</a>.</p>
+
+<figure><img src="img/hero.png" alt="KNIME with the Server Explorer tab open on the left. The tab shows a Team share server with folders, and the local workspace below it. A workflow downloaded from the share is open in the editor.">
+<figcaption>Server Explorer, top left, with a shared folder above and your own workspace below.</figcaption></figure>
+
+<p>Server Explorer lets a team keep KNIME workflows in one shared place. The tab shows two lists, one above the other:</p>
+<ul>
+  <li><b>Server</b>: the shared place. This is either a <b>workflow server</b> that your organization runs, reached by a web address, or a <b>folder</b>, such as a shared network drive.</li>
+  <li><b>Workspace (local)</b>: your own KNIME workspace, the same workflows that KNIME Explorer lists under LOCAL.</li>
+</ul>
+<p>To share a workflow, drag it from your workspace up to the server. To use someone else's, drag it down, or just double-click it.</p>
+
+<nav aria-label="Contents" class="noprint"><ol>
+  <li><a href="#find">Find the tab</a></li>
+  <li><a href="#parts">What's in the tab</a></li>
+  <li><a href="#connect">Connect to a server</a></li>
+  <li><a href="#open">Open a workflow</a></li>
+  <li><a href="#download">Download to your workspace</a></li>
+  <li><a href="#upload">Upload to the server</a></li>
+  <li><a href="#organize">Folders, renaming, moving and deleting</a></li>
+  <li><a href="#url">Copy a workflow's address</a></li>
+  <li><a href="#search">Search</a></li>
+  <li><a href="#refresh">Seeing other people's changes</a></li>
+  <li><a href="#settings">Settings</a></li>
+  <li><a href="#help">Getting help</a></li>
+  <li><a href="#trouble">If something goes wrong</a></li>
+</ol></nav>
+
+<h2 id="find">1. Find the tab</h2>
+<p>Server Explorer is a tab next to <b>KNIME Explorer</b>, at the top left of the KNIME window. Click it to bring it to the front.</p>
+<ul>
+  <li><b>KNIME 5:</b> the tab is only in the classic user interface. If KNIME opens in the Modern UI, click <b>Menu &rsaquo; Switch to classic user interface</b>.</li>
+  <li><b>Closed it by mistake?</b> Choose <b>View &rsaquo; Server Explorer</b>, or <b>View &rsaquo; Other... &rsaquo; KNIME Views &rsaquo; Server Explorer</b>. The tab then stays.</li>
+</ul>
+
+<h2 id="parts">2. What's in the tab</h2>
+<div class="side">
+<figure><img src="img/view.png" alt="The Server Explorer tab: a row of buttons, a status line with a gear and a question mark, a search box with an Options button, and the tree with the Server and Workspace branches."></figure>
+<table>
+  <tr><th>Part</th><th>What it does</th></tr>
+  <tr><td>Buttons, top row</td><td>From left: <b>Refresh</b>, <b>New Folder</b>, <b>Upload to Server</b>, <b>Download to Workspace</b>.</td></tr>
+  <tr><td>Status line</td><td>Whether the server can be reached. See below.</td></tr>
+  <tr><td>Gear</td><td>Opens the server settings (<a href="#connect">section 3</a>).</td></tr>
+  <tr><td>Question mark</td><td>Opens this guide.</td></tr>
+  <tr><td>Search box, <b>Options</b></td><td>Narrows the tree to matching names (<a href="#search">section 9</a>).</td></tr>
+  <tr><td><b>Server: <i>name</i> (<i>address</i>)</b></td><td>The shared workflows.</td></tr>
+  <tr><td><b>Workspace (local)</b></td><td>Your own workflows.</td></tr>
+</table>
+</div>
+<p>In the tree, a folder icon is a folder, the small diagram icon is a workflow, and a page icon is any other file. Right-click anything for its menu. Double-clicking a folder opens or closes it.</p>
+<table>
+  <tr><th>Status line</th><th>Meaning</th></tr>
+  <tr><td>Connected: <i>address</i></td><td>All is well.</td></tr>
+  <tr><td>Offline: <i>address</i> (workspace browsing only)</td><td>The server can't be reached right now. Your workspace still works. See <a href="#trouble">section 13</a>.</td></tr>
+  <tr><td>No server configured — click &#9881; to add one</td><td>Add a server (<a href="#connect">section 3</a>).</td></tr>
+</table>
+
+<h2 id="connect">3. Connect to a server</h2>
+<figure><img src="img/setup.gif" data-still="img/setup_still.png" alt="Animation: clicking the gear, clicking Add, entering the name Team share, choosing Local drive, entering the folder, testing the connection, then OK and Apply and Close. The tab then shows the share's folders.">
+<figcaption>Adding a shared folder as a server.</figcaption></figure>
+<p>You need the server's address, or the path to the shared folder. Ask whoever set it up.</p>
+<ol class="how">
+  <li>Click the <b>gear</b> in the tab. This opens <b>Server Connector &rsaquo; Servers</b> in KNIME's preferences. You can also get there with <b>File &rsaquo; Preferences</b>.</li>
+  <li>Click <b>Add...</b></li>
+  <li>Type a <b>Name</b> that you'll recognize, such as <i>Team share</i>.</li>
+  <li>Choose the <b>Type</b>, and fill in the box below it:
+    <ul>
+      <li><b>Remote (HTTP/HTTPS)</b> for a workflow server. Enter its address, starting with <code>https://</code> or <code>http://</code>, for example <code>https://workflows.example.com</code>.</li>
+      <li><b>Local drive</b> for a folder. Click <b>Browse...</b> or type the path, for example <code>S:\KNIME workflows</code>, <code>\\fileserver\team\knime</code> or <code>/mnt/team/knime</code>. It can be any folder you can open, including a network drive.</li>
+    </ul></li>
+  <li>Click <b>Test connection</b>. It should say <b>Connected successfully</b>. If not, it suggests a likely cause.</li>
+  <li>Click <b>OK</b>, then <b>Apply and Close</b>.</li>
+</ol>
+<figure><img src="img/add_server.png" alt="The Add Server dialog with Name, Type (Remote or Local drive), Path with a Browse button, an option to allow self-signed certificates, Test connection, Cancel and OK."></figure>
+<p><b>Allow self-signed / untrusted HTTPS certificates</b> is only for an <code>https://</code> server whose certificate KNIME doesn't trust, which is common for servers inside an organization. Turn it on only if the person who runs the server tells you to, or if Test connection says the certificate couldn't be validated and you know the server is the right one.</p>
+
+<h3>More than one server</h3>
+<figure><img src="img/servers.png" alt="The Servers page listing two servers: Team share, marked active, and Analytics server. Buttons on the right: Add, Edit, Remove, Set Active."></figure>
+<p>The tab shows one server at a time, the one with the tick in the <b>Active</b> column. The first server you add becomes active. To switch, select another one, click <b>Set Active</b>, then <b>Apply and Close</b>. <b>Edit...</b> and <b>Remove</b> change the list. Nothing changes until you click <b>Apply and Close</b>.</p>
+<div class="note"><b>The server list belongs to the workspace.</b> If you start KNIME with a different workspace, its list starts empty, so add your servers there too.</div>
+
+<h2 id="open">4. Open a workflow</h2>
+<figure><img src="img/open.gif" data-still="img/open_still.png" alt="Animation: double-clicking Visual Analysis of Sales Data in the server branch. It appears in the workspace branch and opens in the editor.">
+<figcaption>Double-clicking a server workflow copies it into your workspace and opens it.</figcaption></figure>
+<p><b>Double-click a workflow</b>, or right-click it and choose <b>Open Workflow</b>.</p>
+<ul>
+  <li><b>In your workspace</b>, it opens just as it would from KNIME Explorer.</li>
+  <li><b>On the server</b>, it's first copied to the top level of your workspace, under the same name, and that copy opens. Your changes go to that copy, not to the server. Upload it when you want to share them (<a href="#upload">section 6</a>).</li>
+</ul>
+<div class="note"><b>If your workspace already has a workflow with that name at the top level, double-clicking opens your copy and doesn't fetch the server's.</b> To get the server's current version, download it (<a href="#download">section 5</a>), under a new name if you want to keep yours.</div>
+<p>If KNIME reports errors while loading, the workflow probably uses nodes from an extension you don't have. That message comes from KNIME, not from Server Explorer.</p>
+
+<h2 id="download">5. Download to your workspace</h2>
+<figure><img src="img/download.gif" data-still="img/download_still.png" alt="Animation: dragging Simple Reporting Example from the server branch onto Workspace (local). A message says it was downloaded, and the workflow appears at the bottom of the workspace branch.">
+<figcaption>Dragging a workflow from the server onto your workspace.</figcaption></figure>
+<p>There are two ways:</p>
+<ul>
+  <li><b>Drag</b> a workflow or folder from the Server branch and drop it anywhere on the Workspace branch. It keeps its name. You can select several items with <kbd>Ctrl</kbd> or <kbd>Shift</kbd> and drag them together.</li>
+  <li><b>Right-click &rsaquo; Download to Workspace</b>, or select it and click the button at the top. This asks for a name first, so you can keep it apart from a copy you already have.</li>
+</ul>
+<p>Downloads always go to the <b>top level</b> of your workspace, even if you drop onto a folder there. To put one in a folder, drag it there afterwards. A folder comes with everything inside it. KNIME Explorer shows the download too.</p>
+<div class="note"><b>A download replaces a workflow of the same name without asking.</b> Its files are overwritten with the server's, so changes you made to your copy are lost. Use <b>Right-click &rsaquo; Download to Workspace</b> and a new name to keep both.</div>
+
+<h2 id="upload">6. Upload to the server</h2>
+<figure><img src="img/upload.gif" data-still="img/upload_still.png" alt="Animation: dragging Sales Dashboard from the workspace branch onto the Customer Intelligence folder on the server. A message confirms the upload, and opening that folder shows Sales Dashboard inside.">
+<figcaption>Dragging a workflow from your workspace into a folder on the server.</figcaption></figure>
+<ul>
+  <li><b>Drag</b> a workflow or folder from the Workspace branch onto a folder on the server. Dropping on a workflow puts it in that workflow's folder, and dropping on the <b>Server:</b> line puts it at the top level.</li>
+  <li><b>Right-click &rsaquo; Upload to Server</b>, or the button at the top, asks for a name and puts it at the <b>top level</b> of the server.</li>
+</ul>
+<div class="tip"><b>Save first.</b> An upload copies the workflow as it is saved on disk, so changes you haven't saved aren't included.</div>
+<div class="note"><b>An upload replaces anything on the server with the same name, in the same folder, without asking.</b> Everyone then gets your version. If a colleague may have changed it, download theirs first, under a new name, and compare.</div>
+<p>Uploads and downloads run in the background, with a progress window you can cancel. A message says when each one is done. To stop seeing these messages, tick <b>Don't show this again</b>.</p>
+
+<h2 id="organize">7. Folders, renaming, moving and deleting</h2>
+<div class="side">
+<figure><img src="img/menu_server.png" alt="Right-click menu on a server workflow: Open Workflow, Download to Workspace, New Folder, Rename, Copy URL Location, Delete, Refresh."></figure>
+<p>These work the same way on both branches. Right-click an item to see them.</p>
+<ul>
+  <li><b>New Folder</b> creates a folder in the selected folder, or next to the selected workflow.</li>
+  <li><b>Rename...</b>, or <kbd>F2</kbd>. Names can't contain <code>/</code> or <code>\</code>.</li>
+  <li><b>Move:</b> drag an item onto a folder in the same branch. In your workspace, the move stops if the folder already has something with that name.</li>
+  <li><b>Delete</b> asks first. You can select several items and delete them at once.</li>
+</ul>
+</div>
+<div class="note"><b>Delete is permanent.</b> Nothing goes to the Recycle Bin or Trash. Deleting from the server removes it for everyone.</div>
+<p>Close a workflow in KNIME before renaming, moving or deleting it.</p>
+
+<h2 id="url">8. Copy a workflow's address</h2>
+<p><b>Right-click &rsaquo; Copy URL Location</b> puts the item's address on the clipboard, ready to paste. Select several to get one address per line.</p>
+<table>
+  <tr><th>Item</th><th>Address</th></tr>
+  <tr><td>In your workspace</td><td><code>knime://LOCAL/Folder/Workflow</code>. KNIME's reader and writer nodes accept this.</td></tr>
+  <tr><td>On a Local drive server</td><td>A <code>file:</code> address of the folder</td></tr>
+  <tr><td>On a Remote server</td><td>The server's download address for it</td></tr>
+</table>
+
+<h2 id="search">9. Search</h2>
+<figure><img src="img/search.gif" data-still="img/search_still.png" alt="Animation: typing churn in the search box. Both branches narrow to the folders and workflows whose names contain churn. Then the Options menu opens.">
+<figcaption>Typing in the search box narrows both branches.</figcaption></figure>
+<p>Type in <b>Search workflows...</b> and both branches narrow to the items whose names contain what you typed, with the folders they're in opened. Capitals don't matter. Click the <b>&times;</b> in the box to clear it, and the tree goes back to how it was.</p>
+<figure><img src="img/search_options.png" alt="The Options menu: Match node titles (user-set names), Match workflow annotations / sticky notes, and the note Names are always matched."></figure>
+<p><b>Options</b> can also look inside workflows, at the names you've given nodes and at the notes on the canvas. These searches read every workflow, so results take longer, especially on a big server.</p>
+
+<h2 id="refresh">10. Seeing other people's changes</h2>
+<p>The Server branch checks for changes by itself: every 10 seconds while the tab is in use, and every minute otherwise. Your workspace updates when you come back to the tab, and when items are added or removed at its top level. To update straight away, click <b>Refresh</b>. A refresh closes the server's folders.</p>
+
+<h2 id="settings">11. Settings</h2>
+<figure><img src="img/settings.png" alt="The Server Connector preferences page. It says where the plugin is installed and has three options: hide the Download Complete and Upload Complete messages, skip rename prompts, and skip delete confirmation."></figure>
+<p><b>File &rsaquo; Preferences &rsaquo; Server Connector</b>:</p>
+<ul>
+  <li><b>Hide "Download Complete" / "Upload Complete" dialogs.</b></li>
+  <li><b>Skip rename prompts (use source name).</b> The buttons and menu items then upload and download straight away, under the item's own name.</li>
+  <li><b>Skip delete confirmation.</b> Deleting then happens with one click, and can't be undone.</li>
+</ul>
+<p>The page also says who has the plugin and which file it was loaded from, which helps when asking for support. These settings, like the server list, belong to the workspace.</p>
+
+<h2 id="help">12. Getting help</h2>
+<figure><img src="img/help_window.png" alt="KNIME's help window. The contents list OVF Server Explorer User Guide with its thirteen sections, and the guide is open on the right."></figure>
+<div class="side">
+<figure><img src="img/context_help.png" alt="KNIME's Help panel showing Server Explorer, a one-line description, and links to six sections of this guide."></figure>
+<ul>
+  <li>The <b>question mark</b> in the tab opens this guide in KNIME's help window.</li>
+  <li><b>Help &rsaquo; Help Contents</b> lists it as <b>OVF Server Explorer User Guide</b>.</li>
+  <li>In the tab or on the plugin's settings pages, press <kbd>F1</kbd> on Windows, or <kbd>Ctrl</kbd>+<kbd>F1</kbd> on Linux. KNIME's Help panel opens with links to the sections about what you're looking at.</li>
+</ul>
+</div>
+<ul>
+  <li>Online: <a href="https://shinwachi.github.io/ovf-updates/user-guide.html">this guide</a> (<a href="https://shinwachi.github.io/ovf-updates/user-guide.pdf">PDF</a>) and the <a href="https://shinwachi.github.io/ovf-updates/install.html">install guide</a>.</li>
+</ul>
+
+<h2 id="trouble">13. If something goes wrong</h2>
+<table>
+  <tr><th>What you see</th><th>What to do</th></tr>
+  <tr><td><b>Offline: <i>address</i></b></td><td>Check your network or VPN. On the Servers page, select the server, click <b>Edit...</b> and <b>Test connection</b>: it usually says why.</td></tr>
+  <tr><td>Test connection: <i>not speaking TLS on that port</i></td><td>Try the address with <code>http://</code> instead of <code>https://</code>.</td></tr>
+  <tr><td>Test connection: <i>TLS certificate could not be validated</i></td><td>See the note on self-signed certificates in <a href="#connect">section 3</a>.</td></tr>
+  <tr><td>Test connection: <i>nothing is listening</i>, <i>could not be resolved</i> or <i>timed out</i></td><td>The address is wrong, the server is down, or a firewall or VPN is in the way. Check the address with whoever runs the server.</td></tr>
+  <tr><td>A line starting <b>Error:</b> under the server</td><td>The server or folder couldn't be read. For a Local drive, check that you can open the folder outside KNIME.</td></tr>
+  <tr><td><i>is not a workflow (no workflow.knime found)</i></td><td>That item is a folder, not a workflow.</td></tr>
+  <tr><td><i>Could not open workflow</i></td><td>Open it from KNIME Explorer instead.</td></tr>
+  <tr><td>The server list is empty</td><td>You're probably in a different workspace. Add the servers again (<a href="#connect">section 3</a>).</td></tr>
+  <tr><td>A drag does nothing</td><td>Drags work within this tab only, not to or from KNIME Explorer. All dragged items must come from the same branch, and an item can't be dropped onto itself.</td></tr>
+  <tr><td>No Server Explorer tab</td><td>See <a href="#find">section 1</a>. If it's not under <b>View</b> either, the plugin isn't installed in this KNIME: see the <a href="https://shinwachi.github.io/ovf-updates/install.html">install guide</a>.</td></tr>
+  <tr><td>A red tab, <b>Server Explorer (needs OVF plugin)</b></td><td>This KNIME doesn't have the plugin, but the workspace was used with one that does. Close the tab, or use the KNIME that has the plugin. Nothing is lost.</td></tr>
+</table>
+
+</body>
+</html>

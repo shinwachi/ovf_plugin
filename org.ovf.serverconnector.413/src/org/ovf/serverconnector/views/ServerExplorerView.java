@@ -59,6 +59,7 @@ import org.ovf.serverconnector.actions.CopyUrlAction;
 import org.ovf.serverconnector.actions.DeleteAction;
 import org.ovf.serverconnector.actions.DownloadAction;
 import org.ovf.serverconnector.actions.NewFolderAction;
+import org.ovf.serverconnector.actions.OpenHelpAction;
 import org.ovf.serverconnector.actions.OpenServersPreferencesAction;
 import org.ovf.serverconnector.actions.OpenWorkflowAction;
 import org.ovf.serverconnector.actions.RefreshAction;
@@ -193,6 +194,7 @@ public class ServerExplorerView extends ViewPart {
         // need it now, so create early actions inline.
         openServersPrefsAction = new OpenServersPreferencesAction(getSite().getShell());
         statusToolBar.add(openServersPrefsAction);
+        statusToolBar.add(new OpenHelpAction());
         ToolBar tb = statusToolBar.createControl(statusBar);
         tb.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
 
@@ -225,6 +227,9 @@ public class ServerExplorerView extends ViewPart {
         viewer.setLabelProvider(new WorkflowTreeLabelProvider());
         viewer.setAutoExpandLevel(2);
         viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
+        // F1 shows the user guide topics for this view.
+        org.eclipse.ui.PlatformUI.getWorkbench().getHelpSystem()
+                .setHelp(parent, OpenHelpAction.CONTEXT_VIEW);
 
         // Name filter wired to the search box.
         searchFilter = new WorkflowSearchFilter();

@@ -65,12 +65,15 @@ public class ServersPreferencePage extends PreferencePage implements IWorkbenchP
         t.setLinesVisible(true);
         GridData gd = new GridData(GridData.FILL_BOTH);
         gd.heightHint = 180;
+        // Without a width hint the columns set the page's width, and the default
+        // Preferences dialog then cuts off the buttons on the right.
+        gd.widthHint = 380;
         t.setLayoutData(gd);
 
-        addColumn("Active", 60, c -> isActive(c) ? "✓" : "");
-        addColumn("Name", 140, c -> c.getName());
-        addColumn("URL", 260, c -> c.getUrl());
-        addColumn("Self-signed", 90, c -> c.isAllowSelfSigned() ? "yes" : "");
+        addColumn("Active", 50, c -> isActive(c) ? "✓" : "");
+        addColumn("Name", 110, c -> c.getName());
+        addColumn("URL", 220, c -> c.getUrl());
+        addColumn("Self-signed", 80, c -> c.isAllowSelfSigned() ? "yes" : "");
 
         table.setContentProvider(new IStructuredContentProvider() {
             @Override public Object[] getElements(Object input) {
@@ -94,6 +97,8 @@ public class ServersPreferencePage extends PreferencePage implements IWorkbenchP
         table.addSelectionChangedListener(e -> updateButtons());
         table.addDoubleClickListener(e -> onEdit());
         updateButtons();
+        org.eclipse.ui.PlatformUI.getWorkbench().getHelpSystem().setHelp(root,
+                org.ovf.serverconnector.actions.OpenHelpAction.CONTEXT_SERVERS);
         return root;
     }
 

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.contexts"?>
+<contexts>
+   <context id="view" title="Server Explorer">
+      <description>Browse a shared workflow server or folder, and copy workflows between it and your workspace. The full guide is under Help &gt; Help Contents.</description>
+      <topic label="2. What&#x27;s in the tab" href="help/user-guide.html#parts"/>
+      <topic label="3. Connect to a server" href="help/user-guide.html#connect"/>
+      <topic label="4. Open a workflow" href="help/user-guide.html#open"/>
+      <topic label="5. Download to your workspace" href="help/user-guide.html#download"/>
+      <topic label="6. Upload to the server" href="help/user-guide.html#upload"/>
+      <topic label="13. If something goes wrong" href="help/user-guide.html#trouble"/>
+   </context>
+   <context id="servers" title="Servers">
+      <description>Add, change or remove the servers Server Explorer connects to, and choose the active one. The full guide is under Help &gt; Help Contents.</description>
+      <topic label="3. Connect to a server" href="help/user-guide.html#connect"/>
+      <topic label="13. If something goes wrong" href="help/user-guide.html#trouble"/>
+   </context>
+   <context id="settings" title="Server Connector settings">
+      <description>Choose which messages Server Explorer shows, and see where the plugin is installed. The full guide is under Help &gt; Help Contents.</description>
+      <topic label="11. Settings" href="help/user-guide.html#settings"/>
+      <topic label="3. Connect to a server" href="help/user-guide.html#connect"/>
+   </context>
+</contexts>

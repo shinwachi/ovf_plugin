@@ -38,5 +38,7 @@ public class ServerConnectorPreferencePage extends FieldEditorPreferencePage
                 PreferenceConstants.P_HIDE_DELETE_CONFIRM,
                 "Skip delete confirmation",
                 getFieldEditorParent()));
+        org.eclipse.ui.PlatformUI.getWorkbench().getHelpSystem().setHelp(getFieldEditorParent(),
+                org.ovf.serverconnector.actions.OpenHelpAction.CONTEXT_SETTINGS);
     }
 }

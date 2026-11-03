@@ -158,6 +158,26 @@ with 1.0.3 / 1.0.3.413.
 
 Fix mirrored in both source trees.
 
+### 1.7 Removing the last server left it in the tree (5.x only)
+
+**Symptom (1.0.6, KNIME 5.x):** after removing the only server on the Servers page, the
+tab said *Server (none configured)* but still listed that server's folders, and actions
+still reached it.
+
+**Root cause:** `onServerConfigChanged` called `client.reconfigure(active)` only when
+`active != null`, so the client kept the old backend. The 4.1.x tree already passed null.
+
+**Fix (1.0.7):** always call `reconfigure`, which handles null by dropping the backend.
+
+### 1.8 In-app help
+
+1.0.7 adds `help/` to the bundle: an `org.eclipse.help.toc` (primary, so it's listed in
+*Help > Help Contents*) and `org.eclipse.help.contexts` for the view and both preference
+pages. `OpenHelpAction` is the ? button next to the gear. Context help is F1 on Windows
+and Ctrl+F1 on Linux (Eclipse's GTK binding). KNIME's help window on Windows renders with
+an old Internet Explorer engine, so the page uses plain CSS without variables or grid.
+Both are generated from `doc/user_guide/`; don't edit `help/` by hand.
+
 ---
 
 ## 2. Windows-specific fixes

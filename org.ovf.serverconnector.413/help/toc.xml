@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?NLS TYPE="org.eclipse.help.toc"?>
+<toc label="OVF Server Explorer User Guide" topic="help/user-guide.html">
+   <topic label="1. Find the tab" href="help/user-guide.html#find"/>
+   <topic label="2. What&#x27;s in the tab" href="help/user-guide.html#parts"/>
+   <topic label="3. Connect to a server" href="help/user-guide.html#connect"/>
+   <topic label="4. Open a workflow" href="help/user-guide.html#open"/>
+   <topic label="5. Download to your workspace" href="help/user-guide.html#download"/>
+   <topic label="6. Upload to the server" href="help/user-guide.html#upload"/>
+   <topic label="7. Folders, renaming, moving and deleting" href="help/user-guide.html#organize"/>
+   <topic label="8. Copy a workflow&#x27;s address" href="help/user-guide.html#url"/>
+   <topic label="9. Search" href="help/user-guide.html#search"/>
+   <topic label="10. Seeing other people&#x27;s changes" href="help/user-guide.html#refresh"/>
+   <topic label="11. Settings" href="help/user-guide.html#settings"/>
+   <topic label="12. Getting help" href="help/user-guide.html#help"/>
+   <topic label="13. If something goes wrong" href="help/user-guide.html#trouble"/>
+</toc>

@@ -28,8 +28,8 @@ The installer zip scans for KNIME or lets you select it in a file picker, asks w
 should get the plugin (all users or just you), checks the KNIME folder's
 permissions, and explains any failure:
 
-- [5.x installer](https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.6-installer.zip)
-- [4.1.x installer](https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.6-installer.zip)
+- [5.x installer](https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.7-installer.zip)
+- [4.1.x installer](https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.7-installer.zip)
 
 Extract it, then run `install-ovf.cmd` (Windows) or `./install-ovf.sh` (Linux).
 The tab is only in KNIME 5's classic interface. In the Modern UI: *Menu > Switch
@@ -65,9 +65,9 @@ If your KNIME can't reach GitHub, grab the archive zip and use
 - All zip downloads:
   <https://shinwachi.github.io/ovf-updates/downloads/>
 - Latest 5.x archive:
-  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.6-updatesite.zip>
+  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.7-updatesite.zip>
 - Latest 4.1.x archive:
-  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.6-updatesite.zip>
+  <https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.7-updatesite.zip>
 
 ### Dropin (last-resort fallback)
 
@@ -82,7 +82,18 @@ Look for a *Server Explorer* tab next to **KNIME Explorer** in the
 Modeller perspective (on KNIME 5, the classic interface). If the tab isn't visible:
 *View > Other... > KNIME Views > Server Explorer*.
 
-Configure a server under *File > Preferences > Server Connector > Servers*.
+Configure a server with the gear in the tab, or under *File > Preferences > Server Connector > Servers*.
+
+The [user guide](https://shinwachi.github.io/ovf-updates/user-guide.html)
+([PDF](https://shinwachi.github.io/ovf-updates/user-guide.pdf)) explains how to use the tab, with animated
+examples. It's also built into KNIME: click the ? next to the gear, or open *Help > Help Contents*.
+
+### Install a new version
+
+Run the new version's installer the same way as the first time, with the same choice of who gets
+it. There's no need to remove the old version first, and server lists and settings are kept.
+See the [install guide](https://shinwachi.github.io/ovf-updates/install.html#update) for the
+other install methods.
 
 ### Build outputs (for developers)
 
@@ -128,13 +139,14 @@ at its `plugins/*.jar`.
 
 - Browse remote (HTTP) or local-mount (filesystem) workflow shares
 - Upload / download workflows as zip
-- Drag-and-drop between Server Explorer and KNIME Explorer
+- Drag-and-drop between the server and workspace branches of the view
 - Multi-select delete and multi-select drag-drop
 - Rename, new folder, delete, copy URL
 - Search by file/folder name, with optional deep search of node titles
   and workflow annotations
 - Multiple configured servers with HTTPS + self-signed support, switchable
   from the in-view status strip
+- Built-in user guide: the view's ? button, F1, and *Help > Help Contents*
 - Auto-refresh on cross-client changes (10s when the view is focused,
   60s when not), driven by a cheap `/api/v1/state` content-hash poll
 

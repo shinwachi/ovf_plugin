@@ -73,7 +73,7 @@
 <body>
 
 <h1>Install OVF Server Explorer</h1>
-<p class="lead">Version 1.0.6, for KNIME on Windows, Linux and macOS. Adds a Server Explorer tab next to KNIME Explorer. This is a third-party plugin, not a KNIME product.</p>
+<p class="lead">Version 1.0.7, for KNIME on Windows, Linux and macOS. Adds a Server Explorer tab next to KNIME Explorer. This is a third-party plugin, not a KNIME product.</p>
 
 <nav aria-label="Contents"><ol>
   <li><a href="#download">Get the right download</a></li>
@@ -84,7 +84,7 @@
   <li><a href="#worked">Check that it worked</a></li>
   <li><a href="#where">Where the files go, and permissions</a></li>
   <li><a href="#trouble">If something goes wrong</a></li>
-  <li><a href="#update">Update or remove</a></li>
+  <li><a href="#update">Install a new version, or remove</a></li>
   <li><a href="#open">If people still have KNIME open</a></li>
   <li><a href="#copy">Transplant instead of installing</a></li>
   <li><a href="#tested">What this was tested on</a></li>
@@ -96,10 +96,10 @@
 <div class="scroll"><table>
   <tr><th>Your KNIME</th><th>Installer (Windows, Linux)</th><th>Update-site address (macOS, or KNIME's wizard)</th></tr>
   <tr><td><b>5.x</b></td>
-      <td><a href="https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.6-installer.zip">5.x installer zip</a></td>
+      <td><a href="https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-5.x-1.0.7-installer.zip">5.x installer zip</a></td>
       <td><code>https://shinwachi.github.io/ovf-updates/5x/</code></td></tr>
   <tr><td><b>4.1 or 4.2</b></td>
-      <td><a href="https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.6-installer.zip">4.1.x installer zip</a></td>
+      <td><a href="https://shinwachi.github.io/ovf-updates/downloads/ovf-serverconnector-4.1.x-1.0.7-installer.zip">4.1.x installer zip</a></td>
       <td><code>https://shinwachi.github.io/ovf-updates/4.1.x/</code></td></tr>
 </table></div>
 <p>No internet on the KNIME computer? Copy the zip over. It has everything inside. All files are on the <a href="https://shinwachi.github.io/ovf-updates/downloads/">downloads page</a>.</p>
@@ -121,7 +121,7 @@
   1) C:\Program Files\knime_4.1.3
      KNIME 4.1.3, needs the 4.1.x installer
   2) C:\Program Files\knime_5.8.1
-     KNIME 5.8.1, installed for you (1.0.6)
+     KNIME 5.8.1, installed for you (1.0.7)
   3) C:\Tools\KNIME Analytics
      KNIME 5.8.1, not installed
 Which KNIME? Type a number, p for a file picker, or a folder path:</code></pre>
@@ -159,7 +159,7 @@ Which KNIME? Type a number, p for a file picker, or a folder path:</code></pre>
   <li><b>Choose your KNIME:</b> type <code>1</code> to scan and pick from a list, or <code>2</code> for a file picker. Then type <code>1</code> for who gets it.</li>
   <li><b>Restart KNIME.</b> Do this for everyone using it.</li>
 </ol>
-<pre><code>unzip ovf-serverconnector-5.x-1.0.6-installer.zip -d ovf-installer
+<pre><code>unzip ovf-serverconnector-5.x-1.0.7-installer.zip -d ovf-installer
 cd ovf-installer
 sudo ./install-ovf.sh --knime /opt/knime --mode admin --apply-permissions</code></pre>
 <p>This one command also sets the recommended folder permissions. Change <code>5.x</code> to <code>4.1.x</code> and <code>/opt/knime</code> to your KNIME folder as needed.</p>
@@ -188,13 +188,14 @@ sudo ./install-ovf.sh --knime /opt/knime --mode admin --apply-permissions</code>
 <h2 id="worked">6. Check that it worked</h2>
 <div class="note"><b>KNIME 5:</b> the tab is only in the classic user interface. If KNIME opens in the Modern UI (a dark bar with Home, Preferences and Menu at the top), click <b>Menu &rsaquo; Switch to classic user interface</b>. KNIME reopens with the tab. To go back, click <b>Open KNIME Modern UI</b> at the top right.</div>
 <p>When the installer succeeds, it prints a line like one of these:</p>
-<pre><code>Installed for everyone: C:\Program Files\KNIME\plugins\org.ovf.serverconnector_1.0.6.413.jar
-Installed: C:\Users\you\.eclipse\1637230351_win32_win32_x86_64\plugins\org.ovf.serverconnector_1.0.6.413.jar
+<pre><code>Installed for everyone: C:\Program Files\KNIME\plugins\org.ovf.serverconnector_1.0.7.413.jar
+Installed: C:\Users\you\.eclipse\1637230351_win32_win32_x86_64\plugins\org.ovf.serverconnector_1.0.7.413.jar
 
 Restart KNIME. The Server Explorer tab appears next to KNIME Explorer.</code></pre>
 <figure><div class="card"><img src="@img:success.png@" alt="Top left of the KNIME window: the Server Explorer tab is open next to KNIME Explorer, showing No server configured and the local workspace."></div>
 <figcaption>The Server Explorer tab, next to KNIME Explorer, after clicking it. This shows a new install with no server set up yet.</figcaption></figure>
 <p>To connect to a server, click the gear icon in the tab, or go to <b>File &rsaquo; Preferences &rsaquo; Server Connector &rsaquo; Servers</b>. The <b>Server Connector</b> page also says who has the plugin and where its files are.</p>
+<p>To learn how to use the tab, click the question mark next to the gear, or read the <a href="https://shinwachi.github.io/ovf-updates/user-guide.html">user guide</a> (<a href="https://shinwachi.github.io/ovf-updates/user-guide.pdf">PDF</a>). The installer zip also has it, as <code>USER-GUIDE.html</code>.</p>
 
 <h2 id="where">7. Where the files go, and permissions</h2>
 <figure><div class="card"><!--svg:where All users: the plugin goes in the KNIME folder and everyone gets it. Just me: it goes in your private area and only you get it.--></div></figure>
@@ -240,10 +241,37 @@ sudo ./install-ovf.sh --knime /opt/knime --mode admin --apply-permissions</code>
 <p>If the message doesn't help, send your administrator the <code>Full log</code> file named at the end of the installer's output.</p>
 <p><b>The installer succeeded but the tab is gone</b>, for example after you closed it, or in 1.0.5 after KNIME crashed: choose <b>View &rsaquo; Server Explorer</b>. The tab stays from then on.</p>
 
-<h2 id="update">9. Update or remove</h2>
-<p><b>Update:</b> download the new zip and run the installer the same way you did the first time. It replaces the old version. With Just me, each person does this for themselves. Along the way you may see <code>Cannot complete the install because of a conflicting dependency</code>, followed by <code>Replacing the installed version...</code> That is normal.</p>
+<h2 id="update">9. Install a new version, or remove</h2>
+<p>New versions appear on the <a href="https://shinwachi.github.io/ovf-updates/">home page</a> and the <a href="https://shinwachi.github.io/ovf-updates/downloads/">downloads page</a>. Nothing inside KNIME tells you about them.</p>
+<h3>Which version do I have?</h3>
+<ul>
+  <li><b>File &rsaquo; Preferences &rsaquo; Server Connector</b> names the plugin file, for example <code>org.ovf.serverconnector_1.0.7.jar</code>. The version is the number at the end.</li>
+  <li>The installer's scan shows it next to each KNIME, for example <code>installed for everyone (1.0.6)</code>.</li>
+</ul>
+<h3>Update</h3>
+<p>Update the same way you installed. You don't need to remove the old version first, and you can skip versions: updates from 1.0.3, 1.0.4, 1.0.5 and 1.0.6 were tested. Server lists and settings are kept, because they're stored in each workspace.</p>
+<div class="scroll"><table>
+  <tr><th>You installed with</th><th>To update</th></tr>
+  <tr><td>The installer, <span class="tag all">All users</span></td><td>An administrator runs the new installer, as in the steps below. Everyone gets the new version when they restart KNIME.</td></tr>
+  <tr><td>The installer, <span class="tag me">Just me</span></td><td>Each person runs the new installer for themselves, as in the steps below.</td></tr>
+  <tr><td>KNIME's wizard</td><td>Run the wizard again (<a href="#macos">section 5</a>) with the same address and tick <b>OVF Server Explorer</b>. This route hasn't been tested. If KNIME won't install it, remove the old version first (below), then install.</td></tr>
+  <tr><td>A dropin</td><td>Close KNIME, delete <code>dropins/serverconnector</code> and unzip the new dropin zip (<a href="#copy">section 11</a>).</td></tr>
+  <tr><td>A copied KNIME folder</td><td>Update the master copy, then copy it out again (<a href="#copy">section 11</a>).</td></tr>
+</table></div>
+<p><b>With the installer:</b></p>
+<ol class="steps all">
+  <li><b>Download the new installer zip</b> for your KNIME (<a href="#download">section 1</a>).</li>
+  <li><b>Close KNIME.</b> For All users, ask everyone else to close it too, or see <a href="#open">section 10</a>.</li>
+  <li><b>Extract it into a new folder.</b> Don't extract over the old installer.</li>
+  <li><b>Run it</b> as you did the first time, and make the same choice for who gets it.</li>
+  <li><b>Restart KNIME</b> and check the version on the <b>Server Connector</b> page.</li>
+</ol>
+<p>The installer prints <code>Replacing the installed version...</code> Before that you may see <code>Cannot complete the install because of a conflicting dependency</code>. Both are normal. The previous version's jar stays in <code>plugins</code>, unused, until the next update removes it.</p>
+<pre><code>install-ovf.cmd -Knime "C:\Program Files\KNIME" -Mode admin -ApplyPermissions
+sudo ./install-ovf.sh --knime /opt/knime --mode admin --apply-permissions</code></pre>
 <div class="note">If you installed Just me and an administrator then installs for all users, your own old copy keeps loading. Run the installer as Just me once to bring it up to date.</div>
-<p><b>Remove:</b> close KNIME, then use the same mode you installed with. For an all-users change, ask everyone else to close it too (<a href="#open">section 10</a>).</p>
+<h3>Remove</h3>
+<p>Close KNIME, then use the same mode you installed with. For an all-users change, ask everyone else to close it too (<a href="#open">section 10</a>).</p>
 <pre><code>install-ovf.cmd -Knime "C:\Program Files\KNIME" -Mode admin -Uninstall    (or -Mode user)
 ./install-ovf.sh --knime /opt/knime --mode admin --uninstall              (or --mode user)</code></pre>
 <p>If you used the wizard: <b>Help &rsaquo; About KNIME &rsaquo; Installation Details</b>, select <b>OVF Server Explorer</b>, click <b>Uninstall...</b></p>
@@ -359,13 +387,14 @@ Linux:
   <tr><td>Linux</td><td>4.1.3 and 5.8.1</td><td>Copying the KNIME folder to a separate container with the original path gone. All users: tar and zip, same and different path, read-only and owned by one user, new users; then update, remove and Just me on the copy. Just me: folder only, with the private area, at a different path. Tab checked each time.</td></tr>
   <tr><td>Windows Server 2022</td><td>4.1.3 and 5.8.1</td><td>Copying the KNIME folder with robocopy to a new path, with the original renamed away and a user who had never run KNIME. There was only one machine, so this stands in for a second computer. All users: then update, remove and Just me on the copy. Just me: folder only, then installing again. On 4.1.3 also a copy under <code>C:\</code> with the permissions fix. Tab checked each time.</td></tr>
   <tr><td>Linux and Windows Server 2022</td><td>4.1.3 and 5.8.1</td><td>Transplants from clean KNIMEs: replacing the whole folder with a newer one, with the server list kept; the dropin zip on a read-only KNIME, for existing and new users, and updating it; and the two file-copy shortcuts. How the jar-plus-one-line shortcut behaves when updated or removed, removing a dropin, the wrong dropin zip, a dropin plus the installer, and replacing a folder under an open KNIME were tested on Linux only.</td></tr>
-  <tr><td>Linux and Windows Server 2022</td><td>4.1.3 and 5.8.1</td><td>KNIME killed after the plugin's settings were saved: 1.0.5 lost the tab for good, 1.0.6 brought it back, including in the workspace 1.0.5 had left without it. Updating from 1.0.5 with the 1.0.6 installer was tested on Linux and on Windows 5.8.1; on Windows 4.1.3 the fixed plugin was tested without the update. A tab closed on purpose stayed closed, even after a kill, and <b>View &rsaquo; Server Explorer</b> brought it back (Linux).</td></tr>
-  <tr><td>Any</td><td>4.2.3</td><td>The 4.1.x plugin installs. The 1.0.6 installer wasn't tried on it.</td></tr>
+  <tr><td>Linux and Windows Server 2022</td><td>4.1.3 and 5.8.1</td><td>KNIME killed after the plugin's settings were saved: 1.0.5 lost the tab for good, 1.0.6 brought it back, including in the workspace 1.0.5 had left without it. Updating from 1.0.5 with the 1.0.6 installer was tested on both systems and both KNIME versions. A tab closed on purpose stayed closed, even after a kill, and <b>View &rsaquo; Server Explorer</b> brought it back (Linux).</td></tr>
+  <tr><td>Windows Server 2022, and Linux</td><td>4.1.3 and 5.8.1, and 5.8.1</td><td>All-users update from 1.0.6 to 1.0.7 with the installer, which also removed the 1.0.5 jar left by the update before. The user guide opened from the tab's question mark, from F1 in the tab and on the Servers page, and under <b>Help &rsaquo; Help Contents</b>. On Linux: the question mark and Ctrl+F1.</td></tr>
+  <tr><td>Any</td><td>4.2.3</td><td>The 4.1.x plugin installs. The 1.0.7 installer wasn't tried on it.</td></tr>
 </table></div>
 <p>Not tested for transplants: macOS, a Windows zip of the whole folder, or a real second Windows computer. Not tested in general: macOS, Windows 10 and 11, other KNIME versions, one workspace used in both KNIME 4 and KNIME 5, domain Group Policy, antivirus software, roaming profiles, and KNIME on a remote file server.</p>
 
 <h2 id="files">13. Exactly what changes on disk</h2>
-<p>This section is for administrators and anyone curious. It lists what the plugin adds, how KNIME learns about it, and where its settings are kept. <code>&lt;ver&gt;</code> is the version, such as <code>1.0.6</code> or <code>1.0.6.413</code>. Paths use <code>/</code>, and on Windows the same paths apply with <code>\</code>.</p>
+<p>This section is for administrators and anyone curious. It lists what the plugin adds, how KNIME learns about it, and where its settings are kept. <code>&lt;ver&gt;</code> is the version, such as <code>1.0.7</code> or <code>1.0.7.413</code>. Paths use <code>/</code>, and on Windows the same paths apply with <code>\</code>.</p>
 
 <h3>How KNIME finds the plugin</h3>
 <p>The program is one file, a jar. KNIME doesn't scan for new jars: at startup it loads the plugins named in a list called <code>bundles.info</code>. <b>Adding one line to that list is what registers the plugin.</b> The jar then tells KNIME about the Server Explorer view, the settings pages and a startup step that adds the tab.</p>
@@ -382,7 +411,7 @@ Linux:
   <tr><td>Other files in <code>configuration/</code> and <code>p2/</code></td><td>KNIME's own caches and logs, refreshed because its installer ran. These hold no plugin settings you need to manage.</td></tr>
 </table></div>
 <p>The line added to <code>bundles.info</code>. The path is relative to the KNIME folder:</p>
-<pre><code>org.ovf.serverconnector,1.0.6,plugins/org.ovf.serverconnector_1.0.6.jar,4,false</code></pre>
+<pre><code>org.ovf.serverconnector,1.0.7,plugins/org.ovf.serverconnector_1.0.7.jar,4,false</code></pre>
 <p>The last two values are the plugin's start level and whether KNIME starts it straight away. Don't edit this file by hand. Use the installer, so that it stays in step with KNIME's installer records.</p>
 
 <h3><span class="tag me">Just me</span> In your private area</h3>
@@ -400,7 +429,7 @@ Linux:    ~/.eclipse/&lt;id&gt;/
   <tr><td><code>configuration/org.eclipse.equinox.simpleconfigurator/bundles.info</code></td><td><b>The registration.</b> Your own copy of KNIME's whole list, plus the plugin's line.</td></tr>
   <tr><td><code>artifacts.xml</code>, <code>configuration/config.ini</code>, <code>p2/...</code></td><td>Your own installer records. <code>config.ini</code> points back to the shared KNIME folder.</td></tr>
 </table></div>
-<pre><code>org.ovf.serverconnector,1.0.6.413,../../home/alice/.eclipse/1877637008_linux_gtk_x86_64/plugins/org.ovf.serverconnector_1.0.6.413.jar,4,false</code></pre>
+<pre><code>org.ovf.serverconnector,1.0.7.413,../../home/alice/.eclipse/1877637008_linux_gtk_x86_64/plugins/org.ovf.serverconnector_1.0.7.413.jar,4,false</code></pre>
 <p>Because this is a private copy of the list, it can go out of date. If an administrator changes KNIME, KNIME goes back to the shared list, which doesn't name your copy of the plugin. That is why a Just me install stops loading (<a href="#trouble">section 8</a>).</p>
 
 <h3>Settings: mostly in the workspace</h3>
