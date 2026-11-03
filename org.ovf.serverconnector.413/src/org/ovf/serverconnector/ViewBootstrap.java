@@ -42,8 +42,8 @@ public class ViewBootstrap implements IStartup {
     private static final String LABEL_AT_EXIT = "Server Explorer (needs OVF plugin)";
     private static final String TOOLTIP_AT_EXIT = "This tab comes from the OVF Server Explorer plugin. "
             + "If it shows an error, this KNIME doesn't have the plugin: install it, or close this tab.";
-    private static final String P_PLACED = "serverconnector.viewPlaced";
-    private static final String P_OPEN = "serverconnector.viewOpenAtExit";
+    // Only a normal exit writes this, so a killed session can't look like a closed tab.
+    private static final String P_CLOSED = "serverconnector.viewClosedAtExit";
     private static final String P_NOTICE = "serverconnector.privateInstallNoticeShown";
 
     private boolean checked;  // once-per-session guard
@@ -101,7 +101,7 @@ public class ViewBootstrap implements IStartup {
         });
     }
 
-    /** Adds the tab once per session if this workspace hasn't had it, or lost it elsewhere. */
+    /** Adds the tab once per session, unless it was closed when KNIME last exited normally. */
     private void ensurePlaced(IWorkbenchWindow win) throws Exception {
         if (checked) return;
         // No KNIME Explorer here (5.x Modern UI, another perspective): try
@@ -109,9 +109,7 @@ public class ViewBootstrap implements IStartup {
         if (findInPerspective(win, EXPLORER_ID) == null) return;
         checked = true;
         IPreferenceStore prefs = ServerConnectorActivator.getInstance().getPreferenceStore();
-        boolean wanted = !prefs.getBoolean(P_PLACED) || prefs.getBoolean(P_OPEN);
-        prefs.setValue(P_PLACED, true);
-        if (wanted) place(win);
+        if (!prefs.getBoolean(P_CLOSED)) place(win);
     }
 
     private void place(IWorkbenchWindow win) throws Exception {
@@ -138,7 +136,8 @@ public class ViewBootstrap implements IStartup {
             }
             setLabels(w, LABEL_AT_EXIT, TOOLTIP_AT_EXIT);
         }
-        ServerConnectorActivator.getInstance().getPreferenceStore().setValue(P_OPEN, open);
+        // A session that never showed KNIME Explorer says nothing about the tab.
+        if (checked) ServerConnectorActivator.getInstance().getPreferenceStore().setValue(P_CLOSED, !open);
     }
 
     private void setLabels(IWorkbenchWindow win, String label, String tooltip) {
