@@ -81,6 +81,7 @@
   <li><a href="#trouble">If something goes wrong</a></li>
   <li><a href="#update">Update or remove</a></li>
   <li><a href="#open">If people still have KNIME open</a></li>
+  <li><a href="#copy">Transplant instead of installing</a></li>
   <li><a href="#tested">What this was tested on</a></li>
   <li><a href="#files">Exactly what changes on disk</a></li>
 </ol></nav>
@@ -99,6 +100,7 @@
 <p>No internet on the KNIME computer? Copy the zip over. It has everything inside. All files are on the <a href="https://shinwachi.github.io/ovf-updates/downloads/">downloads page</a>.</p>
 
 <h2 id="choose">2. Choose how to install</h2>
+<div class="note"><b>Setting up many computers?</b> Install once, then copy the result to the others: see <a href="#copy">section 11</a>.</div>
 <figure><div class="card"><svg role="img" aria-label="Decision chart. macOS uses KNIME's wizard. On Windows or Linux, if others share the KNIME folder and you have administrator rights, choose All users. If you are the only user, choose Just me. If you share it without rights, ask an administrator." style="width:649pt;max-width:100%;height:auto"
  viewBox="7.20 7.20 641.70 323.20" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(11.2 319.2)">
@@ -633,7 +635,137 @@ Linux:
   ps -eo user,args | grep '[/]plugins/org.knime.binary.jre' | cut -c1-70</code></pre>
 <div class="note"><b>The installer's warning only covers this computer.</b> It can't see KNIME running on other computers from a shared network folder. On Windows it also reacts to KNIME running from any folder, not just the one you chose.</div>
 
-<h2 id="tested">11. What this was tested on</h2>
+<h2 id="copy">11. Transplant instead of installing</h2>
+<p>A transplant moves a working plugin to another KNIME by copying files, without running the installer there. <b>It's the recommended way to give the plugin to many computers:</b> install once on one master copy, test it, then copy that result everywhere. Every computer then gets exactly what you tested.</p>
+<figure><div class="card"><svg role="img" aria-label="Decision chart. If the other computer has no KNIME to keep, or it can be replaced, use a whole-folder transplant. If it has a KNIME to keep and you don't need Installation Details or KNIME's uninstall, use a dropin transplant. If you do need them, use the installer." style="width:775pt;max-width:100%;height:auto"
+ viewBox="7.20 7.20 768.20 164.20" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(11.2 160.2)">
+
+<polygon fill="white" stroke="none" points="-4,4 -4,-153 757,-153 757,4 -4,4"/>
+<!-- q1 -->
+<g id="node1" class="node">
+<path fill="#eef2f6" stroke="#5b6b7b" d="M164,-69.5C164,-69.5 12,-69.5 12,-69.5 6,-69.5 1.42109e-14,-63.5 1.42109e-14,-57.5 1.42109e-14,-57.5 1.42109e-14,-43.5 1.42109e-14,-43.5 1.42109e-14,-37.5 6,-31.5 12,-31.5 12,-31.5 164,-31.5 164,-31.5 170,-31.5 176,-37.5 176,-43.5 176,-43.5 176,-57.5 176,-57.5 176,-63.5 170,-69.5 164,-69.5"/>
+<text text-anchor="middle" x="88" y="-53.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Does the other computer</text>
+<text text-anchor="middle" x="88" y="-40.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">have a KNIME to keep?</text>
+</g>
+<!-- q2 -->
+<g id="node2" class="node">
+<path fill="#eef2f6" stroke="#5b6b7b" d="M506.5,-118C506.5,-118 378.5,-118 378.5,-118 372.5,-118 366.5,-112 366.5,-106 366.5,-106 366.5,-79 366.5,-79 366.5,-73 372.5,-67 378.5,-67 378.5,-67 506.5,-67 506.5,-67 512.5,-67 518.5,-73 518.5,-79 518.5,-79 518.5,-106 518.5,-106 518.5,-112 512.5,-118 506.5,-118"/>
+<text text-anchor="middle" x="442.5" y="-102.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Do you need KNIME&#39;s</text>
+<text text-anchor="middle" x="442.5" y="-89.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Installation Details</text>
+<text text-anchor="middle" x="442.5" y="-76.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">or its uninstall?</text>
+</g>
+<!-- q1&#45;&gt;q2 -->
+<g id="edge2" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M176.135,-60.882C231.123,-67.4338 301.817,-75.8569 356.41,-82.3616"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="356.065,-85.8451 366.408,-83.5529 356.893,-78.8943 356.065,-85.8451"/>
+<text text-anchor="middle" x="263.5" y="-82.7" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1d2733">yes</text>
+</g>
+<!-- a -->
+<g id="node3" class="node">
+<path fill="#dff3e3" stroke="#2d8a46" d="M522,-51C522,-51 363,-51 363,-51 357,-51 351,-45 351,-39 351,-39 351,-12 351,-12 351,-6 357,-3.55271e-15 363,-3.55271e-15 363,-3.55271e-15 522,-3.55271e-15 522,-3.55271e-15 528,-3.55271e-15 534,-6 534,-12 534,-12 534,-39 534,-39 534,-45 528,-51 522,-51"/>
+<text text-anchor="middle" x="442.5" y="-35.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Whole&#45;folder transplant</text>
+<text text-anchor="middle" x="442.5" y="-22.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Install once, then copy the</text>
+<text text-anchor="middle" x="442.5" y="-9.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">KNIME folder everywhere.</text>
+</g>
+<!-- q1&#45;&gt;a -->
+<g id="edge1" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M176.135,-44.3202C225.926,-40.789 288.593,-36.3445 340.524,-32.6614"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="341.033,-36.1342 350.76,-31.9355 340.537,-29.1518 341.033,-36.1342"/>
+<text text-anchor="middle" x="263.5" y="-45.7" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1d2733">no, or it can be replaced</text>
+</g>
+<!-- b -->
+<g id="node4" class="node">
+<path fill="#dff3e3" stroke="#2d8a46" d="M741,-149C741,-149 602,-149 602,-149 596,-149 590,-143 590,-137 590,-137 590,-110 590,-110 590,-104 596,-98 602,-98 602,-98 741,-98 741,-98 747,-98 753,-104 753,-110 753,-110 753,-137 753,-137 753,-143 747,-149 741,-149"/>
+<text text-anchor="middle" x="671.5" y="-133.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Dropin transplant</text>
+<text text-anchor="middle" x="671.5" y="-120.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Unzip one folder into</text>
+<text text-anchor="middle" x="671.5" y="-107.4" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">KNIME&#39;s dropins folder.</text>
+</g>
+<!-- q2&#45;&gt;b -->
+<g id="edge3" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M518.772,-102.779C538.314,-105.448 559.568,-108.351 579.811,-111.115"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="579.591,-114.617 589.972,-112.503 580.538,-107.682 579.591,-114.617"/>
+<text text-anchor="middle" x="562" y="-113.7" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1d2733">no</text>
+</g>
+<!-- c -->
+<g id="node5" class="node">
+<path fill="#fff4d6" stroke="#b98a00" d="M723,-81.5C723,-81.5 620,-81.5 620,-81.5 614,-81.5 608,-75.5 608,-69.5 608,-69.5 608,-55.5 608,-55.5 608,-49.5 614,-43.5 620,-43.5 620,-43.5 723,-43.5 723,-43.5 729,-43.5 735,-49.5 735,-55.5 735,-55.5 735,-69.5 735,-69.5 735,-75.5 729,-81.5 723,-81.5"/>
+<text text-anchor="middle" x="671.5" y="-65.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Installer</text>
+<text text-anchor="middle" x="671.5" y="-52.9" font-family="Helvetica,sans-Serif" font-size="12.00" fill="#1d2733">Sections 3 and 4.</text>
+</g>
+<!-- q2&#45;&gt;c -->
+<g id="edge4" class="edge">
+<path fill="none" stroke="#5b6b7b" d="M518.772,-82.5521C544.181,-79.1942 572.483,-75.4538 597.697,-72.1216"/>
+<polygon fill="#5b6b7b" stroke="#5b6b7b" points="598.472,-75.5497 607.927,-70.7696 597.554,-68.61 598.472,-75.5497"/>
+<text text-anchor="middle" x="562" y="-80.7" font-family="Helvetica,sans-Serif" font-size="11.00" fill="#1d2733">yes</text>
+</g>
+</g>
+</svg>
+</div></figure>
+<div class="scroll"><table>
+  <tr><th>Your situation</th><th>Use</th></tr>
+  <tr><td>A new computer, or a set of computers that should all be the same</td><td><b>Whole folder</b></td></tr>
+  <tr><td>Rolling out an update after the first install</td><td><b>Whole folder</b>, replacing the old one</td></tr>
+  <tr><td>Computers that already have a KNIME with their own extensions, which you want to keep</td><td><b>Dropin</b>, or the installer</td></tr>
+  <tr><td>One computer, or a Just me install</td><td>The installer</td></tr>
+</table></div>
+
+<h3>Routine 1: whole folder</h3>
+<p>The plugin lives inside the KNIME folder when it's installed for <span class="tag all">All users</span>, so it travels with the copy, and it works at any path. KNIME and every extension in the folder go with it.</p>
+<ol class="steps all">
+  <li><b>Make the master.</b> Install for All users on one KNIME. Add any other extensions you want everyone to have.</li>
+  <li><b>Close KNIME</b> on the master and on the target. Replacing a folder under an open KNIME made the plugin's settings page fail in that session.</li>
+  <li><b>Copy the whole KNIME folder.</b> Use the same operating system on both: the folder includes a Java runtime built for that system.</li>
+  <li><b>Set the permissions</b> on the target (below).</li>
+  <li><b>Open KNIME.</b> The tab is there, including for people who have never used KNIME.</li>
+</ol>
+<pre><code>Windows, from an administrator PowerShell:
+  robocopy "C:\Program Files\KNIME" "\\OTHERPC\C$\Program Files\KNIME" /E /COPY:DAT
+  install-ovf.cmd -Knime "C:\Program Files\KNIME" -Mode admin -ApplyPermissions    (on the target)
+
+Linux:
+  tar czf knime.tgz -C /opt knime                  (or: zip -qry knime.zip knime)
+  sudo tar xzf knime.tgz -C /opt                   (on the target)
+  sudo ./install-ovf.sh --knime /opt/knime --mode admin --apply-permissions</code></pre>
+<div class="note"><b>Windows permissions depend on where you put the copy.</b> Under Program Files, it gets the right access by itself and the permissions command is optional. Directly under <code>C:\</code>, ordinary users can create files but not change them, and the installer says so. The permissions command fixes that. It also installs the plugin from its zip, so use the zip for the same version as the master.</div>
+<p><b>To update:</b> update the master, close KNIME on the target, move the old folder aside, and copy the new one to the same path. People get the new version the next time they open KNIME, and their workspaces and server lists stay as they were. Anything added to the old folder on that computer alone is replaced, including other extensions. Keep the old folder until you've checked the new one.</p>
+
+<h3>Routine 2: dropin</h3>
+<p>Use this when the target's KNIME has to stay. It adds one folder, and it works on a read-only KNIME. Use the plain zip from the <a href="https://shinwachi.github.io/ovf-updates/downloads/">downloads page</a>, the one that doesn't end in <code>-installer</code> or <code>-updatesite</code>, and match your KNIME: <code>5.x</code> or <code>4.1.x</code>.</p>
+<ol class="steps all">
+  <li><b>Close KNIME.</b></li>
+  <li><b>Unzip into <code>dropins</code></b> in the KNIME folder, creating that folder if needed, so that you have <code>dropins/serverconnector/plugins/org.ovf.serverconnector_&lt;ver&gt;.jar</code></li>
+  <li><b>Open KNIME.</b> The tab appears for everyone.</li>
+</ol>
+<ul>
+  <li><b>To update:</b> close KNIME, delete <code>dropins/serverconnector</code>, and unzip the new version.</li>
+  <li><b>To remove:</b> close KNIME and delete <code>dropins/serverconnector</code>. A workspace that used the plugin then shows the red tab, which you can close.</li>
+  <li><b>Use the right zip.</b> The 5.x zip on KNIME 4.1.3 gave no tab and no message.</li>
+  <li><b>Don't also run the installer on it.</b> After doing both, the installer's uninstall reported <code>The plugin is still installed</code> and left it there.</li>
+  <li>The plugin doesn't appear in <b>Installation Details</b>, and KNIME's uninstall can't remove it.</li>
+</ul>
+
+<h3>If the plugin was installed Just me</h3>
+<p>That copy lives in the person's home folder, so it stays behind when the KNIME folder is copied. Run the installer on the new copy.</p>
+<div class="scroll"><table>
+  <tr><th>What was copied</th><th>Result</th></tr>
+  <tr><td>KNIME folder only</td><td>No plugin. A new workspace shows no tab. A workspace that used it shows the red tab, and KNIME may offer an import wizard.</td></tr>
+  <tr><td>KNIME folder and the private area (<code>.eclipse</code>), same KNIME path, same user and home folder</td><td>The plugin works (tested on Linux only).</td></tr>
+  <tr><td>KNIME folder and the private area, <b>different</b> KNIME path</td><td>No plugin: the private area's name depends on the KNIME path, so KNIME looks in a new one. You get the red tab, and KNIME may offer an import wizard (seen on 5.8.1).</td></tr>
+</table></div>
+
+<h3>What doesn't come with the folder</h3>
+<p>Workspaces are separate, so <b>server lists stay on the first computer</b> unless you copy them too. To bring a list, copy the workspace folder with KNIME closed. On Linux, the server list was still there afterwards, at the same and at a different KNIME path. Otherwise, add the servers again.</p>
+
+<h3>Don't copy only the changed files</h3>
+<p><a href="#files">Section 13</a> lists what an install changes, so it's tempting to copy just those files. Two ways of doing that were tested, and neither is recommended. Both show the tab at first.</p>
+<div class="scroll"><table>
+  <tr><th>Shortcut</th><th>What went wrong</th></tr>
+  <tr><td><b>The jar plus one line</b> added to <code>bundles.info</code></td><td>KNIME's installer doesn't know the plugin is there. Updating with the installer then reported success and listed the new version, but KNIME kept loading the old one. Uninstall reported <code>The plugin is still installed</code>, even after running the installer over it, so the line has to be removed by hand.</td></tr>
+  <tr><td><b>All the changed files</b>, including <code>bundles.info</code> and KNIME's installer records</td><td>On a KNIME with another extension, it overwrote the list and that extension stopped being listed. KNIME's installer records only took effect if its installer had never run on the target. Otherwise they were ignored.</td></tr>
+</table></div>
+
+<h2 id="tested">12. What this was tested on</h2>
 <div class="scroll"><table>
   <tr><th>Platform</th><th>KNIME</th><th>Result</th></tr>
   <tr><td>Linux</td><td>4.1.3</td><td>All users and Just me: install, update from 1.0.3 and 1.0.4, remove. Tab checked.</td></tr>
@@ -643,11 +775,14 @@ Linux:
   <tr><td>Linux</td><td>4.1.3 and three copies of 5.8.1</td><td>Scan and file picker (zenity), including cancelling and wrong selections. Only the chosen KNIME changed. Workspaces tested as described in section 7.</td></tr>
   <tr><td>Windows Server 2022</td><td>Seven 4.1.3 folders and two 5.8.1</td><td>Scan and file picker. Only the chosen KNIME changed. Update from 1.0.4 on 5.8.1, tab checked on 4.1.3 and 5.8.1.</td></tr>
   <tr><td>Linux and Windows Server 2022</td><td>4.1.3 and 5.8.1</td><td>All-users update from 1.0.4 to 1.0.5 and removal, with two other people's KNIME open. Deleting a jar in use made the settings page fail on 4.1.3, on both systems. On 5.8.1 it kept working, because that jar happened to still be open, so don't count on this. A second update, tested on Linux with nobody's KNIME open, deleted the older jar too.</td></tr>
+  <tr><td>Linux</td><td>4.1.3 and 5.8.1</td><td>Copying the KNIME folder to a separate container with the original path gone. All users: tar and zip, same and different path, read-only and owned by one user, new users; then update, remove and Just me on the copy. Just me: folder only, with the private area, at a different path. Tab checked each time.</td></tr>
+  <tr><td>Windows Server 2022</td><td>4.1.3 and 5.8.1</td><td>Copying the KNIME folder with robocopy to a new path, with the original renamed away and a user who had never run KNIME. There was only one machine, so this stands in for a second computer. All users: then update, remove and Just me on the copy. Just me: folder only, then installing again. On 4.1.3 also a copy under <code>C:\</code> with the permissions fix. Tab checked each time.</td></tr>
+  <tr><td>Linux and Windows Server 2022</td><td>4.1.3 and 5.8.1</td><td>Transplants from clean KNIMEs: replacing the whole folder with a newer one, with the server list kept; the dropin zip on a read-only KNIME, for existing and new users, and updating it; and the two file-copy shortcuts. How the jar-plus-one-line shortcut behaves when updated or removed, removing a dropin, the wrong dropin zip, a dropin plus the installer, and replacing a folder under an open KNIME were tested on Linux only.</td></tr>
   <tr><td>Any</td><td>4.2.3</td><td>The 4.1.x plugin installs. The 1.0.5 installer wasn't tried on it.</td></tr>
 </table></div>
-<p>Not tested: macOS, Windows 10 and 11, other KNIME versions, one workspace used in both KNIME 4 and KNIME 5, domain Group Policy, antivirus software, roaming profiles, and KNIME on a remote file server.</p>
+<p>Not tested for transplants: macOS, a Windows zip of the whole folder, or a real second Windows computer. Not tested in general: macOS, Windows 10 and 11, other KNIME versions, one workspace used in both KNIME 4 and KNIME 5, domain Group Policy, antivirus software, roaming profiles, and KNIME on a remote file server.</p>
 
-<h2 id="files">12. Exactly what changes on disk</h2>
+<h2 id="files">13. Exactly what changes on disk</h2>
 <p>This section is for administrators and anyone curious. It lists what the plugin adds, how KNIME learns about it, and where its settings are kept. <code>&lt;ver&gt;</code> is the version, such as <code>1.0.5</code> or <code>1.0.5.413</code>. Paths use <code>/</code>, and on Windows the same paths apply with <code>\</code>.</p>
 
 <h3>How KNIME finds the plugin</h3>

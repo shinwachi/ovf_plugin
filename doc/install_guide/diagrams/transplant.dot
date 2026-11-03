@@ -1,0 +1,14 @@
+digraph transplant {
+  rankdir=LR; nodesep=0.22; ranksep=0.5; bgcolor="white"; margin=0.1;
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=12, margin="0.16,0.09", color="#5b6b7b", fillcolor="#eef2f6", fontcolor="#1d2733"];
+  edge [color="#5b6b7b", fontname="Helvetica", fontsize=11, fontcolor="#1d2733"];
+  q1 [label="Does the other computer\nhave a KNIME to keep?"];
+  q2 [label="Do you need KNIME's\nInstallation Details\nor its uninstall?"];
+  a [label="Whole-folder transplant\nInstall once, then copy the\nKNIME folder everywhere.", fillcolor="#dff3e3", color="#2d8a46"];
+  b [label="Dropin transplant\nUnzip one folder into\nKNIME's dropins folder.", fillcolor="#dff3e3", color="#2d8a46"];
+  c [label="Installer\nSections 3 and 4.", fillcolor="#fff4d6", color="#b98a00"];
+  q1 -> a [label="no, or it can be replaced"];
+  q1 -> q2 [label="yes"];
+  q2 -> b [label="no"];
+  q2 -> c [label="yes"];
+}
