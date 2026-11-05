@@ -1,6 +1,9 @@
 package org.ovf.serverconnector.actions;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Locale;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -101,10 +104,39 @@ public class UploadAction extends Action {
             @Override
             protected IStatus run(IProgressMonitor monitor) {
                 monitor.beginTask("Uploading " + nodeName, IProgressMonitor.UNKNOWN);
+                String target = finalTarget;
                 try {
-                    System.out.println("[ServerExplorer] Uploading: " + localDir + " -> server:" + finalTarget);
+                    // Listing the folder is a network call, so the check runs
+                    // here rather than on the UI thread; only the question
+                    // goes to the UI thread.
+                    int slash = target.lastIndexOf('/');
+                    String parent = slash > 0 ? target.substring(0, slash) : "/";
+                    String name = target.substring(slash + 1);
+                    Set<String> taken = new HashSet<>();
+                    for (WorkflowNode sibling : client.browse(parent)) {
+                        taken.add(sibling.getName().toLowerCase(Locale.ROOT));
+                    }
+                    if (taken.contains(name.toLowerCase(Locale.ROOT))) {
+                        String copy = OverwritePrompt.freeName(name,
+                                n -> taken.contains(n.toLowerCase(Locale.ROOT)));
+                        int[] choice = { OverwritePrompt.CANCEL };
+                        display.syncExec(() -> {
+                            if (!shell.isDisposed()) {
+                                choice[0] = OverwritePrompt.ask(shell, "Upload to Server", name,
+                                        parent.equals("/") ? "the server's top folder"
+                                                : "the server folder '" + parent + "'",
+                                        copy);
+                            }
+                        });
+                        if (choice[0] == OverwritePrompt.CANCEL) return Status.CANCEL_STATUS;
+                        if (choice[0] == OverwritePrompt.KEEP_BOTH) {
+                            target = (parent.equals("/") ? "" : parent) + "/" + copy;
+                        }
+                    }
+
+                    System.out.println("[ServerExplorer] Uploading: " + localDir + " -> server:" + target);
                     byte[] zipData = ZipHelper.zipDirectoryContents(localDir);
-                    client.upload(finalTarget, zipData);
+                    client.upload(target, zipData);
                 } catch (final Exception e) {
                     System.err.println("[ServerExplorer] Upload failed: " + e.getMessage());
                     e.printStackTrace();
@@ -115,13 +147,14 @@ public class UploadAction extends Action {
                 } finally {
                     monitor.done();
                 }
+                final String uploadedAs = target;
                 display.asyncExec(() -> {
                     boolean hideSuccess = fPrefs != null
                             && fPrefs.getBoolean(PreferenceConstants.P_HIDE_SUCCESS_DIALOGS);
                     if (!hideSuccess) {
                         MessageDialogWithToggle dialog = MessageDialogWithToggle.openInformation(shell,
                                 "Upload Complete",
-                                "Uploaded '" + nodeName + "' to server as '" + finalTarget + "'",
+                                "Uploaded '" + nodeName + "' to server as '" + uploadedAs + "'",
                                 "Don't show this again", false, null, null);
                         if (dialog.getToggleState() && fPrefs != null) {
                             fPrefs.setValue(PreferenceConstants.P_HIDE_SUCCESS_DIALOGS, true);

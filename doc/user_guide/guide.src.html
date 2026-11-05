@@ -64,7 +64,7 @@
 <body>
 
 <h1>OVF Server Explorer User Guide</h1>
-<p class="lead">Version 1.0.7, for KNIME 4.1 and later, and KNIME 5 in the classic user interface. Server Explorer is a third-party plugin, not a KNIME product. To install or update it, see the <a href="https://shinwachi.github.io/ovf-updates/install.html">install guide</a>.</p>
+<p class="lead">Version 1.0.8, for KNIME 4.1 and later, and KNIME 5 in the classic user interface. Server Explorer is a third-party plugin, not a KNIME product. To install or update it, see the <a href="https://shinwachi.github.io/ovf-updates/install.html">install guide</a>.</p>
 
 <figure><img src="img/hero.png" alt="KNIME with the Server Explorer tab open on the left. The tab shows a Team share server with folders, and the local workspace below it. A workflow downloaded from the share is open in the editor.">
 <figcaption>Server Explorer, top left, with a shared folder above and your own workspace below.</figcaption></figure>
@@ -165,7 +165,7 @@
   <li><b>Right-click &rsaquo; Download to Workspace</b>, or select it and click the button at the top. This asks for a name first, so you can keep it apart from a copy you already have.</li>
 </ul>
 <p>Downloads always go to the <b>top level</b> of your workspace, even if you drop onto a folder there. To put one in a folder, drag it there afterwards. A folder comes with everything inside it. KNIME Explorer shows the download too.</p>
-<div class="note"><b>A download replaces a workflow of the same name without asking.</b> Its files are overwritten with the server's, so changes you made to your copy are lost. Use <b>Right-click &rsaquo; Download to Workspace</b> and a new name to keep both.</div>
+<div class="note"><b>If your workspace already has a workflow or folder with that name, Server Explorer asks first.</b> <b>Replace</b> overwrites its files with the server's, so changes you made to your copy are lost. <b>Keep both</b> downloads it under a new name, such as <i>Sales Dashboard (2)</i>. <b>Cancel</b> changes nothing.</div>
 
 <h2 id="upload">6. Upload to the server</h2>
 <figure><img src="img/upload.gif" data-still="img/upload_still.png" alt="Animation: dragging Sales Dashboard from the workspace branch onto the Customer Intelligence folder on the server. A message confirms the upload, and opening that folder shows Sales Dashboard inside.">
@@ -175,7 +175,7 @@
   <li><b>Right-click &rsaquo; Upload to Server</b>, or the button at the top, asks for a name and puts it at the <b>top level</b> of the server.</li>
 </ul>
 <div class="tip"><b>Save first.</b> An upload copies the workflow as it is saved on disk, so changes you haven't saved aren't included.</div>
-<div class="note"><b>An upload replaces anything on the server with the same name, in the same folder, without asking.</b> Everyone then gets your version. If a colleague may have changed it, download theirs first, under a new name, and compare.</div>
+<div class="note"><b>If that server folder already has something with the same name, Server Explorer asks first.</b> <b>Replace</b> puts your version in its place, and everyone then gets yours. If a colleague may have changed it, choose <b>Cancel</b>, download theirs under a new name, and compare. <b>Keep both</b> uploads yours under a new name, such as <i>Sales Dashboard (2)</i>.</div>
 <p>Uploads and downloads run in the background, with a progress window you can cancel. A message says when each one is done. To stop seeing these messages, tick <b>Don't show this again</b>.</p>
 
 <h2 id="organize">7. Folders, renaming, moving and deleting</h2>

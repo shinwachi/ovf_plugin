@@ -178,6 +178,21 @@ and Ctrl+F1 on Linux (Eclipse's GTK binding). KNIME's help window on Windows ren
 an old Internet Explorer engine, so the page uses plain CSS without variables or grid.
 Both are generated from `doc/user_guide/`; don't edit `help/` by hand.
 
+### 1.9 Downloads and uploads replaced same-name items silently
+
+**Symptom (up to 1.0.7):** downloading onto a workspace workflow of the same name
+overwrote its files, and uploading onto a same-name server item replaced it, with no
+question asked. Both apply to drags as well as the menu and toolbar.
+
+**Fix (1.0.8):** `OverwritePrompt` asks *Replace / Keep both / Cancel*, with Cancel as the
+default, and no "don't show again" setting skips it. Keep both picks the first free
+`name (2)`, `name (3)`, ... The download check is a local `File.exists()` before the
+job starts. The upload check lists the target folder with `client.browse()`, which is a
+network call, so it runs inside the upload job and only the question goes to the UI
+thread through `syncExec`. Server names are compared ignoring case, since a shared
+folder on Windows is case-insensitive. Replace on download still unzips over the
+existing folder, as before, so files that only the local copy had are left in place.
+
 ---
 
 ## 2. Windows-specific fixes

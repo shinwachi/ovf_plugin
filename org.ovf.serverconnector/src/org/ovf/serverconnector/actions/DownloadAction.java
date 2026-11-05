@@ -87,6 +87,14 @@ public class DownloadAction extends Action {
             }
         }
 
+        if (new File(workspacePath, targetName).exists()) {
+            String copy = OverwritePrompt.freeName(targetName, n -> new File(workspacePath, n).exists());
+            int choice = OverwritePrompt.ask(shell, "Download to Workspace", targetName,
+                    "your workspace", copy);
+            if (choice == OverwritePrompt.CANCEL) return;
+            if (choice == OverwritePrompt.KEEP_BOTH) targetName = copy;
+        }
+
         // Run the fetch+unzip on a background Job so a slow backend (SMB
         // share, high-latency HTTP) doesn't block the SWT UI thread and
         // freeze KNIME during the transfer. See the same fix in
