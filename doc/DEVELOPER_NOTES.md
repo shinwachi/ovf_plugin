@@ -193,6 +193,27 @@ thread through `syncExec`. Server names are compared ignoring case, since a shar
 folder on Windows is case-insensitive. Replace on download still unzips over the
 existing folder, as before, so files that only the local copy had are left in place.
 
+### 1.10 Opening a workflow failed on KNIME 5.1.3
+
+**Symptom (up to 1.0.8, 5.x build):** on KNIME 5.1.3 in the classic UI, double-clicking
+a workflow in Server Explorer showed *Could not open workflow ... Open it from KNIME
+Explorer instead* (workspace) or *Downloaded but could not open ...* (server). 5.8.1 was
+fine, which is all the lab had tested.
+
+**Root cause:** the 5.x `KnimeExplorerRefresher` found the LOCAL mount with
+`ExplorerMountTable.getContentProvider(String)`, which returns an `Optional` and exists in
+5.8.1 but not in 5.1.3 (nor 4.1.3). The `NoSuchMethodException` made every lookup fail:
+opening, the KNIME Explorer refresh after a download, the change listener, and the
+delete and rename through KNIME's file store, which then fell back to plain file
+operations; deleting a workflow that way while KNIME still has it loaded has
+crashed KNIME. The 4.1.x tree already had `lookupLocalProvider`, which falls back
+to `getMountedContent().get("LOCAL")`; it was never ported to the 5.x tree.
+
+**Fix (1.0.9):** the 5.x tree uses the same `lookupLocalProvider`, so
+`KnimeExplorerRefresher.java` is now identical in both trees. Checked with `javap`:
+`getMountedContent()` exists in 4.1.3, 5.1.3 and 5.8.1. Before relying on another
+KNIME internal through reflection, check it in all three.
+
 ---
 
 ## 2. Windows-specific fixes

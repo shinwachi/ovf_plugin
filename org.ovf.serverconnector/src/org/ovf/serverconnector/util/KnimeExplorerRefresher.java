@@ -48,6 +48,31 @@ public final class KnimeExplorerRefresher {
     private KnimeExplorerRefresher() {}
 
     /**
+     * Look up the LOCAL-mount content provider via {@code ExplorerMountTable}.
+     * KNIME 5.x exposes {@code getContentProvider(String) -> Optional<...>};
+     * 4.1.x has only {@code getMountedContent() -> Map<String, ...>}. This
+     * helper hides the difference so the rest of the file is API-agnostic.
+     * Returns null if the bundle isn't active or the mount isn't registered.
+     */
+    private static Object lookupLocalProvider(ClassLoader cl) throws Exception {
+        Class<?> mountTableClass = cl.loadClass(MOUNT_TABLE_CLASS);
+        try {
+            Method m = mountTableClass.getMethod("getContentProvider", String.class);
+            Object opt = m.invoke(null, LOCAL_MOUNT_ID);
+            if (opt instanceof Optional<?>) {
+                Optional<?> o = (Optional<?>) opt;
+                return o.isPresent() ? o.get() : null;
+            }
+            return opt;
+        } catch (NoSuchMethodException notIn4x) {
+            @SuppressWarnings("unchecked")
+            java.util.Map<String, Object> mounts = (java.util.Map<String, Object>)
+                    mountTableClass.getMethod("getMountedContent").invoke(null);
+            return mounts == null ? null : mounts.get(LOCAL_MOUNT_ID);
+        }
+    }
+
+    /**
      * Open a local workflow in the KNIME workflow editor by delegating to
      * KNIME's own static helper
      * {@code OpenWorkflowAction.openEditor(AbstractExplorerFileStore)}.
@@ -62,13 +87,8 @@ public final class KnimeExplorerRefresher {
                 System.err.println("[ServerExplorer] Cannot open workflow: explorer bundle not active");
                 return false;
             }
-            Class<?> mountTableClass = cl.loadClass(MOUNT_TABLE_CLASS);
-            Object opt = mountTableClass.getMethod("getContentProvider", String.class)
-                    .invoke(null, LOCAL_MOUNT_ID);
-            if (!(opt instanceof Optional<?>)) return false;
-            Optional<?> optProvider = (Optional<?>) opt;
-            if (optProvider.isEmpty()) return false;
-            Object provider = optProvider.get();
+            Object provider = lookupLocalProvider(cl);
+            if (provider == null) return false;
 
             // Refresh first so a just-extracted workflow is recognized.
             provider.getClass().getMethod("refresh").invoke(provider);
@@ -129,19 +149,11 @@ public final class KnimeExplorerRefresher {
             return;
         }
 
-        Class<?> mountTableClass = explorerCL.loadClass(MOUNT_TABLE_CLASS);
-        Method getProvider = mountTableClass.getMethod("getContentProvider", String.class);
-        Object opt = getProvider.invoke(null, LOCAL_MOUNT_ID);
-        if (!(opt instanceof Optional<?>)) {
-            System.err.println("[ServerExplorer] Unexpected return type from getContentProvider: " + opt);
-            return;
-        }
-        Optional<?> optProvider = (Optional<?>) opt;
-        if (optProvider.isEmpty()) {
+        Object provider = lookupLocalProvider(explorerCL);
+        if (provider == null) {
             System.err.println("[ServerExplorer] LOCAL mount point not registered");
             return;
         }
-        Object provider = optProvider.get();
         provider.getClass().getMethod("refresh").invoke(provider);
         System.out.println("[ServerExplorer] Refreshed KNIME Explorer content provider for LOCAL mount");
     }
@@ -196,13 +208,8 @@ public final class KnimeExplorerRefresher {
             ClassLoader cl = findExplorerClassLoader();
             if (cl == null) return false;
 
-            Class<?> mountTableClass = cl.loadClass(MOUNT_TABLE_CLASS);
-            Object opt = mountTableClass.getMethod("getContentProvider", String.class)
-                    .invoke(null, LOCAL_MOUNT_ID);
-            if (!(opt instanceof Optional<?>)) return false;
-            Optional<?> optProvider = (Optional<?>) opt;
-            if (optProvider.isEmpty()) return false;
-            Object provider = optProvider.get();
+            Object provider = lookupLocalProvider(cl);
+            if (provider == null) return false;
 
             Object fileStore = provider.getClass().getMethod("getFileStore", String.class)
                     .invoke(provider, relativePath);
@@ -245,13 +252,8 @@ public final class KnimeExplorerRefresher {
             ClassLoader cl = findExplorerClassLoader();
             if (cl == null) return false;
 
-            Class<?> mountTableClass = cl.loadClass(MOUNT_TABLE_CLASS);
-            Object opt = mountTableClass.getMethod("getContentProvider", String.class)
-                    .invoke(null, LOCAL_MOUNT_ID);
-            if (!(opt instanceof Optional<?>)) return false;
-            Optional<?> optProvider = (Optional<?>) opt;
-            if (optProvider.isEmpty()) return false;
-            Object provider = optProvider.get();
+            Object provider = lookupLocalProvider(cl);
+            if (provider == null) return false;
 
             Method getFileStore = provider.getClass().getMethod("getFileStore", String.class);
             Object srcStore = getFileStore.invoke(provider, oldPath);
@@ -296,13 +298,8 @@ public final class KnimeExplorerRefresher {
             ClassLoader cl = findExplorerClassLoader();
             if (cl == null) return null;
 
-            Class<?> mountTableClass = cl.loadClass(MOUNT_TABLE_CLASS);
-            Object opt = mountTableClass.getMethod("getContentProvider", String.class)
-                    .invoke(null, LOCAL_MOUNT_ID);
-            if (!(opt instanceof Optional<?>)) return null;
-            Optional<?> optProvider = (Optional<?>) opt;
-            if (optProvider.isEmpty()) return null;
-            Object provider = optProvider.get();
+            Object provider = lookupLocalProvider(cl);
+            if (provider == null) return null;
 
             ILabelProviderListener listener = event -> {
                 try {
